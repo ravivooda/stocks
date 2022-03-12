@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"imports/models"
 	"io"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -41,47 +42,47 @@ func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]m
 		return nil, err
 	}
 
-	if len(data) <= seed.SkippableLines {
-		return nil, errors.New(fmt.Sprintf("got fewer (%d) than expected lines (%d)", len(data), seed.SkippableLines))
+	if len(data) <= seed.Header.SkippableLines {
+		return nil, errors.New(fmt.Sprintf("got fewer (%d) than expected lines (%d)", len(data), seed.Header.SkippableLines))
 	}
 
-	if strings.Join(data[seed.SkippableLines-1], ",") != strings.Join(seed.ExpectedColumns, ",") {
-		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s)", seed.ExpectedColumns, data[seed.SkippableLines-1]))
+	if strings.Join(data[seed.Header.SkippableLines-1], ",") != strings.Join(seed.Header.ExpectedColumns, ",") {
+		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s)", seed.Header.ExpectedColumns, data[seed.Header.SkippableLines-1]))
 	}
 
-	var totalSum float64
-	for i := seed.SkippableLines; i < len(data); i++ {
-		totalSum += parseFloat(data[i][6])
+	var totalSum int64
+	for i := seed.Header.SkippableLines; i < len(data); i++ {
+		totalSum += parseInt(data[i][6])
 	}
 
+	//fmt.Println(totalSum)
+	var totalPercent float64
 	var holdings []models.Holding
-	for i := seed.SkippableLines; i < len(data); i++ {
-		mv := parseFloat(data[i][6])
+	for i := seed.Header.SkippableLines; i < len(data); i++ {
 		holdings = append(holdings, models.Holding{
 			TradeDate:     data[i][0],
 			AccountTicker: data[i][1],
 			StockTicker:   data[i][2],
 			Description:   data[i][3],
 			Shares:        parseInt(data[i][4]),
-			Price:         parseFloat(data[i][5]),
-			MarketValue:   mv,
-			Percent:       mv / totalSum * 100,
+			Price:         parseInt(data[i][5]),
+			MarketValue:   parseInt(data[i][6]),
+			Percent:       float64(parseInt(data[i][6])) / float64(totalSum) * 100,
 		})
+		totalPercent += float64(parseInt(data[i][6])) / float64(totalSum) * 100
+	}
 
-		totalSum += mv
+	if math.Abs(totalPercent-100) >= 0.1 {
+		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100%", totalPercent))
 	}
 
 	return holdings, nil
 }
 
 func parseInt(s string) int64 {
+	s = strings.Split(s, ".")[0]
 	ri, _ := strconv.ParseInt(s, 10, 64)
 	return ri
-}
-
-func parseFloat(s string) float64 {
-	rii, _ := strconv.ParseFloat(s, 32)
-	return rii
 }
 
 func NewDirexionClient() (Client, error) {

@@ -27,7 +27,7 @@ func (i importsDB) ListSeeds(ctx context.Context) ([]models.Seed, error) {
 	var rets []models.Seed
 	for rows.Next() {
 		seed := models.Seed{}
-		err := rows.Scan(&seed.URL, &seed.Ticker, &seed.SkippableLines, &seed.ExpectedColumns)
+		err := rows.Scan(&seed.URL, &seed.Ticker, &seed.Header.SkippableLines, &seed.Header.ExpectedColumns)
 		if err != nil {
 			return nil, err
 		}

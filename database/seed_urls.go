@@ -18,18 +18,24 @@ func (i dumbDatabase) ListSeeds(context context.Context) ([]models.Seed, error) 
 		"Price",
 		"MarketValue",
 	}
+	header := models.Header{
+		SkippableLines:  4,
+		ExpectedColumns: expectedColumns,
+		OutstandingShares: models.OutstandingShares{
+			LineNumber: 2,
+			Prefix:     "Shares Outstanding:",
+		},
+	}
 	return []models.Seed{
-		//{
-		//	URL:             "https://www.direxion.com/holdings/TECL.csv",
-		//	Ticker:          "TECL",
-		//	SkippableLines:  4,
-		//	ExpectedColumns: expectedColumns,
-		//},
 		{
-			URL:             "https://www.direxion.com/holdings/TECS.csv",
-			Ticker:          "TECS",
-			SkippableLines:  4,
-			ExpectedColumns: expectedColumns,
+			URL:    "https://www.direxion.com/holdings/TECL.csv",
+			Ticker: "TECL",
+			Header: header,
+		},
+		{
+			URL:    "https://www.direxion.com/holdings/TECS.csv",
+			Ticker: "TECS",
+			Header: header,
 		},
 	}, nil
 }
