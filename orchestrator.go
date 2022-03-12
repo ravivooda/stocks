@@ -6,6 +6,7 @@ import (
 	"imports/database"
 	"imports/direxion"
 	"imports/models"
+	"sort"
 )
 
 func orchestrate(ctx context.Context, db database.DB, client direxion.Client) error {
@@ -22,6 +23,10 @@ func orchestrate(ctx context.Context, db database.DB, client direxion.Client) er
 		}
 		allHoldings = append(allHoldings, holdings...)
 	}
+
+	sort.Slice(allHoldings, func(i, j int) bool {
+		return allHoldings[i].Percent > allHoldings[j].Percent
+	})
 
 	fmt.Print(allHoldings)
 	return nil
