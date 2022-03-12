@@ -19,12 +19,12 @@ func (i dumbDatabase) ListSeeds(context context.Context) ([]models.Seed, error) 
 		"MarketValue",
 	}
 	return []models.Seed{
-		{
-			URL:             "https://www.direxion.com/holdings/TECL.csv",
-			Ticker:          "TECL",
-			SkippableLines:  4,
-			ExpectedColumns: expectedColumns,
-		},
+		//{
+		//	URL:             "https://www.direxion.com/holdings/TECL.csv",
+		//	Ticker:          "TECL",
+		//	SkippableLines:  4,
+		//	ExpectedColumns: expectedColumns,
+		//},
 		{
 			URL:             "https://www.direxion.com/holdings/TECS.csv",
 			Ticker:          "TECS",

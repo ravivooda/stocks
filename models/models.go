@@ -15,5 +15,5 @@ type Holding struct {
 	Shares        int64
 	Price         float64
 	MarketValue   float64
-	Percent       float32
+	Percent       float64
 }

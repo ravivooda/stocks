@@ -3,14 +3,17 @@ package direxion
 import (
 	"context"
 	"encoding/csv"
+	"errors"
+	"fmt"
 	"imports/models"
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
-// DirexionClient API
-type DirexionClient interface {
+// Client API
+type Client interface {
 	GetHoldings(ctx context.Context, seed models.Seed) ([]models.Holding, error)
 }
 
@@ -29,15 +32,31 @@ func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]m
 			print(err)
 		}
 	}(resp.Body)
+
 	reader := csv.NewReader(resp.Body)
-	reader.Comma = ';'
+	reader.Comma = ','
+	reader.FieldsPerRecord = -1
 	data, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
 	}
 
+	if len(data) <= seed.SkippableLines {
+		return nil, errors.New(fmt.Sprintf("got fewer (%d) than expected lines (%d)", len(data), seed.SkippableLines))
+	}
+
+	if strings.Join(data[seed.SkippableLines-1], ",") != strings.Join(seed.ExpectedColumns, ",") {
+		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s)", seed.ExpectedColumns, data[seed.SkippableLines-1]))
+	}
+
+	var totalSum float64
+	for i := seed.SkippableLines; i < len(data); i++ {
+		totalSum += parseFloat(data[i][6])
+	}
+
 	var holdings []models.Holding
 	for i := seed.SkippableLines; i < len(data); i++ {
+		mv := parseFloat(data[i][6])
 		holdings = append(holdings, models.Holding{
 			TradeDate:     data[i][0],
 			AccountTicker: data[i][1],
@@ -45,9 +64,11 @@ func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]m
 			Description:   data[i][3],
 			Shares:        parseInt(data[i][4]),
 			Price:         parseFloat(data[i][5]),
-			MarketValue:   parseFloat(data[i][6]),
-			Percent:       float32(parseFloat(data[i][7])),
+			MarketValue:   mv,
+			Percent:       mv / totalSum * 100,
 		})
+
+		totalSum += mv
 	}
 
 	return holdings, nil
@@ -59,10 +80,10 @@ func parseInt(s string) int64 {
 }
 
 func parseFloat(s string) float64 {
-	rii, _ := strconv.ParseFloat(s, 64)
+	rii, _ := strconv.ParseFloat(s, 32)
 	return rii
 }
 
-func NewDirexionClient() (DirexionClient, error) {
+func NewDirexionClient() (Client, error) {
 	return &direxionClient{}, nil
 }
