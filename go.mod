@@ -1,3 +1,3 @@
-module imports
+module stocks
 
 go 1.17
