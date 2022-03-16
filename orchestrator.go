@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"imports/database"
-	"imports/direxion"
-	"imports/models"
 	"sort"
+	"stocks/database"
+	"stocks/direxion"
+	"stocks/models"
 )
 
 func orchestrate(ctx context.Context, db database.DB, client direxion.Client) error {

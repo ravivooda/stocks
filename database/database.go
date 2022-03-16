@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	"imports/models"
+	"stocks/models"
 )
 
 type DBConfig struct {

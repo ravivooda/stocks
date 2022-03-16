@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"imports/models"
+	"stocks/models"
 )
 
 type dumbDatabase struct {
