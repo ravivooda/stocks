@@ -21,10 +21,10 @@ type Client interface {
 type direxionClient struct {
 }
 
-func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]models.Holding, error) {
+func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]models.Holding, error) {
 	resp, err := http.Get(seed.URL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fetching %+v returned err: %w", seed, err)
 	}
 
 	defer func(Body io.ReadCloser) {
@@ -39,15 +39,15 @@ func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]m
 	reader.FieldsPerRecord = -1
 	data, err := reader.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("reading data for %+v returned err: %w", seed, err)
 	}
 
 	if len(data) <= seed.Header.SkippableLines {
-		return nil, errors.New(fmt.Sprintf("got fewer (%d) than expected lines (%d)", len(data), seed.Header.SkippableLines))
+		return nil, errors.New(fmt.Sprintf("got fewer (%d) than expected lines (%d) for seed %+v", len(data), seed.Header.SkippableLines, seed))
 	}
 
 	if strings.Join(data[seed.Header.SkippableLines-1], ",") != strings.Join(seed.Header.ExpectedColumns, ",") {
-		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s)", seed.Header.ExpectedColumns, data[seed.Header.SkippableLines-1]))
+		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s) for seed %+v", seed.Header.ExpectedColumns, data[seed.Header.SkippableLines-1], seed))
 	}
 
 	var totalSum int64
@@ -73,7 +73,7 @@ func (d *direxionClient) GetHoldings(ctx context.Context, seed models.Seed) ([]m
 	}
 
 	if math.Abs(totalPercent-100) >= 0.1 {
-		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100%", totalPercent))
+		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100% for seed %+v", totalPercent, seed))
 	}
 
 	return holdings, nil

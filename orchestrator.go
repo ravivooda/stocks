@@ -17,6 +17,7 @@ func orchestrate(ctx context.Context, db database.DB, client direxion.Client) er
 
 	var allHoldings []models.Holding
 	for _, seed := range seeds {
+		fmt.Printf("fetching information for %+v\n", seed)
 		holdings, err := client.GetHoldings(ctx, seed)
 		if err != nil {
 			return err
