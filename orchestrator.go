@@ -7,9 +7,14 @@ import (
 	"stocks/database"
 	"stocks/direxion"
 	"stocks/models"
+	"stocks/morning_star"
 )
 
-func orchestrate(ctx context.Context, db database.DB, client direxion.Client) error {
+func orchestrate(
+	ctx context.Context,
+	db database.DB,
+	client direxion.Client,
+	msapi morning_star.MSAPI) error {
 	seeds, err := db.ListSeeds(ctx)
 	if err != nil {
 		return err
@@ -30,10 +35,17 @@ func orchestrate(ctx context.Context, db database.DB, client direxion.Client) er
 	})
 
 	fmt.Print(allHoldings)
+
+	movers, err := msapi.GetMovers(ctx)
+	if err != nil {
+		return err
+	}
+	fmt.Println(movers)
 	return nil
 }
 
 func main() {
+	ctx := context.Background()
 	db := database.NewDumbDatabase()
 	client, err := direxion.NewDirexionClient()
 	if err != nil {
@@ -41,7 +53,13 @@ func main() {
 		return
 	}
 
-	err = orchestrate(context.Background(), db, client)
+	msapi := morning_star.New(morning_star.Config{
+		URL:  "https://ms-finance.p.rapidapi.com/market/v2/get-movers",
+		Host: "ms-finance.p.rapidapi.com",
+		Key:  "e6e18b1891mshe45bf4b11c2c441p199735jsn2958e367084e",
+	})
+
+	err = orchestrate(ctx, db, client, msapi)
 	if err != nil {
 		fmt.Println(err)
 		return
