@@ -6,13 +6,14 @@ import (
 	"sort"
 	"stocks/alerts"
 	"stocks/alerts/movers"
+	"stocks/alerts/movers/morning_star"
 	"stocks/database"
-	"stocks/direxion"
 	"stocks/models"
-	"stocks/morning_star"
+	"stocks/securities"
+	"stocks/securities/direxion"
 )
 
-func orchestrate(ctx context.Context, db database.DB, client direxion.Client, parsers []alerts.AlertParser) error {
+func orchestrate(ctx context.Context, db database.DB, client securities.Client, parsers []alerts.AlertParser) error {
 	seeds, err := db.ListSeeds(ctx)
 	if err != nil {
 		return err
@@ -41,7 +42,7 @@ func orchestrate(ctx context.Context, db database.DB, client direxion.Client, pa
 	return nil
 }
 
-func fetchHoldings(ctx context.Context, seeds []models.Seed, client direxion.Client) ([]models.Holding, error) {
+func fetchHoldings(ctx context.Context, seeds []models.Seed, client securities.Client) ([]models.Holding, error) {
 	var allHoldings []models.Holding
 	for _, seed := range seeds {
 		fmt.Printf("fetching information for %+v\n", seed)

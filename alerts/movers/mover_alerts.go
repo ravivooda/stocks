@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"stocks/alerts"
+	"stocks/alerts/movers/morning_star"
 	"stocks/models"
-	"stocks/morning_star"
 )
 
 type Config struct {

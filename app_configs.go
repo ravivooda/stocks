@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/spf13/viper"
-	"stocks/morning_star"
+	"stocks/alerts/movers/morning_star"
 )
 
 type Config struct {

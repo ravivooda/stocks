@@ -9,14 +9,10 @@ import (
 	"math"
 	"net/http"
 	"stocks/models"
+	"stocks/securities"
 	"strconv"
 	"strings"
 )
-
-// Client API
-type Client interface {
-	GetHoldings(ctx context.Context, seed models.Seed) ([]models.Holding, error)
-}
 
 type direxionClient struct {
 }
@@ -85,6 +81,6 @@ func parseInt(s string) int64 {
 	return ri
 }
 
-func NewDirexionClient() (Client, error) {
+func NewDirexionClient() (securities.Client, error) {
 	return &direxionClient{}, nil
 }
