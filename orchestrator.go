@@ -4,17 +4,15 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"stocks/alerts"
+	"stocks/alerts/movers"
 	"stocks/database"
 	"stocks/direxion"
 	"stocks/models"
 	"stocks/morning_star"
 )
 
-func orchestrate(
-	ctx context.Context,
-	db database.DB,
-	client direxion.Client,
-	msapi morning_star.MSAPI) error {
+func orchestrate(ctx context.Context, db database.DB, client direxion.Client, parsers []alerts.AlertParser) error {
 	seeds, err := db.ListSeeds(ctx)
 	if err != nil {
 		return err
@@ -31,27 +29,16 @@ func orchestrate(
 	}
 	fmt.Println(holdingsMap)
 
-	movers, err := msapi.GetMovers(ctx)
-	if err != nil {
-		return err
-	}
-	fmt.Println(movers)
-	var alerts []string
-	alerts = append(alerts, retrieveAlerts(movers.Actives, holdingsMap, "active")...)
-	alerts = append(alerts, retrieveAlerts(movers.Losers, holdingsMap, "loser")...)
-	alerts = append(alerts, retrieveAlerts(movers.Gainers, holdingsMap, "gainer")...)
-	fmt.Printf("Found alerts: %s\n", alerts)
-	return nil
-}
-
-func retrieveAlerts(movers []models.MSHolding, holdingsMap map[string]models.Holding, action string) []string {
-	var alerts []string
-	for _, mover := range movers {
-		if holding, found := holdingsMap[mover.Ticker]; found {
-			alerts = append(alerts, fmt.Sprintf("found %s stock ticker %+v in holding %+v\n", action, mover, holding))
+	var gatheredAlerts []alerts.Alert
+	for _, parser := range parsers {
+		tAlerts, err := parser.GetAlerts(ctx, holdingsMap)
+		if err != nil {
+			return err
 		}
+		gatheredAlerts = append(gatheredAlerts, tAlerts...)
 	}
-	return alerts
+	fmt.Printf("Found alerts: %s\n", gatheredAlerts)
+	return nil
 }
 
 func fetchHoldings(ctx context.Context, seeds []models.Seed, client direxion.Client) ([]models.Holding, error) {
@@ -81,13 +68,20 @@ func main() {
 		return
 	}
 
-	msapi := morning_star.New(morning_star.Config{
-		URL:  "https://ms-finance.p.rapidapi.com/market/v2/get-movers",
-		Host: "ms-finance.p.rapidapi.com",
-		Key:  "e6e18b1891mshe45bf4b11c2c441p199735jsn2958e367084e",
-	})
+	config, err := NewConfig()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(config)
 
-	err = orchestrate(ctx, db, client, msapi)
+	msapi := morning_star.New(config.MSAPI)
+
+	alertParsers := []alerts.AlertParser{
+		movers.New(movers.Config{MSAPI: msapi}),
+	}
+
+	err = orchestrate(ctx, db, client, alertParsers)
 	if err != nil {
 		fmt.Println(err)
 		return
