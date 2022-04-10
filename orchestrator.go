@@ -32,7 +32,7 @@ func orchestrate(ctx context.Context, db database.DB, client securities.Client, 
 
 	var gatheredAlerts []alerts.Alert
 	for _, parser := range parsers {
-		tAlerts, err := parser.GetAlerts(ctx, holdingsMap)
+		tAlerts, _, err := parser.GetAlerts(ctx, holdingsMap)
 		if err != nil {
 			return err
 		}

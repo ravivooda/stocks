@@ -1,0 +1,116 @@
+seeds:
+  direxion:
+    url_base: https://www.direxion.com/holdings
+    simple:
+      tickers:
+        - DFEN
+        - WANT
+        - WEBS
+        - WEBL
+        - FAZ
+        - FAS
+        - CURE
+        - NAIL
+        - DUSL
+        - PILL
+        - DRV
+        - DRN
+        - DPST
+        - RETL
+        - HIBS
+        - HIBL
+        - LABD
+        - LABU
+        - SOXS
+        - SOXL
+        - TECS
+        - TECL
+        - TPOR
+        - UTSL
+        - TMV
+        - TMF
+        - TYO
+        - TYD
+        - MIDU
+        - SPXS
+        - SPXL
+        - TZA
+        - TNA
+        - YANG
+        - YINN
+        - EURL
+        - EDZ
+        - EDC
+        - MEXX
+        - KORU
+        - TENG
+        - CHAU
+        - CWEB
+        - CLDS
+        - CLDL
+        - ERY
+        - ERX
+        - FNTC
+        - DUST
+        - NUGT
+        - JDST
+        - JNUG
+        - BRZU
+        - INDL
+        - MNM
+        - ONG
+        - UBOT
+        - RUSL
+        - SPUU
+        - EVEN
+        - DRIP
+        - GUSH
+        - FNGG
+        - SWAR
+        - OOTO
+        - DOZR
+        - KLNE
+        - CHAD
+        - SPDN
+      header:
+        expected_columns:
+          - TradeDate
+          - AccountTicker
+          - StockTicker
+          - SecurityDescription
+          - Shares
+          - Price
+          - MarketValue
+        skippable_lines: 4
+        outstanding_shares:
+          line_number: 2
+          prefix: "Shares Outstanding:"
+    complicated:
+      tickers:
+        - COM
+        - NIFE
+        - LOPX
+        - QQQE
+        - RWGV
+        - RWVG
+        - HJEN
+        - MOON
+        - TYNE
+        - WFH
+        - WWOW
+        - MSGR
+      header:
+        expected_columns:
+          - TradeDate
+          - AccountTicker
+          - StockTicker
+          - SecurityDescription
+          - Shares
+          - Price
+          - MarketValue
+          - Cusip
+          - HoldingsPercent
+        skippable_lines: 4
+        outstanding_shares:
+          line_number: 2
+          prefix: "Shares Outstanding:"

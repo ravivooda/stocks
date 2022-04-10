@@ -15,17 +15,21 @@ type implementer struct {
 	config Config
 }
 
-func (i *implementer) GetAlerts(ctx context.Context, holdingsMap map[string]models.Holding) ([]alerts.Alert, error) {
+func (i *implementer) GetAlerts(ctx context.Context, holdingsMap map[string]models.Holding) ([]alerts.Alert, []alerts.Subscriber, error) {
 	movers, err := i.config.MSAPI.GetMovers(ctx)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var retAlerts []string
 	retAlerts = append(retAlerts, retrieveAlerts(movers.Actives, holdingsMap, "active")...)
 	retAlerts = append(retAlerts, retrieveAlerts(movers.Losers, holdingsMap, "loser")...)
 	retAlerts = append(retAlerts, retrieveAlerts(movers.Gainers, holdingsMap, "gainer")...)
-	return retAlerts, err
+	subscribersFromYaml, err := alerts.LoadSubscribersFromYaml("./alerts/movers/subscribers.yaml")
+	if err != nil {
+		return nil, nil, err
+	}
+	return retAlerts, subscribersFromYaml, err
 }
 
 func retrieveAlerts(movers []models.MSHolding, holdingsMap map[string]models.Holding, action string) []string {

@@ -1,14 +1,14 @@
 package models
 
 type OutstandingShares struct {
-	LineNumber int
-	Prefix     string
+	LineNumber int    `mapstructure:"line_number"`
+	Prefix     string `mapstructure:"prefix"`
 }
 
 type Header struct {
-	SkippableLines    int
-	ExpectedColumns   []string
-	OutstandingShares OutstandingShares
+	SkippableLines    int               `mapstructure:"skippable_lines"`
+	ExpectedColumns   []string          `mapstructure:"expected_columns"`
+	OutstandingShares OutstandingShares `mapstructure:"outstanding_shares"`
 }
 
 type Seed struct {

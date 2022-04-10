@@ -10,15 +10,14 @@ type Config struct {
 }
 
 func NewConfig() (Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
+	v := viper.New()
+	v.SetConfigFile("./config.yaml")
+	err := v.ReadInConfig()
 	if err != nil {
 		return Config{}, err
 	}
 	var c Config
-	err = viper.Unmarshal(&c)
+	err = v.Unmarshal(&c)
 	if err != nil {
 		return Config{}, err
 	}

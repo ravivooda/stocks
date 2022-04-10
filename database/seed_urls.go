@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"github.com/spf13/viper"
 	"stocks/models"
 )
 
@@ -10,138 +11,48 @@ type dumbDatabase struct {
 }
 
 func (i dumbDatabase) ListSeeds(_ context.Context) ([]models.Seed, error) {
-	expectedColumns := []string{
-		"TradeDate",
-		"AccountTicker",
-		"StockTicker",
-		"SecurityDescription",
-		"Shares",
-		"Price",
-		"MarketValue",
+	type YAML struct {
+		Seeds struct {
+			Direxion struct {
+				UrlBase string `mapstructure:"url_base"`
+				Simple  struct {
+					Tickers []string
+					Header  models.Header
+				}
+				Complicated struct {
+					Tickers []string
+					Header  models.Header
+				}
+			}
+		}
 	}
-	header := models.Header{
-		SkippableLines:  4,
-		ExpectedColumns: expectedColumns,
-		OutstandingShares: models.OutstandingShares{
-			LineNumber: 2,
-			Prefix:     "Shares Outstanding:",
-		},
+
+	v := viper.New()
+	v.SetConfigFile("./database/seeds.yaml")
+	err := v.ReadInConfig()
+	if err != nil {
+		return nil, err
 	}
-	var stocks = []string{
-		"DFEN",
-		"WANT",
-		"WEBS",
-		"WEBL",
-		"FAZ",
-		"FAS",
-		"CURE",
-		"NAIL",
-		"DUSL",
-		"PILL",
-		"DRV",
-		"DRN",
-		"DPST",
-		"RETL",
-		"HIBS",
-		"HIBL",
-		"LABD",
-		"LABU",
-		"SOXS",
-		"SOXL",
-		"TECS",
-		"TECL",
-		"TPOR",
-		"UTSL",
-		"TMV",
-		"TMF",
-		"TYO",
-		"TYD",
-		"MIDU",
-		"SPXS",
-		"SPXL",
-		"TZA",
-		"TNA",
-		"YANG",
-		"YINN",
-		"EURL",
-		"EDZ",
-		"EDC",
-		"MEXX",
-		"KORU",
-		"TENG",
-		"CHAU",
-		"CWEB",
-		"CLDS",
-		"CLDL",
-		"ERY",
-		"ERX",
-		"FNTC",
-		"DUST",
-		"NUGT",
-		"JDST",
-		"JNUG",
-		"BRZU",
-		"INDL",
-		"MNM",
-		"ONG",
-		"UBOT",
-		"RUSL",
-		"SPUU",
-		"EVEN",
-		"DRIP",
-		"GUSH",
-		"FNGG",
-		"SWAR",
-		"OOTO",
-		"DOZR",
-		"KLNE",
-		"CHAD",
-		"SPDN",
+	var c YAML
+	err = v.Unmarshal(&c)
+	if err != nil {
+		return nil, err
 	}
+	fmt.Println(c)
 	var rets []models.Seed
-	for _, stock := range stocks {
+	for _, stock := range c.Seeds.Direxion.Simple.Tickers {
 		rets = append(rets, models.Seed{
-			URL:    fmt.Sprintf("https://www.direxion.com/holdings/%s.csv", stock),
+			URL:    fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
 			Ticker: stock,
-			Header: header,
+			Header: c.Seeds.Direxion.Simple.Header,
 		})
 	}
-	var weirdStocks = []string{
-		"COM",
-		"NIFE",
-		"LOPX",
-		"QQQE",
-		"RWGV",
-		"RWVG",
-		"HJEN",
-		"MOON",
-		"TYNE",
-		"WFH",
-		"WWOW",
-		"MSGR",
-	}
-	for _, weirdStock := range weirdStocks {
+
+	for _, stock := range c.Seeds.Direxion.Complicated.Tickers {
 		rets = append(rets, models.Seed{
-			URL:    fmt.Sprintf("https://www.direxion.com/holdings/%s.csv", weirdStock),
-			Ticker: weirdStock,
-			Header: models.Header{
-				SkippableLines: 4,
-				ExpectedColumns: []string{
-					"TradeDate",
-					"AccountTicker",
-					"StockTicker",
-					"SecurityDescription",
-					"Shares",
-					"Price",
-					"MarketValue",
-					"Cusip",
-					"HoldingsPercent",
-				},
-				OutstandingShares: models.OutstandingShares{
-					LineNumber: 2,
-					Prefix:     "Shares Outstanding:",
-				},
-			},
+			URL:    fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
+			Ticker: stock,
+			Header: c.Seeds.Direxion.Complicated.Header,
 		})
 	}
 	rets = append(rets)
