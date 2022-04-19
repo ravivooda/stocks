@@ -1,8 +1,10 @@
 name: Go
 
 on:
-  schedule:
-    - '0 0 23 ? * SUN,MON,TUE,WED,THU *'
+  workflow_dispatch
+
+#  schedule:
+#    - '0 0 23 ? * SUN,MON,TUE,WED,THU *'
 
 jobs:
 
