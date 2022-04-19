@@ -1,0 +1,95 @@
+package notifications
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"regexp"
+	"stocks/alerts"
+	"strings"
+	"time"
+)
+
+type NotifierRequest struct {
+	Alerts         []alerts.Alert
+	Subscribers    []alerts.Subscriber
+	Title          string
+	AlertGroupName string
+}
+
+type Notifier interface {
+	Send(ctx context.Context, request NotifierRequest) (bool, error)
+}
+
+type Config struct {
+	TempDirectory string
+}
+
+type emailer struct {
+	config Config
+}
+
+func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error) {
+	// Writes to file today in a selected directory, there is a separate github action to actually send the emails
+	reg, err := regexp.Compile("[^a-zA-Z\\d]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var emailTemplate = `
+<body>
+	<h2>
+		Alerts for %s on date %s
+	</h2>
+	<p>
+		Hi %s!
+		Here are your alerts:
+	</p>
+	%s
+</body>
+`
+	processedTitle := reg.ReplaceAllString(request.Title, "_")
+	for _, subscriber := range request.Subscribers {
+		processedName := reg.ReplaceAllString(subscriber.Name, "_")
+		htmlString := fmt.Sprintf(emailTemplate, request.AlertGroupName, time.Now().Format("01-02-2006"), subscriber.Name, strings.Join(request.Alerts, ""))
+		dirPathAddr := fmt.Sprintf("%s/%s_%s_tmp", e.config.TempDirectory, processedName, processedTitle)
+		if _, err := os.Stat(dirPathAddr); errors.Is(err, os.ErrNotExist) {
+			err := os.MkdirAll(dirPathAddr, os.ModePerm)
+			if err != nil {
+				return false, err
+			}
+		}
+		emailFileAddr := fmt.Sprintf("%s/email.html", dirPathAddr)
+		err := os.WriteFile(emailFileAddr, []byte(htmlString), 0744)
+		if err != nil {
+			return false, err
+		}
+
+		var emailJSON = struct {
+			Email        string `json:"email"`
+			FileLocation string `json:"file_location"`
+			Subject      string `json:"subject"`
+		}{
+			Email:        subscriber.Email,
+			FileLocation: emailFileAddr,
+			Subject:      request.Title,
+		}
+
+		fileData, err := json.MarshalIndent(emailJSON, "", " ")
+		if err != nil {
+			return false, err
+		}
+
+		jsonFileAddr := fmt.Sprintf("%s/metadata.json", dirPathAddr)
+		err = ioutil.WriteFile(jsonFileAddr, fileData, 0744)
+	}
+
+	return true, nil
+}
+
+func New(config Config) Notifier {
+	return &emailer{config: config}
+}

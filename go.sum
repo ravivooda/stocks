@@ -1,3 +1,5 @@
+github.com/DrGrimshaw/gohtml v0.0.0-20211105122738-1231c86d1d16 h1:V8pj0z7RBqjv5dDe8M3YEhQsjXBxbgnv59GfWf9s5Wg=
+github.com/DrGrimshaw/gohtml v0.0.0-20211105122738-1231c86d1d16/go.mod h1:3Ynddxd0zT8RpcjwgWuRLGo4edQ3X7uaYYERRl+IX6w=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

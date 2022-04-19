@@ -6,7 +6,10 @@ import (
 )
 
 type Config struct {
-	MSAPI morning_star.Config `mapstructure:"ms_api"`
+	MSAPI         morning_star.Config `mapstructure:"ms_api"`
+	Notifications struct {
+		ShouldSendEmails bool `mapstructure:"should_send_email"`
+	} `mapstructure:"notifications"`
 }
 
 func NewConfig() (Config, error) {

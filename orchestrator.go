@@ -10,11 +10,12 @@ import (
 	"stocks/alerts/movers/morning_star"
 	"stocks/database"
 	"stocks/models"
+	"stocks/notifications"
 	"stocks/securities"
 	"stocks/securities/direxion"
 )
 
-func orchestrate(ctx context.Context, db database.DB, client securities.Client, parsers []alerts.AlertParser) error {
+func orchestrate(ctx context.Context, db database.DB, client securities.Client, parsers []alerts.AlertParser, notifier notifications.Notifier) error {
 	seeds, err := db.ListSeeds(ctx)
 	if err != nil {
 		return err
@@ -31,15 +32,30 @@ func orchestrate(ctx context.Context, db database.DB, client securities.Client, 
 	}
 	fmt.Println(holdingsMap)
 
-	var gatheredAlerts []alerts.Alert
+	var gatheredAlerts []notifications.NotifierRequest
 	for _, parser := range parsers {
-		tAlerts, _, err := parser.GetAlerts(ctx, holdingsMap)
+		tAlerts, subscribers, err := parser.GetAlerts(ctx, holdingsMap)
 		if err != nil {
 			return err
 		}
-		gatheredAlerts = append(gatheredAlerts, tAlerts...)
+		gatheredAlerts = append(gatheredAlerts, notifications.NotifierRequest{
+			Alerts:         tAlerts,
+			Subscribers:    subscribers,
+			Title:          "Notifications!!!",
+			AlertGroupName: "Leveraged Stock Alerts",
+		})
 	}
-	fmt.Printf("Found alerts: %s\n", gatheredAlerts)
+	fmt.Printf("Found alerts: %+v\n", gatheredAlerts)
+
+	if notifier != nil {
+		for _, alert := range gatheredAlerts {
+			_, err := notifier.Send(ctx, alert)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -82,7 +98,12 @@ func main() {
 		movers.New(movers.Config{MSAPI: msapi}),
 	}
 
-	err = orchestrate(ctx, db, client, alertParsers)
+	var notifier notifications.Notifier
+	if config.Notifications.ShouldSendEmails {
+		notifier = notifications.New(notifications.Config{TempDirectory: "tmp"})
+	}
+
+	err = orchestrate(ctx, db, client, alertParsers, notifier)
 	if err != nil {
 		log.Fatal(err)
 	}

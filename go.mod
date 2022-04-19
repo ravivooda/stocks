@@ -3,6 +3,7 @@ module stocks
 go 1.17
 
 require (
+	github.com/DrGrimshaw/gohtml v0.0.0-20211105122738-1231c86d1d16
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/viper v1.10.1
 )
