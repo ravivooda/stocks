@@ -1,0 +1,39 @@
+name: Go
+
+on:
+  schedule:
+    - '0 0 23 ? * SUN,MON,TUE,WED,THU *'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.17
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Setup config.yaml
+      run: |
+        echo "ms_api:" >> config.yaml
+        echo "  host: ms-finance.p.rapidapi.com" >> config.yaml
+        echo "  url: https://ms-finance.p.rapidapi.com/market/v2/get-movers" >> config.yaml
+        echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> config.yaml
+        echo "notifications:" >> config.yaml
+        echo "  should_send_email: true" >> config.yaml
+        cat config.yaml
+
+    - name: Run orchestrator
+      run: |
+        cat config.yaml
+        go run .
+        tree .
