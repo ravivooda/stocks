@@ -6,6 +6,7 @@ import (
 	"stocks/alerts"
 	"stocks/alerts/movers/morning_star"
 	"stocks/models"
+	"strings"
 )
 
 type Config struct {
@@ -64,7 +65,11 @@ func retrieveHTMLAlert(movers []models.MSHolding, holdingsMap map[string]models.
 	if err != nil {
 		return "", err
 	}
-	return gohtml.Encode(AlertHTMLArr{Alerts: alertHTMLS})
+	encodedHTML, err := gohtml.Encode(AlertHTMLArr{Alerts: alertHTMLS})
+	if err != nil {
+		return "", err
+	}
+	return strings.ReplaceAll(encodedHTML, "<td>", "<td style=\"border: 1px solid #ddd; padding: 8px;\">"), nil
 }
 
 func retrieveAlerts(movers []models.MSHolding, holdingsMap map[string]models.Holding, action string) ([]AlertHTML, error) {

@@ -33,13 +33,7 @@ type emailer struct {
 	config Config
 }
 
-func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error) {
-	// Writes to file today in a selected directory, there is a separate github action to actually send the emails
-	reg, err := regexp.Compile("[^a-zA-Z\\d]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-	var emailTemplate = `
+var emailTemplate = `
 <body>
 	<h2>
 		Alerts for %s on date %s
@@ -51,6 +45,19 @@ func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error)
 	%s
 </body>
 `
+
+type metadata struct {
+	Email        string `json:"email"`
+	FileLocation string `json:"file_location"`
+	Subject      string `json:"subject"`
+}
+
+func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error) {
+	// Writes to file today in a selected directory, there is a separate github action to actually send the emails
+	reg, err := regexp.Compile("[^a-zA-Z\\d]+")
+	if err != nil {
+		log.Fatal(err)
+	}
 	processedTitle := reg.ReplaceAllString(request.Title, "_")
 	for _, subscriber := range request.Subscribers {
 		processedName := reg.ReplaceAllString(subscriber.Name, "_")
@@ -68,11 +75,7 @@ func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error)
 			return false, err
 		}
 
-		var emailJSON = struct {
-			Email        string `json:"email"`
-			FileLocation string `json:"file_location"`
-			Subject      string `json:"subject"`
-		}{
+		var emailJSON = metadata{
 			Email:        subscriber.Email,
 			FileLocation: emailFileAddr,
 			Subject:      request.Title,
