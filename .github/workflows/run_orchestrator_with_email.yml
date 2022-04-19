@@ -1,13 +1,10 @@
-name: Go
+name: Run and send email alert
 
 on:
-  workflow_dispatch
-
-#  schedule:
-#    - '0 0 23 ? * SUN,MON,TUE,WED,THU *'
+  schedule:
+    - cron: '0 22 * * 1-5'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
