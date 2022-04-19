@@ -51,7 +51,7 @@ type AlertHTML struct {
 	Name             string  `html:"l=Name,e=span,c=name"`
 	PercentChange    float64 `html:"l=Percent Change,e=span,c=percent_change"`
 	LastPrice        float64 `html:"l=Last Price,e=span,c=last_price"`
-	Nothing          string  `html:"l=|,e=span,c=action"`
+	Nothing          string  `html:"l=,e=span,c=action"`
 	LeveragedETF     string  `html:"l=Leveraged ETF,e=span,c=leveraged_etf"`
 	PercentOwnership float64 `html:"l=Percentage ownership in leveraged etf,e=span,c=percent_ownership"`
 }
@@ -69,7 +69,42 @@ func retrieveHTMLAlert(movers []models.MSHolding, holdingsMap map[string]models.
 	if err != nil {
 		return "", err
 	}
-	return strings.ReplaceAll(encodedHTML, "<td>", "<td style=\"border: 1px solid #ddd; padding: 8px;\">"), nil
+	return appendCSS(encodedHTML), nil
+}
+
+type validator func(int) bool
+
+func appendCSS(encodedHTML string) string {
+	replaceConfigs := []struct {
+		old       string
+		new       string
+		validator validator
+	}{
+		{old: "<td>", new: "<td style=\"border: 1px solid #ddd; padding: 8px;\">"},
+		{old: "<tr>", new: "<tr style=\"background-color: #f2f2f2;\">", validator: func(i int) bool {
+			return i%2 == 0
+		}},
+		{old: "<thead>", new: "<thead style=\"padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #04AA6D;color: white;\">"},
+		{old: "<table>", new: "<table style=\"padding-bottom: 50px\">"},
+	}
+	var retString = encodedHTML
+	for _, config := range replaceConfigs {
+		var i = 1
+		placeholder := "DOESNT_MATTER_WHAT_WE_PUT_HERE_ITS_JUST_A_SIMPLE_PLACEHOLDER"
+		for true {
+			if config.validator == nil || config.validator(i) {
+				retString = strings.Replace(retString, config.old, config.new, 1)
+			} else {
+				retString = strings.Replace(retString, config.old, placeholder, 1)
+			}
+			i += 1
+			if !strings.Contains(retString, config.old) {
+				break
+			}
+		}
+		retString = strings.ReplaceAll(retString, placeholder, config.old)
+	}
+	return retString
 }
 
 func retrieveAlerts(movers []models.MSHolding, holdingsMap map[string]models.Holding, action string) ([]AlertHTML, error) {
