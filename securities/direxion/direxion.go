@@ -69,7 +69,7 @@ func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]mod
 	}
 
 	if math.Abs(totalPercent-100) >= 0.1 {
-		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100% for seed %+v", totalPercent, seed))
+		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", totalPercent, seed))
 	}
 
 	return holdings, nil
