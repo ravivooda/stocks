@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"sort"
 	"stocks/alerts"
 	"stocks/alerts/movers"
@@ -65,16 +66,15 @@ func main() {
 	db := database.NewDumbDatabase()
 	client, err := direxion.NewDirexionClient()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
 	config, err := NewConfig()
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
-	fmt.Println(config)
+	fmt.Printf("Found Morning Star Config: %+v\n", config)
 
 	msapi := morning_star.New(config.MSAPI)
 
@@ -84,7 +84,6 @@ func main() {
 
 	err = orchestrate(ctx, db, client, alertParsers)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 }

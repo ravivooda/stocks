@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -49,6 +50,10 @@ func (m *msapi) GetMovers(_ context.Context) (models.MSResponse, error) {
 		return models.MSResponse{}, err
 	}
 
+	if len(result.Gainers) == 0 || len(result.Losers) == 0 || len(result.Actives) == 0 {
+		return models.MSResponse{}, errors.Errorf("Found empty unexpected results: %+v", result)
+	}
+
 	return result, nil
 }
 
@@ -56,6 +61,10 @@ type Config struct {
 	URL  string
 	Host string
 	Key  string
+}
+
+func (c Config) String() string {
+	return fmt.Sprintf("URL: %s, Host: %s, Key (Length): %d", c.URL, c.Host, len(c.Key))
 }
 
 func New(config Config) MSAPI {
