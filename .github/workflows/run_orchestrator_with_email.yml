@@ -39,3 +39,32 @@ jobs:
         cat config.yaml
         go run .
         tree .
+
+    # Hardcoded for now, need to fix this in future
+    - name: Send mail
+      uses: dawidd6/action-send-mail@v3
+      with:
+        # Required mail server address:
+        server_address: smtp.gmail.com
+        # Required mail server port:
+        server_port: 465
+        # Optional (recommended): mail server username:
+        username: ${{secrets.MAIL_USERNAME}}
+        # Optional (recommended) mail server password:
+        password: ${{secrets.MAIL_PASSWORD}}
+        # Required mail subject:
+        subject: Github Actions job result
+        # Required recipients' addresses:
+        to: 05.dreaded_baobabs@icloud.com
+        # Required sender full name (address can be skipped):
+        from: Alerter GitHub # <user@example.com>
+        # Optional whether this connection use TLS (default is true if server_port is 465)
+        secure: true
+        # Optional HTML body read from file:
+        html_body: tmp/Ravi_Vooda_Notifications__tmp/email.html
+        # Optional unsigned/invalid certificates allowance:
+        ignore_cert: true
+        # Optional converting Markdown to HTML (set content_type to text/html too):
+        convert_markdown: false
+        # Optional priority: 'high', 'normal' (default) or 'low'
+        priority: low
