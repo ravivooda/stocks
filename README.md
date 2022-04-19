@@ -15,7 +15,7 @@ A `config.yaml` is needed in the root of the repository with the following forma
 ms_api:
   host: ms-finance.p.rapidapi.com
   url: https://ms-finance.p.rapidapi.com/market/v2/get-movers
-  key: { API_KEY_SECRET }
+  key: { MS_API_KEY_SECRET }
 ```
 
 With that, its simple to run
