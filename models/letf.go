@@ -15,8 +15,9 @@ type LETFHolding struct {
 }
 
 type LETFOverlap struct {
-	Ticker     StockTicker `json:"ticker"`
-	Percentage float64     `json:"percentage"`
+	Ticker                   StockTicker
+	Percentage               float64
+	IndividualPercentagesMap map[LETFAccountTicker]float64
 }
 
 type LETFOverlapAnalysis struct {

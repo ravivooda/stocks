@@ -9,6 +9,8 @@ import (
 	"stocks/alerts/movers"
 	"stocks/alerts/movers/morning_star"
 	"stocks/database"
+	"stocks/database/insights"
+	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/notifications"
 	"stocks/securities"
@@ -16,34 +18,65 @@ import (
 	"stocks/utils"
 )
 
-func orchestrate(ctx context.Context, db database.DB, client securities.Client, parsers []alerts.AlertParser, notifier notifications.Notifier) error {
-	seeds, err := db.ListSeeds(ctx)
+type orchestrateRequest struct {
+	db                database.DB
+	client            securities.Client
+	parsers           []alerts.AlertParser
+	notifier          notifications.Notifier
+	insightGenerators []overlap.Generator
+	insightsLogger    insights.Logger
+}
+
+func orchestrate(ctx context.Context, request orchestrateRequest) error {
+	seeds, err := request.db.ListSeeds(ctx)
 	if err != nil {
 		return err
 	}
 
-	holdings, err := fetchHoldings(ctx, seeds, client)
+	holdings, err := fetchHoldings(ctx, seeds, request.client)
 	if err != nil {
 		return err
 	}
 
 	holdingsMap := utils.MapLETFHoldingsWithStockTicker(holdings)
-	fmt.Println(holdingsMap)
+	//fmt.Println(holdingsMap)
 
-	gatheredAlerts, err := gatherAlerts(ctx, parsers, holdingsMap)
+	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsMap)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Found alerts: %+v\n", gatheredAlerts)
+	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
 
-	if notifier != nil {
-		_, err := notifier.SendAll(ctx, gatheredAlerts)
+	if request.notifier != nil {
+		_, err := request.notifier.SendAll(ctx, gatheredAlerts)
 		if err != nil {
 			return err
 		}
 	}
 
+	gatheredInsights, err := gatherInsights(ctx, request.insightGenerators, holdings)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Total insights count: %d\n", len(gatheredInsights))
+
+	for _, insight := range gatheredInsights {
+		_, err := request.insightsLogger.Log(insight)
+		if err != nil {
+			return err
+		}
+		//fmt.Printf("Logged %s\n", fileName)
+	}
+
 	return nil
+}
+
+func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings []models.LETFHolding) ([]models.LETFOverlapAnalysis, error) {
+	var gatheredInsights []models.LETFOverlapAnalysis
+	for _, generator := range generators {
+		gatheredInsights = append(gatheredInsights, generator.Generate(letfHoldings)...)
+	}
+	return gatheredInsights, nil
 }
 
 func gatherAlerts(ctx context.Context, parsers []alerts.AlertParser, holdingsMap map[models.StockTicker]models.LETFHolding) ([]notifications.NotifierRequest, error) {
@@ -103,11 +136,19 @@ func main() {
 	}
 
 	var notifier notifications.Notifier
+	tempDirectory := "tmp"
 	if config.Notifications.ShouldSendEmails {
-		notifier = notifications.New(notifications.Config{TempDirectory: "tmp"})
+		notifier = notifications.New(notifications.Config{TempDirectory: tempDirectory})
 	}
 
-	err = orchestrate(ctx, db, client, alertParsers, notifier)
+	err = orchestrate(ctx, orchestrateRequest{
+		db:                db,
+		client:            client,
+		parsers:           alertParsers,
+		notifier:          notifier,
+		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator()},
+		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: tempDirectory + "/insights"}),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
