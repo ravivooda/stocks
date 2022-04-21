@@ -48,6 +48,9 @@ func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]mod
 
 	var totalSum int64
 	for i := seed.Header.SkippableLines; i < len(data); i++ {
+		if shouldIgnoreCashFund(data[i][3]) {
+			continue
+		}
 		totalSum += parseInt(data[i][6])
 	}
 
@@ -55,6 +58,9 @@ func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]mod
 	var totalPercent float64
 	var holdings []models.LETFHolding
 	for i := seed.Header.SkippableLines; i < len(data); i++ {
+		if shouldIgnoreCashFund(data[i][3]) {
+			continue
+		}
 		holdings = append(holdings, models.LETFHolding{
 			TradeDate:         data[i][0],
 			LETFAccountTicker: models.LETFAccountTicker(data[i][1]),
@@ -73,6 +79,13 @@ func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]mod
 	}
 
 	return holdings, nil
+}
+
+func shouldIgnoreCashFund(name string) bool {
+	if name == "TECHNOLOGY SELECT SECTOR INDEX SWAP" || name == "ICE SEMICONDUCTOR INDEX SWAP" || name == "DREYFUS GOVT CASH MGMT" {
+		return true
+	}
+	return false
 }
 
 func parseInt(s string) int64 {

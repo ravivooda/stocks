@@ -3,13 +3,13 @@ package notifications
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
 	"stocks/alerts"
+	"stocks/utils"
 	"strings"
 	"time"
 )
@@ -74,14 +74,12 @@ func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error)
 		processedName := reg.ReplaceAllString(subscriber.Name, "_")
 		htmlString := fmt.Sprintf(emailTemplate, request.AlertGroupName, time.Now().Format("01-02-2006"), subscriber.Name, strings.Join(request.Alerts, ""))
 		dirPathAddr := fmt.Sprintf("%s/%s_%s_tmp", e.config.TempDirectory, processedName, processedTitle)
-		if _, err := os.Stat(dirPathAddr); errors.Is(err, os.ErrNotExist) {
-			err := os.MkdirAll(dirPathAddr, os.ModePerm)
-			if err != nil {
-				return false, err
-			}
+		b, err := utils.MakeDir(dirPathAddr)
+		if err != nil {
+			return b, err
 		}
 		emailFileAddr := fmt.Sprintf("%s/email.html", dirPathAddr)
-		err := os.WriteFile(emailFileAddr, []byte(htmlString), 0744)
+		err = os.WriteFile(emailFileAddr, []byte(htmlString), 0744)
 		if err != nil {
 			return false, err
 		}
