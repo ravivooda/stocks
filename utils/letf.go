@@ -1,6 +1,30 @@
 package utils
 
-import "stocks/models"
+import (
+	"stocks/models"
+	"strings"
+)
+
+var knownAliases = map[string]string{
+	"FB":   "META",
+	"BLOC": "SQ",
+}
+
+func cleanAndMap(input string) string {
+	trimmedInput := strings.ToUpper(strings.TrimSpace(input))
+	if aliasStockName, ok := knownAliases[trimmedInput]; ok {
+		trimmedInput = aliasStockName
+	}
+	return trimmedInput
+}
+
+func FetchStockTicker(input string) models.StockTicker {
+	return models.StockTicker(cleanAndMap(input))
+}
+
+func FetchAccountTicker(input string) models.LETFAccountTicker {
+	return models.LETFAccountTicker(cleanAndMap(input))
+}
 
 func MapLETFHoldingsWithAccountTicker(input []models.LETFHolding) map[models.LETFAccountTicker][]models.LETFHolding {
 	var rets = map[models.LETFAccountTicker][]models.LETFHolding{}

@@ -3,10 +3,14 @@ package microsector
 import (
 	"context"
 	"encoding/csv"
+	"errors"
 	"fmt"
+	"math"
 	"os"
 	"stocks/models"
 	"stocks/securities"
+	"stocks/utils"
+	"strconv"
 	"time"
 )
 
@@ -28,17 +32,23 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 	}
 
 	var rets []models.LETFHolding
+	totalPercentage := float64(0)
 	for _, row := range allRows {
+		parsedPercentage, _ := strconv.ParseFloat(row[2], 64)
 		rets = append(rets, models.LETFHolding{
 			TradeDate:         time.Now().Format("01-02-2006"),
-			LETFAccountTicker: models.LETFAccountTicker(seed.Ticker),
-			StockTicker:       models.StockTicker(row[1]),
+			LETFAccountTicker: utils.FetchAccountTicker(seed.Ticker),
+			StockTicker:       utils.FetchStockTicker(row[1]),
 			Description:       row[0],
 			Shares:            0,
 			Price:             0,
 			MarketValue:       0,
-			Percent:           10,
+			Percent:           parsedPercentage,
 		})
+		totalPercentage += parsedPercentage
+	}
+	if math.Abs(totalPercentage-100) >= 0.1 {
+		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", totalPercentage, seed))
 	}
 	return rets, nil
 }

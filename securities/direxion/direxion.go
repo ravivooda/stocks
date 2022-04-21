@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"stocks/models"
 	"stocks/securities"
+	"stocks/utils"
 	"strconv"
 	"strings"
 )
@@ -63,8 +64,8 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 		}
 		holdings = append(holdings, models.LETFHolding{
 			TradeDate:         data[i][0],
-			LETFAccountTicker: models.LETFAccountTicker(data[i][1]),
-			StockTicker:       models.StockTicker(data[i][2]),
+			LETFAccountTicker: utils.FetchAccountTicker(data[i][1]),
+			StockTicker:       utils.FetchStockTicker(data[i][2]),
 			Description:       data[i][3],
 			Shares:            parseInt(data[i][4]),
 			Price:             parseInt(data[i][5]),
