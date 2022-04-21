@@ -118,3 +118,4 @@ seeds:
     simple:
       tickers:
         - FNGU
+        - BULZ
