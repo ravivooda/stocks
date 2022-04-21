@@ -114,3 +114,7 @@ seeds:
         outstanding_shares:
           line_number: 2
           prefix: "Shares Outstanding:"
+  microsector:
+    simple:
+      tickers:
+        - FNGU

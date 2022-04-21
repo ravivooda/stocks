@@ -24,6 +24,11 @@ func (i dumbDatabase) ListSeeds(_ context.Context) ([]models.Seed, error) {
 					Header  models.Header
 				}
 			}
+			MicroSector struct {
+				Simple struct {
+					Tickers []string
+				}
+			} `mapstructure:"microsector"`
 		}
 	}
 
@@ -42,20 +47,31 @@ func (i dumbDatabase) ListSeeds(_ context.Context) ([]models.Seed, error) {
 	var rets []models.Seed
 	for _, stock := range c.Seeds.Direxion.Simple.Tickers {
 		rets = append(rets, models.Seed{
-			URL:    fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
-			Ticker: stock,
-			Header: c.Seeds.Direxion.Simple.Header,
+			URL:      fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
+			Ticker:   stock,
+			Header:   c.Seeds.Direxion.Simple.Header,
+			Provider: models.Direxion,
 		})
 	}
 
 	for _, stock := range c.Seeds.Direxion.Complicated.Tickers {
 		rets = append(rets, models.Seed{
-			URL:    fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
-			Ticker: stock,
-			Header: c.Seeds.Direxion.Complicated.Header,
+			URL:      fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
+			Ticker:   stock,
+			Header:   c.Seeds.Direxion.Complicated.Header,
+			Provider: models.Direxion,
 		})
 	}
-	rets = append(rets)
+
+	for _, stock := range c.Seeds.MicroSector.Simple.Tickers {
+		rets = append(rets, models.Seed{
+			URL:      "",
+			Ticker:   stock,
+			Header:   models.Header{},
+			Provider: models.MicroSector,
+		})
+	}
+
 	return rets, nil
 }
 

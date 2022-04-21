@@ -14,10 +14,10 @@ import (
 	"strings"
 )
 
-type direxionClient struct {
+type client struct {
 }
 
-func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
+func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
 	resp, err := http.Get(seed.URL)
 	if err != nil {
 		return nil, fmt.Errorf("fetching %+v returned err: %w", seed, err)
@@ -94,6 +94,6 @@ func parseInt(s string) int64 {
 	return ri
 }
 
-func NewDirexionClient() (securities.Client, error) {
-	return &direxionClient{}, nil
+func NewClient() (securities.Client, error) {
+	return &client{}, nil
 }

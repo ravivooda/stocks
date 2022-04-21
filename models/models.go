@@ -11,10 +11,18 @@ type Header struct {
 	OutstandingShares OutstandingShares `mapstructure:"outstanding_shares"`
 }
 
+type Provider string
+
+const (
+	Direxion    Provider = "direxion"
+	MicroSector          = "microsector"
+)
+
 type Seed struct {
-	URL    string
-	Ticker string
-	Header Header
+	URL      string
+	Ticker   string
+	Header   Header
+	Provider Provider
 }
 
 type MSHolding struct {

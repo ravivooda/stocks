@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -15,12 +16,13 @@ import (
 	"stocks/notifications"
 	"stocks/securities"
 	"stocks/securities/direxion"
+	"stocks/securities/microsector"
 	"stocks/utils"
 )
 
 type orchestrateRequest struct {
 	db                database.DB
-	client            securities.Client
+	clients           map[models.Provider]securities.Client
 	parsers           []alerts.AlertParser
 	notifier          notifications.Notifier
 	insightGenerators []overlap.Generator
@@ -33,7 +35,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		return err
 	}
 
-	holdings, err := fetchHoldings(ctx, seeds, request.client)
+	holdings, err := fetchHoldings(ctx, seeds, request.clients)
 	if err != nil {
 		return err
 	}
@@ -71,7 +73,11 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 	return nil
 }
 
-func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings []models.LETFHolding) ([]models.LETFOverlapAnalysis, error) {
+func gatherInsights(
+	_ context.Context,
+	generators []overlap.Generator,
+	letfHoldings []models.LETFHolding,
+) ([]models.LETFOverlapAnalysis, error) {
 	var gatheredInsights []models.LETFOverlapAnalysis
 	for _, generator := range generators {
 		gatheredInsights = append(gatheredInsights, generator.Generate(letfHoldings)...)
@@ -79,7 +85,11 @@ func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldi
 	return gatheredInsights, nil
 }
 
-func gatherAlerts(ctx context.Context, parsers []alerts.AlertParser, holdingsMap map[models.StockTicker]models.LETFHolding) ([]notifications.NotifierRequest, error) {
+func gatherAlerts(
+	ctx context.Context,
+	parsers []alerts.AlertParser,
+	holdingsMap map[models.StockTicker]models.LETFHolding,
+) ([]notifications.NotifierRequest, error) {
 	var gatheredAlerts []notifications.NotifierRequest
 	for _, parser := range parsers {
 		tAlerts, subscribers, err := parser.GetAlerts(ctx, holdingsMap)
@@ -96,9 +106,17 @@ func gatherAlerts(ctx context.Context, parsers []alerts.AlertParser, holdingsMap
 	return gatheredAlerts, nil
 }
 
-func fetchHoldings(ctx context.Context, seeds []models.Seed, client securities.Client) ([]models.LETFHolding, error) {
+func fetchHoldings(
+	ctx context.Context,
+	seeds []models.Seed,
+	clientsMap map[models.Provider]securities.Client,
+) ([]models.LETFHolding, error) {
 	var allHoldings []models.LETFHolding
 	for _, seed := range seeds {
+		client := clientsMap[seed.Provider]
+		if client == nil {
+			return nil, errors.New(fmt.Sprintf("did not find provider for seed: %+v", seed))
+		}
 		fmt.Printf("fetching information for %+v\n", seed)
 		holdings, err := client.GetHoldings(ctx, seed)
 		if err != nil {
@@ -117,7 +135,8 @@ func fetchHoldings(ctx context.Context, seeds []models.Seed, client securities.C
 func main() {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
-	client, err := direxion.NewDirexionClient()
+	direxionClient, err := direxion.NewClient()
+	microsectorClient, err := microsector.NewClient()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -142,8 +161,11 @@ func main() {
 	}
 
 	err = orchestrate(ctx, orchestrateRequest{
-		db:                db,
-		client:            client,
+		db: db,
+		clients: map[models.Provider]securities.Client{
+			models.Direxion:    direxionClient,
+			models.MicroSector: microsectorClient,
+		},
 		parsers:           alertParsers,
 		notifier:          notifier,
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator()},
