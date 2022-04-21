@@ -3,6 +3,7 @@ package movers
 import (
 	"context"
 	"github.com/DrGrimshaw/gohtml"
+	"sort"
 	"stocks/alerts"
 	"stocks/alerts/movers/morning_star"
 	"stocks/models"
@@ -16,7 +17,7 @@ type implementer struct {
 	config Config
 }
 
-func (i *implementer) GetAlerts(ctx context.Context, holdingsMap map[models.StockTicker]models.LETFHolding) ([]alerts.Alert, []alerts.Subscriber, error) {
+func (i *implementer) GetAlerts(ctx context.Context, holdingsMap map[models.StockTicker][]models.LETFHolding) ([]alerts.Alert, []alerts.Subscriber, error) {
 	movers, err := i.config.MSAPI.GetMovers(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -60,7 +61,7 @@ type AlertHTMLArr struct {
 	Alerts []AlertHTML `html:"row"`
 }
 
-func retrieveHTMLAlert(movers []models.MSHolding, holdingsMap map[models.StockTicker]models.LETFHolding, action string) (string, error) {
+func retrieveHTMLAlert(movers []models.MSHolding, holdingsMap map[models.StockTicker][]models.LETFHolding, action string) (string, error) {
 	alertHTMLS, err := retrieveAlerts(movers, holdingsMap, action)
 	if err != nil {
 		return "", err
@@ -107,10 +108,13 @@ func appendCSS(encodedHTML string) string {
 	return retString
 }
 
-func retrieveAlerts(movers []models.MSHolding, holdingsMap map[models.StockTicker]models.LETFHolding, action string) ([]AlertHTML, error) {
+func retrieveAlerts(movers []models.MSHolding, holdingsMap map[models.StockTicker][]models.LETFHolding, action string) ([]AlertHTML, error) {
 	var retAlerts []AlertHTML
 	for _, mover := range movers {
-		if holding, found := holdingsMap[models.StockTicker(mover.Ticker)]; found {
+		if holdingsArray, found := holdingsMap[models.StockTicker(mover.Ticker)]; found {
+			sort.Slice(holdingsArray, func(i, j int) bool {
+				return holdingsArray[i].Percent > holdingsArray[j].Percent
+			})
 			alertHTML := AlertHTML{
 				Action:           action,
 				Ticker:           mover.Ticker,
@@ -118,8 +122,8 @@ func retrieveAlerts(movers []models.MSHolding, holdingsMap map[models.StockTicke
 				PercentChange:    mover.PercentNetChange,
 				LastPrice:        mover.LastPrice,
 				Nothing:          " ",
-				LeveragedETF:     holding.LETFAccountTicker,
-				PercentOwnership: holding.Percent,
+				LeveragedETF:     holdingsArray[0].LETFAccountTicker,
+				PercentOwnership: holdingsArray[0].Percent,
 			}
 			//htmlEncode := fmt.Sprintf("found %s stock ticker %+v in holding %+v\n", action, mover, holding)
 			retAlerts = append(retAlerts, alertHTML)

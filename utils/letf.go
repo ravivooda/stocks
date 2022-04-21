@@ -40,10 +40,15 @@ func MapLETFHoldingsWithAccountTicker(input []models.LETFHolding) map[models.LET
 	return rets
 }
 
-func MapLETFHoldingsWithStockTicker(holdings []models.LETFHolding) map[models.StockTicker]models.LETFHolding {
-	holdingsMap := make(map[models.StockTicker]models.LETFHolding)
+func MapLETFHoldingsWithStockTicker(holdings []models.LETFHolding) map[models.StockTicker][]models.LETFHolding {
+	holdingsMap := make(map[models.StockTicker][]models.LETFHolding)
 	for _, holding := range holdings {
-		holdingsMap[holding.StockTicker] = holding
+		var holdingsArray = holdingsMap[holding.StockTicker]
+		if holdingsArray == nil {
+			holdingsArray = []models.LETFHolding{}
+		}
+		holdingsArray = append(holdingsArray, holding)
+		holdingsMap[holding.StockTicker] = holdingsArray
 	}
 	return holdingsMap
 }

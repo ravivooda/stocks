@@ -88,7 +88,7 @@ func gatherInsights(
 func gatherAlerts(
 	ctx context.Context,
 	parsers []alerts.AlertParser,
-	holdingsMap map[models.StockTicker]models.LETFHolding,
+	holdingsMap map[models.StockTicker][]models.LETFHolding,
 ) ([]notifications.NotifierRequest, error) {
 	var gatheredAlerts []notifications.NotifierRequest
 	for _, parser := range parsers {
