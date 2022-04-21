@@ -14,7 +14,7 @@ type Subscriber struct {
 }
 
 type AlertParser interface {
-	GetAlerts(ctx context.Context, holdingsMap map[string]models.Holding) ([]Alert, []Subscriber, error)
+	GetAlerts(ctx context.Context, holdingsMap map[models.StockTicker]models.LETFHolding) ([]Alert, []Subscriber, error)
 }
 
 func LoadSubscribersFromYaml(filename string) ([]Subscriber, error) {

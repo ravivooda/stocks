@@ -17,7 +17,7 @@ import (
 type direxionClient struct {
 }
 
-func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]models.Holding, error) {
+func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
 	resp, err := http.Get(seed.URL)
 	if err != nil {
 		return nil, fmt.Errorf("fetching %+v returned err: %w", seed, err)
@@ -53,17 +53,17 @@ func (d *direxionClient) GetHoldings(_ context.Context, seed models.Seed) ([]mod
 
 	//fmt.Println(totalSum)
 	var totalPercent float64
-	var holdings []models.Holding
+	var holdings []models.LETFHolding
 	for i := seed.Header.SkippableLines; i < len(data); i++ {
-		holdings = append(holdings, models.Holding{
-			TradeDate:     data[i][0],
-			AccountTicker: data[i][1],
-			StockTicker:   data[i][2],
-			Description:   data[i][3],
-			Shares:        parseInt(data[i][4]),
-			Price:         parseInt(data[i][5]),
-			MarketValue:   parseInt(data[i][6]),
-			Percent:       float64(parseInt(data[i][6])) / float64(totalSum) * 100,
+		holdings = append(holdings, models.LETFHolding{
+			TradeDate:         data[i][0],
+			LETFAccountTicker: models.LETFAccountTicker(data[i][1]),
+			StockTicker:       models.StockTicker(data[i][2]),
+			Description:       data[i][3],
+			Shares:            parseInt(data[i][4]),
+			Price:             parseInt(data[i][5]),
+			MarketValue:       parseInt(data[i][6]),
+			Percent:           float64(parseInt(data[i][6])) / float64(totalSum) * 100,
 		})
 		totalPercent += float64(parseInt(data[i][6])) / float64(totalSum) * 100
 	}

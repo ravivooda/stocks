@@ -17,17 +17,6 @@ type Seed struct {
 	Header Header
 }
 
-type Holding struct {
-	TradeDate     string
-	AccountTicker string
-	StockTicker   string
-	Description   string
-	Shares        int64
-	Price         int64
-	MarketValue   int64
-	Percent       float64
-}
-
 type MSHolding struct {
 	NetChange        float64 `json:"netChange"`
 	Volume           int     `json:"volume"`

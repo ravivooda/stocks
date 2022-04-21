@@ -13,6 +13,7 @@ import (
 	"stocks/notifications"
 	"stocks/securities"
 	"stocks/securities/direxion"
+	"stocks/utils"
 )
 
 func orchestrate(ctx context.Context, db database.DB, client securities.Client, parsers []alerts.AlertParser, notifier notifications.Notifier) error {
@@ -26,17 +27,31 @@ func orchestrate(ctx context.Context, db database.DB, client securities.Client, 
 		return err
 	}
 
-	holdingsMap := make(map[string]models.Holding)
-	for _, holding := range holdings {
-		holdingsMap[holding.StockTicker] = holding
-	}
+	holdingsMap := utils.MapLETFHoldingsWithStockTicker(holdings)
 	fmt.Println(holdingsMap)
 
+	gatheredAlerts, err := gatherAlerts(ctx, parsers, holdingsMap)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Found alerts: %+v\n", gatheredAlerts)
+
+	if notifier != nil {
+		_, err := notifier.SendAll(ctx, gatheredAlerts)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func gatherAlerts(ctx context.Context, parsers []alerts.AlertParser, holdingsMap map[models.StockTicker]models.LETFHolding) ([]notifications.NotifierRequest, error) {
 	var gatheredAlerts []notifications.NotifierRequest
 	for _, parser := range parsers {
 		tAlerts, subscribers, err := parser.GetAlerts(ctx, holdingsMap)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		gatheredAlerts = append(gatheredAlerts, notifications.NotifierRequest{
 			Alerts:         tAlerts,
@@ -45,22 +60,11 @@ func orchestrate(ctx context.Context, db database.DB, client securities.Client, 
 			AlertGroupName: "Leveraged Stock Alerts",
 		})
 	}
-	fmt.Printf("Found alerts: %+v\n", gatheredAlerts)
-
-	if notifier != nil {
-		for _, alert := range gatheredAlerts {
-			_, err := notifier.Send(ctx, alert)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
+	return gatheredAlerts, nil
 }
 
-func fetchHoldings(ctx context.Context, seeds []models.Seed, client securities.Client) ([]models.Holding, error) {
-	var allHoldings []models.Holding
+func fetchHoldings(ctx context.Context, seeds []models.Seed, client securities.Client) ([]models.LETFHolding, error) {
+	var allHoldings []models.LETFHolding
 	for _, seed := range seeds {
 		fmt.Printf("fetching information for %+v\n", seed)
 		holdings, err := client.GetHoldings(ctx, seed)

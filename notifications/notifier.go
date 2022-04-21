@@ -23,6 +23,7 @@ type NotifierRequest struct {
 
 type Notifier interface {
 	Send(ctx context.Context, request NotifierRequest) (bool, error)
+	SendAll(ctx context.Context, requests []NotifierRequest) (bool, error)
 }
 
 type Config struct {
@@ -31,6 +32,16 @@ type Config struct {
 
 type emailer struct {
 	config Config
+}
+
+func (e *emailer) SendAll(ctx context.Context, requests []NotifierRequest) (bool, error) {
+	for _, alert := range requests {
+		b, err := e.Send(ctx, alert)
+		if err != nil {
+			return b, err
+		}
+	}
+	return true, nil
 }
 
 var emailTemplate = `
