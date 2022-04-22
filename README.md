@@ -1,13 +1,30 @@
 # stocks
 
-fetch all the stocks from https://www.direxion.com/etfs and alert based on heuristics
+fetch all the stocks from https://www.direxion.com/etfs. Currently supports:
+
+- Direxion
+- MicroSector (limited)
+
+If you are interested in all the tickers, please see [seeds.yaml](database/seeds.yaml)
+
+## Alerts
 
 current supported heuristics:
- - 10 top movers of the day in Leverage ETFs
+
+- 10 top movers of the day in Leverage ETFs with the highest exposure
    - Actives, Losers, Gainers
 
+## Insights
+
+These are implemented in [insights](insights) package
+
+### Overlap between etfs
+
+Finds n*n overlaps between all ETFs and output them to csv
+
 ## Setup
-Most of the code is in the repo except morning star API credentials. 
+
+Most of the code is in the repo except morning star API credentials.
 
 A `config.yaml` is needed in the root of the repository with the following format
 
