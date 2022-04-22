@@ -33,9 +33,15 @@ ms_api:
   host: ms-finance.p.rapidapi.com
   url: https://ms-finance.p.rapidapi.com/market/v2/get-movers
   key: { MS_API_KEY_SECRET }
+notifications:
+  should_send_email: false # Set it to false when testing
+directories:
+  tmp: tmp
+  build: tmp/build
+  artifacts: tmp/build/artifacts
 ```
 
-With that, its simple to run
+With that, it's simple to run
 
 ```bash
 go run orchestrator.go

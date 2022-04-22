@@ -24,13 +24,17 @@ jobs:
     - name: Test
       run: go test -v ./...
 
+    # TODO: Need to refactor this code with simple config.yaml creation
     - name: Setup config.yaml
       run: |
         echo "ms_api:" >> config.yaml
         echo "  host: ms-finance.p.rapidapi.com" >> config.yaml
         echo "  url: https://ms-finance.p.rapidapi.com/market/v2/get-movers" >> config.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> config.yaml
-        cat config.yaml
+        echo "directories:" >> config.yaml
+        echo "  tmp: tmp" >> config.yaml
+        echo "  build: tmp/build" >> config.yaml
+        echo "  artifacts: tmp/build/artifacts" >> config.yaml
 
     - name: Run orchestrator
       run: |

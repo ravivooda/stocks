@@ -155,9 +155,7 @@ func main() {
 		movers.New(movers.Config{MSAPI: msapi}),
 	}
 
-	tempDirectory := "tmp"
-
-	notifier := notifications.New(notifications.Config{TempDirectory: tempDirectory})
+	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 	err = orchestrate(ctx, orchestrateRequest{
 		config: config,
 		db:     db,
@@ -168,7 +166,7 @@ func main() {
 		parsers:           alertParsers,
 		notifier:          notifier,
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator()},
-		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: tempDirectory + "/insights"}),
+		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
 	})
 	if err != nil {
 		log.Fatal(err)
