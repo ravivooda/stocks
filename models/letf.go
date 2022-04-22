@@ -11,7 +11,7 @@ type LETFHolding struct {
 	Shares            int64
 	Price             int64
 	MarketValue       int64
-	Percent           float64
+	PercentContained  float64
 }
 
 type LETFOverlap struct {

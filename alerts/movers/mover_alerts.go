@@ -7,6 +7,7 @@ import (
 	"stocks/alerts"
 	"stocks/alerts/movers/morning_star"
 	"stocks/models"
+	"stocks/utils"
 	"strings"
 )
 
@@ -113,17 +114,17 @@ func retrieveAlerts(movers []models.MSHolding, holdingsMap map[models.StockTicke
 	for _, mover := range movers {
 		if holdingsArray, found := holdingsMap[models.StockTicker(mover.Ticker)]; found {
 			sort.Slice(holdingsArray, func(i, j int) bool {
-				return holdingsArray[i].Percent > holdingsArray[j].Percent
+				return holdingsArray[i].PercentContained > holdingsArray[j].PercentContained
 			})
 			alertHTML := AlertHTML{
 				Action:           action,
 				Ticker:           mover.Ticker,
 				Name:             mover.Name,
-				PercentChange:    mover.PercentNetChange,
-				LastPrice:        mover.LastPrice,
+				PercentChange:    utils.RoundedPercentage(mover.PercentNetChange),
+				LastPrice:        utils.RoundedDouble(mover.LastPrice),
 				Nothing:          " ",
 				LeveragedETF:     holdingsArray[0].LETFAccountTicker,
-				PercentOwnership: holdingsArray[0].Percent,
+				PercentOwnership: utils.RoundedPercentage(holdingsArray[0].PercentContained),
 			}
 			//htmlEncode := fmt.Sprintf("found %s stock ticker %+v in holding %+v\n", action, mover, holding)
 			retAlerts = append(retAlerts, alertHTML)

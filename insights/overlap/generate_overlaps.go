@@ -80,7 +80,7 @@ func mapStockHoldings(h []models.LETFHolding) map[models.StockTicker]holdingRowM
 		// TODO: Replace holdingRowMap hack
 		// We are hacking rLetfPercentage to get the minimum. This really is bad.
 		rets[holding.StockTicker] = holdingRowMap{
-			rLetfPercentage: holding.Percent,
+			rLetfPercentage: holding.PercentContained,
 		}
 	}
 	return rets

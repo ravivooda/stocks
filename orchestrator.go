@@ -127,7 +127,7 @@ func fetchHoldings(
 	}
 
 	sort.Slice(allHoldings, func(i, j int) bool {
-		return allHoldings[i].Percent > allHoldings[j].Percent
+		return allHoldings[i].PercentContained > allHoldings[j].PercentContained
 	})
 
 	return allHoldings, nil

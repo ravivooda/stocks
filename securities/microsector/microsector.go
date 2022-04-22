@@ -43,7 +43,7 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 			Shares:            0,
 			Price:             0,
 			MarketValue:       0,
-			Percent:           parsedPercentage,
+			PercentContained:  parsedPercentage,
 		})
 		totalPercentage += parsedPercentage
 	}
