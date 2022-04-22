@@ -3,6 +3,7 @@ name: Run and send email alert
 on:
   schedule:
     - cron: '0 22 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   build:
