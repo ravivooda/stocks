@@ -80,15 +80,16 @@ jobs:
         workload_identity_provider: 'projects/659322829339/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
         service_account: 'github-actions-upload@stocks-348021.iam.gserviceaccount.com'
 
+    # TODO: Hardcoded path, need to use $BUILD_ARTIFACTS_PATH from above
     - id: 'upload-folder'
       uses: 'google-github-actions/upload-cloud-storage@v0'
       with:
-        path: echo "$BUILD_ARTIFACTS_PATH"
+        path: tmp/build/artifacts
         destination: 'letf_overlaps/github_action'
         parent: false
 
-    # Example of using the output
-    - id: 'Log upload success'
-      uses: 'foo/bar@main'
-      env:
-        files: '${{ steps.upload-folder.outputs.uploaded }}'
+#    # Example of using the output
+#    - id: 'upload_'
+#      uses: 'foo/bar@main'
+#      env:
+#        files: '${{ steps.upload-folder.outputs.uploaded }}'
