@@ -21,6 +21,7 @@ import (
 )
 
 type orchestrateRequest struct {
+	config            Config
 	db                database.DB
 	clients           map[models.Provider]securities.Client
 	parsers           []alerts.AlertParser
@@ -49,7 +50,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 	}
 	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
 
-	if request.notifier != nil {
+	if request.config.Notifications.ShouldSendEmails {
 		_, err := request.notifier.SendAll(ctx, gatheredAlerts)
 		if err != nil {
 			return err
@@ -154,14 +155,12 @@ func main() {
 		movers.New(movers.Config{MSAPI: msapi}),
 	}
 
-	var notifier notifications.Notifier
 	tempDirectory := "tmp"
-	if config.Notifications.ShouldSendEmails {
-		notifier = notifications.New(notifications.Config{TempDirectory: tempDirectory})
-	}
 
+	notifier := notifications.New(notifications.Config{TempDirectory: tempDirectory})
 	err = orchestrate(ctx, orchestrateRequest{
-		db: db,
+		config: config,
+		db:     db,
 		clients: map[models.Provider]securities.Client{
 			models.Direxion:    direxionClient,
 			models.MicroSector: microsectorClient,
