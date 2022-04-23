@@ -1,4 +1,4 @@
-name: Run and send email alert
+name: Run Prod
 
 on:
   schedule:
