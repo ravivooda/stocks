@@ -38,7 +38,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 	for LETFTicker, allAnalysis := range analysisMap {
 		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", summariesFileRoot, LETFTicker)
 		sort.Slice(allAnalysis, func(i, j int) bool {
-			return allAnalysis[i].OverlapPercentage < allAnalysis[j].OverlapPercentage
+			return allAnalysis[i].OverlapPercentage > allAnalysis[j].OverlapPercentage
 		})
 
 		// Generate Summary for the ticker
