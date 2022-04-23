@@ -12,7 +12,7 @@ If you are interested in all the tickers, please see [seeds.yaml](database/seeds
 current supported heuristics:
 
 - 10 top movers of the day in Leverage ETFs with the highest exposure
-   - Actives, Losers, Gainers
+    - Actives, Losers, Gainers
 
 ## Insights
 
@@ -20,7 +20,12 @@ These are implemented in [insights](insights) package
 
 ### Overlap between etfs
 
-Finds n*n overlaps between all ETFs and output them to csv
+Finds n*n overlaps between all ETFs and output them to
+
+1. csv for data dumping
+2. Creates static websites where
+    1. summaries for each ETF is generated
+    2. overlaps between each ETF is generated
 
 ## Setup
 
@@ -39,6 +44,7 @@ directories:
   tmp: tmp
   build: tmp/build
   artifacts: tmp/build/artifacts
+  websites: tmp/build/artifacts/websites
 ```
 
 With that, it's simple to run
