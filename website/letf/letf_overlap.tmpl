@@ -2,6 +2,33 @@
 <html>
   <head>
     <title>{{ .LETFHolding1 }} overlap with {{ .LETFHolding2 }}</title>
+    <style>
+    * {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    table {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    td, th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    tr:nth-child(even){background-color: #f2f2f2;}
+
+    tr:hover {background-color: #ddd;}
+
+    th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
+    }
+    </style>
   </head>
   <body>
     <h1>
@@ -9,11 +36,11 @@
     </h1>
     <table>
       	<tr>
-          <td>Holding Stock Name</td>
-          <td>Ticker</td>
-          <td>Percentage Exposure in {{ .LETFHolding1 }} </td>
-          <td>Percentage Exposure in {{ .LETFHolding2 }} </td>
-          <td>Minimum Percentage Overlap </td>
+          <th>Holding Stock Name</th>
+          <th>Ticker</th>
+          <th>Percentage Exposure in {{ .LETFHolding1 }} </th>
+          <th>Percentage Exposure in {{ .LETFHolding2 }} </th>
+          <th>Minimum Percentage Overlap </th>
     	</tr>
       	{{ with .DetailedOverlap }}
 			{{ range . }}

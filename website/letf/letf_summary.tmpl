@@ -2,6 +2,33 @@
 <html>
   <head>
     <title>{{ .AccountTicker }} Summary</title>
+    <style>
+    * {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    table {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    td, th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    tr:nth-child(even){background-color: #f2f2f2;}
+
+    tr:hover {background-color: #ddd;}
+
+    th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
+    }
+    </style>
   </head>
   <body>
     <h1>
@@ -10,10 +37,10 @@
     <h2>Holdings for {{ .AccountTicker }}</h2>
     <table>
       	<tr>
-          <td>Holding Stock Name</td>
-          <td>Ticker</td>
-          <td>Percentage Change Today</td>
-          <td>Percentage Exposure in {{ .AccountTicker }} </td>
+          <th>Holding Stock Name</th>
+          <th>Ticker</th>
+          <th>Percentage Change Today</th>
+          <th>Percentage Exposure in {{ .AccountTicker }} </th>
     	</tr>
       	{{ with .Holdings }}
 			{{ range . }}
@@ -29,9 +56,9 @@
     <h2>Most Similar other LETFs</h2>
     <table>
         <tr>
-          <td>LETF Name</td>
-          <td>LETF Ticker</td>
-          <td>Percentage Overlap Today</td>
+          <th>LETF Name</th>
+          <th>LETF Ticker</th>
+          <th>Percentage Overlap Today</th>
         </tr>
         {{ with .Overlaps }}
             {{ range . }}
