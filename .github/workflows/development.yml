@@ -35,6 +35,7 @@ jobs:
         echo "  tmp: tmp" >> config.yaml
         echo "  build: tmp/build" >> config.yaml
         echo "  artifacts: tmp/build/artifacts" >> config.yaml
+        echo "  websites: tmp/build/artifacts/websites" >> config.yaml
 
     - name: Run orchestrator
       run: |
