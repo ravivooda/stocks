@@ -74,7 +74,7 @@ func (e *emailer) Send(_ context.Context, request NotifierRequest) (bool, error)
 		processedName := reg.ReplaceAllString(subscriber.Name, "_")
 		htmlString := fmt.Sprintf(emailTemplate, request.AlertGroupName, time.Now().Format("01-02-2006"), subscriber.Name, strings.Join(request.Alerts, ""))
 		dirPathAddr := fmt.Sprintf("%s/%s_%s_tmp", e.config.TempDirectory, processedName, processedTitle)
-		b, err := utils.MakeDir(dirPathAddr)
+		b, err := utils.MakeDirs([]string{dirPathAddr})
 		if err != nil {
 			return b, err
 		}

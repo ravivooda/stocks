@@ -22,28 +22,60 @@ type generator struct {
 	config Config
 }
 
-const summaryTemplateLoc = "website/letf/letf_summary.tmpl"
+const (
+	summaryTemplateLoc = "website/letf/letf_summary.tmpl"
+	overlapTemplateLoc = "website/letf/letf_overlap.tmpl"
+)
 
 func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
-	_, err := utils.MakeDir(g.config.WebsiteDirectoryRoot)
 	summariesFileRoot := fmt.Sprintf("%s/summary", g.config.WebsiteDirectoryRoot)
-	_, err = utils.MakeDir(summariesFileRoot)
+	overlapsFileRoot := fmt.Sprintf("%s/overlap", summariesFileRoot)
+	_, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
 	if err != nil {
 		return false, err
 	}
 
 	for LETFTicker, allAnalysis := range analysisMap {
-		outputFilePath := fmt.Sprintf("%s/%s.html", summariesFileRoot, LETFTicker)
-		b, err := g.logToHTML(summaryTemplateLoc, outputFilePath, LETFTicker, letfs[LETFTicker], allAnalysis)
-		if err != nil {
+		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", summariesFileRoot, LETFTicker)
+		sort.Slice(allAnalysis, func(i, j int) bool {
+			return allAnalysis[i].OverlapPercentage < allAnalysis[j].OverlapPercentage
+		})
+
+		// Generate Summary for the ticker
+		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, letfs[LETFTicker], allAnalysis); err != nil {
 			return b, err
+		}
+
+		// Generate Overlap details
+		for _, analysis := range allAnalysis {
+			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolding1, analysis.LETFHolding2)
+			b, err := g.logOverlapToHTML(overlapOutputFilePath, analysis)
+			if err != nil {
+				return b, err
+			}
 		}
 	}
 
 	return true, nil
 }
 
-func (g *generator) logToHTML(
+func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis models.LETFOverlapAnalysis) (bool, error) {
+	t := template.Must(template.ParseFiles(overlapTemplateLoc))
+	outputFile, err := os.Create(overlapOutputFilePath)
+	defer func(outputFile *os.File) {
+		_ = outputFile.Close()
+	}(outputFile)
+	if err != nil {
+		return false, err
+	}
+	err = t.Execute(outputFile, analysis)
+	if err != nil {
+		return false, err
+	}
+	return false, nil
+}
+
+func (g *generator) logSummaryToHTML(
 	summaryTemplateLoc string,
 	outputFilePath string,
 	accountTicker models.LETFAccountTicker,
@@ -58,9 +90,6 @@ func (g *generator) logToHTML(
 	if err != nil {
 		return false, err
 	}
-	sort.Slice(allAnalysis, func(i, j int) bool {
-		return allAnalysis[i].OverlapPercentage < allAnalysis[j].OverlapPercentage
-	})
 	err = t.Execute(output, struct {
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding

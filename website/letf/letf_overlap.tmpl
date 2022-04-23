@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ .LETFHolding1 }} overlap with {{ .LETFHolding2 }}</title>
+  </head>
+  <body>
+    <h1>
+      Overlap between {{ .LETFHolding1 }} overlap with {{ .LETFHolding2 }}
+    </h1>
+    <table>
+      	<tr>
+          <td>Holding Stock Name</td>
+          <td>Ticker</td>
+          <td>Percentage Exposure in {{ .LETFHolding1 }} </td>
+          <td>Percentage Exposure in {{ .LETFHolding2 }} </td>
+          <td>Minimum Percentage Overlap </td>
+    	</tr>
+      	{{ with .DetailedOverlap }}
+			{{ range . }}
+      			<tr>
+      			    <td>[Name TBD]</td>
+              		<td>{{ .Ticker }}</td>
+                    <td>{{index .IndividualPercentagesMap $.LETFHolding1}}</td>
+                    <td>{{index .IndividualPercentagesMap $.LETFHolding2}}</td>
+                    <td>{{ .Percentage }}</td>
+      			</tr>
+			{{ end }}
+      	{{ end }}
+    </table>
+  </body>
+</html>

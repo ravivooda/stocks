@@ -23,7 +23,7 @@ type logger struct {
 }
 
 func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
-	_, err := utils.MakeDir(l.c.RootDir)
+	_, err := utils.MakeDirs([]string{l.c.RootDir})
 	if err != nil {
 		return "", err
 	}

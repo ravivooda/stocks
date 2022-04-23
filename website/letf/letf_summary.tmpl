@@ -37,7 +37,7 @@
             {{ range . }}
                 <tr>
                     <td>[Name TBD]</td>
-                    <td>{{ .LETFHolding2 }}</td>
+                    <td><a href="overlap/{{ $.AccountTicker }}_{{ .LETFHolding2 }}.html">{{ .LETFHolding2 }}</a></td>
                     <td>{{ .OverlapPercentage }}</td>
                 </tr>
             {{ end }}
