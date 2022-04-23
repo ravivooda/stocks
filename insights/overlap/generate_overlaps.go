@@ -3,24 +3,22 @@ package overlap
 import (
 	"math"
 	"stocks/models"
-	"stocks/utils"
 )
 
 type Generator interface {
-	Generate([]models.LETFHolding) []models.LETFOverlapAnalysis
+	Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) []models.LETFOverlapAnalysis
 }
 
 type generator struct {
 }
 
-func (g *generator) Generate(holdings []models.LETFHolding) []models.LETFOverlapAnalysis {
-	holdingsWithAccountTicker := utils.MapLETFHoldingsWithAccountTicker(holdings)
-	if len(holdingsWithAccountTicker) <= 1 {
+func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) []models.LETFOverlapAnalysis {
+	if len(holdingsWithAccountTickerMap) <= 1 {
 		return []models.LETFOverlapAnalysis{}
 	}
 	var outputs []models.LETFOverlapAnalysis
-	for lkey, lLETFHoldings := range holdingsWithAccountTicker {
-		for rkey, rLETFHoldings := range holdingsWithAccountTicker {
+	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
+		for rkey, rLETFHoldings := range holdingsWithAccountTickerMap {
 			if lkey != rkey {
 				outputs = append(outputs, g.compare(lLETFHoldings, rLETFHoldings))
 			}

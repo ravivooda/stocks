@@ -17,6 +17,7 @@ type Config struct {
 		Temporary string `mapstructure:"tmp"`
 		Build     string `mapstructure:"build"`
 		Artifacts string `mapstrucutre:"artifacts"`
+		Websites  string `mapstructure:"websites"`
 	} `mapstructure:"directories"`
 }
 

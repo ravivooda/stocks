@@ -70,7 +70,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 			Shares:            parseInt(data[i][4]),
 			Price:             parseInt(data[i][5]),
 			MarketValue:       parseInt(data[i][6]),
-			PercentContained:  float64(parseInt(data[i][6])) / float64(totalSum) * 100,
+			PercentContained:  utils.RoundedPercentage(float64(parseInt(data[i][6])) / float64(totalSum) * 100),
 		})
 		totalPercent += float64(parseInt(data[i][6])) / float64(totalSum) * 100
 	}

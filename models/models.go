@@ -26,14 +26,14 @@ type Seed struct {
 }
 
 type MSHolding struct {
-	NetChange        float64 `json:"netChange"`
-	Volume           int     `json:"volume"`
-	Ticker           string  `json:"ticker"`
-	PerformanceID    string  `json:"performanceID"`
-	Name             string  `json:"name"`
-	Exchange         string  `json:"exchange"`
-	PercentNetChange float64 `json:"percentNetChange"`
-	LastPrice        float64 `json:"lastPrice"`
+	NetChange        TwoRoundedFloat `json:"netChange"`
+	Volume           int             `json:"volume"`
+	Ticker           string          `json:"ticker"`
+	PerformanceID    string          `json:"performanceID"`
+	Name             string          `json:"name"`
+	Exchange         string          `json:"exchange"`
+	PercentNetChange TwoRoundedFloat `json:"percentNetChange"`
+	LastPrice        TwoRoundedFloat `json:"lastPrice"`
 }
 
 type MSResponse struct {

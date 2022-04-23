@@ -18,6 +18,7 @@ import (
 	"stocks/securities/direxion"
 	"stocks/securities/microsector"
 	"stocks/utils"
+	"stocks/website/letf"
 )
 
 type orchestrateRequest struct {
@@ -28,6 +29,7 @@ type orchestrateRequest struct {
 	notifier          notifications.Notifier
 	insightGenerators []overlap.Generator
 	insightsLogger    insights.Logger
+	websiteGenerators []letf.Generator
 }
 
 func orchestrate(ctx context.Context, request orchestrateRequest) error {
@@ -41,10 +43,11 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		return err
 	}
 
-	holdingsMap := utils.MapLETFHoldingsWithStockTicker(holdings)
-	//fmt.Println(holdingsMap)
+	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(holdings)
+	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(holdings)
+	//fmt.Println(holdingsWithStockTickerMap)
 
-	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsMap)
+	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsWithStockTickerMap)
 	if err != nil {
 		return err
 	}
@@ -57,7 +60,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		}
 	}
 
-	gatheredInsights, err := gatherInsights(ctx, request.insightGenerators, holdings)
+	gatheredInsights, err := gatherInsights(ctx, request.insightGenerators, holdingsWithAccountTickerMap)
 	if err != nil {
 		return err
 	}
@@ -71,14 +74,18 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		//fmt.Printf("Logged %s\n", fileName)
 	}
 
+	analysisMap := utils.MapLETFAnalysisWithAccountTicker(gatheredInsights)
+	for _, generator := range request.websiteGenerators {
+		_, err := generator.Generate(ctx, analysisMap, holdingsWithAccountTickerMap)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func gatherInsights(
-	_ context.Context,
-	generators []overlap.Generator,
-	letfHoldings []models.LETFHolding,
-) ([]models.LETFOverlapAnalysis, error) {
+func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings map[models.LETFAccountTicker][]models.LETFHolding) ([]models.LETFOverlapAnalysis, error) {
 	var gatheredInsights []models.LETFOverlapAnalysis
 	for _, generator := range generators {
 		gatheredInsights = append(gatheredInsights, generator.Generate(letfHoldings)...)
@@ -137,7 +144,7 @@ func main() {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
 	direxionClient, err := direxion.NewClient()
-	microsectorClient, err := microsector.NewClient()
+	microSectorClient, err := microsector.NewClient()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -161,12 +168,13 @@ func main() {
 		db:     db,
 		clients: map[models.Provider]securities.Client{
 			models.Direxion:    direxionClient,
-			models.MicroSector: microsectorClient,
+			models.MicroSector: microSectorClient,
 		},
 		parsers:           alertParsers,
 		notifier:          notifier,
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator()},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
+		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites})},
 	})
 	if err != nil {
 		log.Fatal(err)
