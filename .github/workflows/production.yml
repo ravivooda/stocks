@@ -79,7 +79,7 @@ jobs:
       uses: 'google-github-actions/auth@v0'
       with:
         workload_identity_provider: 'projects/659322829339/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
-        service_account: 'github-actions-upload@stocks-348021.iam.gserviceaccount.com'
+        service_account: 'github-upload-manual-service-a@stocks-348021.iam.gserviceaccount.com'
 
     # TODO: Hardcoded path, need to use $BUILD_ARTIFACTS_PATH from above
     - id: 'upload-folder'
