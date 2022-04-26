@@ -6,14 +6,20 @@ import (
 	"stocks/securities/proshares"
 )
 
-type Config struct {
-	MSAPI         morning_star.Config `mapstructure:"ms_api"`
+type Secrets struct {
+	MSAPI struct {
+		Key string
+	} `mapstructure:"ms_api"`
 	Notifications struct {
 		ShouldSendEmails bool `mapstructure:"should_send_email"`
 	} `mapstructure:"notifications"`
 	Uploads struct {
 		ShouldUploadInsightsOutputToGCP bool `mapstructure:"should_upload_insights_output_to_gcp"`
 	} `mapstructure:"uploads"`
+}
+
+type Config struct {
+	MSAPI       morning_star.Config `mapstructure:"ms_api"`
 	Directories struct {
 		Temporary string `mapstructure:"tmp"`
 		Build     string `mapstructure:"build"`
@@ -23,12 +29,11 @@ type Config struct {
 	Securities struct {
 		ProShares proshares.Config `mapstructure:"pro_shares"`
 	} `mapstructure:"securities"`
+	Secrets Secrets
 }
 
 func NewConfig() (Config, error) {
-	v := viper.New()
-	v.SetConfigFile("./config.yaml")
-	err := v.ReadInConfig()
+	v, err := loadViperConfig("./config.yaml")
 	if err != nil {
 		return Config{}, err
 	}
@@ -37,5 +42,26 @@ func NewConfig() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+
+	s, err := loadViperConfig("./secrets.yaml")
+	if err != nil {
+		return Config{}, err
+	}
+	var se Secrets
+	err = s.Unmarshal(&se)
+	if err != nil {
+		return Config{}, err
+	}
+
+	c.Secrets = se
+	c.MSAPI.Key = c.Secrets.MSAPI.Key
+
 	return c, nil
+}
+
+func loadViperConfig(filepath string) (*viper.Viper, error) {
+	v := viper.New()
+	v.SetConfigFile(filepath)
+	err := v.ReadInConfig()
+	return v, err
 }

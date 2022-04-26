@@ -31,20 +31,15 @@ Finds n*n overlaps between all ETFs and output them to
 
 Most of the code is in the repo except morning star API credentials.
 
-A `config.yaml` is needed in the root of the repository with the following format
+A `secrets.yaml` is needed in the root of the repository with the following format
 
 ```yaml
 ms_api:
-  host: ms-finance.p.rapidapi.com
-  url: https://ms-finance.p.rapidapi.com/market/v2/get-movers
   key: { MS_API_KEY_SECRET }
 notifications:
   should_send_email: false # Set it to false when testing
-directories:
-  tmp: tmp
-  build: tmp/build
-  artifacts: tmp/build/artifacts
-  websites: tmp/build/artifacts/websites
+uploads:
+  should_upload_insights_output_to_gcp: true
 ```
 
 With that, it's simple to run

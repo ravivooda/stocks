@@ -1,0 +1,24 @@
+ms_api:
+  host: ms-finance.p.rapidapi.com
+  url: https://ms-finance.p.rapidapi.com/market/v2/get-movers
+directories:
+  tmp: tmp
+  build: tmp/build
+  artifacts: tmp/build/artifacts
+  websites: tmp/build/artifacts/websites
+  # TODO: All the above directories should depend on each other
+securities:
+  pro_shares:
+    csvurl: "https://accounts.profunds.com/etfdata/psdlyhld.csv"
+    skip_lines: 4
+    expected_columns:
+      - Fund Ticker
+      - Fund Name
+      - Security Ticker
+      - Security Sedol
+      - Security Description
+      - Coupon
+      - Maturity Date
+      - Shares/Contracts
+      - Exposure Value (Notional + G/L)
+      - Market Value
