@@ -25,24 +25,18 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    # TODO: Need to refactor this code with simple config.yaml creation
-    - name: Setup config.yaml
+    # TODO: Need to refactor this code with simple secrets.yaml creation
+    - name: Setup secrets.yaml
       run: |
-        echo "ms_api:" >> config.yaml
-        echo "  host: ms-finance.p.rapidapi.com" >> config.yaml
-        echo "  url: https://ms-finance.p.rapidapi.com/market/v2/get-movers" >> config.yaml
-        echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> config.yaml
-        echo "notifications:" >> config.yaml
-        echo "  should_send_email: true" >> config.yaml
-        echo "directories:" >> config.yaml
-        echo "  tmp: tmp" >> config.yaml
-        echo "  build: tmp/build" >> config.yaml
-        echo "  artifacts: tmp/build/artifacts" >> config.yaml
-        echo "  websites: tmp/build/artifacts/websites" >> config.yaml
+        echo "ms_api:" >> secrets.yaml
+        echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
+        echo "notifications:" >> secrets.yaml
+        echo "  should_send_email: true" >> secrets.yaml
+        echo "uploads:" >> secrets.yaml
+        echo "  should_upload_insights_output_to_gcp: true" >> secrets.yaml
 
     - name: Run orchestrator
       run: |
-        cat config.yaml
         go run .
 
     # TODO: Hardcoded for now, need to fix this in future

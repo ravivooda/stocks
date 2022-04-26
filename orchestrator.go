@@ -58,7 +58,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 	}
 	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
 
-	if request.config.Notifications.ShouldSendEmails {
+	if request.config.Secrets.Notifications.ShouldSendEmails {
 		_, err := request.notifier.SendAll(ctx, gatheredAlerts)
 		if err != nil {
 			return err
