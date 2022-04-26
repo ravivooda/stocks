@@ -9,7 +9,7 @@ directories:
   # TODO: All the above directories should depend on each other
 securities:
   pro_shares:
-    csvurl: "https://accounts.profunds.com/etfdata/psdlyhld.csv"
+    csvurl: https://accounts.profunds.com/etfdata/psdlyhld.csv
     skip_lines: 4
     expected_columns:
       - Fund Ticker
