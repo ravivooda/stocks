@@ -40,7 +40,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		if err != nil {
 			return err
 		}
-		seeds = append(_seeds)
+		seeds = append(seeds, _seeds...)
 	}
 
 	holdings, err := fetchHoldings(ctx, seeds, request.clients)
