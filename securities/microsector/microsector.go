@@ -38,7 +38,7 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 			TradeDate:         utils.TodayDate(),
 			LETFAccountTicker: utils.FetchAccountTicker(seed.Ticker),
 			StockTicker:       utils.FetchStockTicker(row[1]),
-			Description:       row[0],
+			StockDescription:  row[0],
 			Shares:            0,
 			Price:             0,
 			MarketValue:       0,

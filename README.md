@@ -1,9 +1,10 @@
 # stocks
 
-fetch all the stocks from https://www.direxion.com/etfs. Currently supports:
+fetch all the stocks from different providers. Currently supports:
 
 - Direxion
 - MicroSector (limited)
+- ProShares
 
 If you are interested in all the tickers, please see [seeds.yaml](database/seeds.yaml)
 

@@ -6,8 +6,9 @@ type StockTicker string
 type LETFHolding struct {
 	TradeDate         string
 	LETFAccountTicker LETFAccountTicker
+	LETFDescription   string
 	StockTicker       StockTicker
-	Description       string
+	StockDescription  string
 	Shares            int64
 	Price             int64
 	MarketValue       int64

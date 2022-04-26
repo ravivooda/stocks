@@ -12,6 +12,18 @@
       margin-right: auto;
     }
 
+    h1 {
+      text-align:center;
+      padding: 16px;
+      margin-bottom: 16px
+    }
+
+    h2 {
+      text-align:center;
+      padding: 12px;
+      margin-bottom: 12px
+    }
+
     td, th {
       border: 1px solid #ddd;
       padding: 8px;
@@ -45,7 +57,7 @@
       	{{ with .Holdings }}
 			{{ range . }}
       			<tr>
-      			    <td>{{ .Description }}</td>
+      			    <td>{{ .StockDescription }}</td>
               		<td>{{ .StockTicker }}</td>
               		<td>N/A</td>
                     <td>{{ .PercentContained }}</td>

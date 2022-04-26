@@ -48,7 +48,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 			TradeDate:         data[i][0],
 			LETFAccountTicker: utils.FetchAccountTicker(data[i][1]),
 			StockTicker:       utils.FetchStockTicker(data[i][2]),
-			Description:       data[i][3],
+			StockDescription:  data[i][3],
 			Shares:            parseInt(data[i][4]),
 			Price:             parseInt(data[i][5]),
 			MarketValue:       parseInt(data[i][6]),
