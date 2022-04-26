@@ -24,8 +24,7 @@ import (
 
 type orchestrateRequest struct {
 	config            Config
-	db                database.DB
-	manualSeeds       []models.Seed
+	seedGenerators    []database.DB
 	clients           map[models.Provider]securities.Client
 	parsers           []alerts.AlertParser
 	notifier          notifications.Notifier
@@ -35,11 +34,14 @@ type orchestrateRequest struct {
 }
 
 func orchestrate(ctx context.Context, request orchestrateRequest) error {
-	seeds, err := request.db.ListSeeds(ctx)
-	if err != nil {
-		return err
+	var seeds []models.Seed
+	for _, generator := range request.seedGenerators {
+		_seeds, err := generator.ListSeeds(ctx)
+		if err != nil {
+			return err
+		}
+		seeds = append(_seeds)
 	}
-	seeds = append(seeds, request.manualSeeds...)
 
 	holdings, err := fetchHoldings(ctx, seeds, request.clients)
 	if err != nil {
@@ -159,7 +161,7 @@ func main() {
 	fmt.Printf("Found Morning Star Config: %+v\n", config)
 
 	msapi := morning_star.New(config.MSAPI)
-	proSharesClient, seeds, err := proshares.New(config.Securities.ProShares)
+	proSharesClient, err := proshares.New(config.Securities.ProShares)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -170,9 +172,11 @@ func main() {
 
 	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 	err = orchestrate(ctx, orchestrateRequest{
-		config:      config,
-		db:          db,
-		manualSeeds: seeds,
+		config: config,
+		seedGenerators: []database.DB{
+			db,
+			proSharesClient,
+		},
 		clients: map[models.Provider]securities.Client{
 			models.Direxion:    direxionClient,
 			models.MicroSector: microSectorClient,

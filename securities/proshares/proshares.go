@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"reflect"
+	"stocks/database"
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
@@ -12,8 +13,18 @@ import (
 	"strings"
 )
 
+type SeedProvider interface {
+	database.DB
+	securities.Client
+}
+
 type client struct {
+	seeds          []models.Seed
 	cachedHoldings map[models.LETFAccountTicker][]models.LETFHolding
+}
+
+func (c *client) ListSeeds(_ context.Context) ([]models.Seed, error) {
+	return c.seeds, nil
 }
 
 func (c *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
@@ -37,14 +48,14 @@ type Config struct {
 	ExpectedColumns []string `mapstructure:"expected_columns"`
 }
 
-func New(config Config) (securities.Client, []models.Seed, error) {
+func New(config Config) (SeedProvider, error) {
 	csvFromUrl, err := utils.ReadCSVFromUrl(config.CSVURL, ',', -1)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "Found error when parsing csv from url %v", config.CSVURL)
+		return nil, errors.Wrapf(err, "Found error when parsing csv from url %v", config.CSVURL)
 	}
 
 	if !reflect.DeepEqual(utils.Trimmed(csvFromUrl[config.SkipLines-1]), config.ExpectedColumns) {
-		return nil, nil, errors.New(fmt.Sprintf("Expected Columns: %v did not exactly match observed: %v", config.ExpectedColumns, csvFromUrl[config.SkipLines-1]))
+		return nil, errors.New(fmt.Sprintf("Expected Columns: %v did not exactly match observed: %v", config.ExpectedColumns, csvFromUrl[config.SkipLines-1]))
 	}
 
 	mappedHoldings := createMapWithAccountTicker(config, csvFromUrl)
@@ -52,10 +63,10 @@ func New(config Config) (securities.Client, []models.Seed, error) {
 	cachedHoldings := map[models.LETFAccountTicker][]models.LETFHolding{}
 	seeds, err := parseMappedHoldings(mappedHoldings, cachedHoldings)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &client{cachedHoldings: cachedHoldings}, seeds, nil
+	return &client{cachedHoldings: cachedHoldings, seeds: seeds}, nil
 }
 
 func createMapWithAccountTicker(config Config, csvFromUrl [][]string) map[models.LETFAccountTicker][][]string {
