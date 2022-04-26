@@ -2,12 +2,9 @@ package direxion
 
 import (
 	"context"
-	"encoding/csv"
-	"errors"
 	"fmt"
-	"io"
+	"github.com/pkg/errors"
 	"math"
-	"net/http"
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
@@ -19,24 +16,9 @@ type client struct {
 }
 
 func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
-	resp, err := http.Get(seed.URL)
+	data, err := utils.ReadCSVFromUrl(seed.URL, ',', -1)
 	if err != nil {
-		return nil, fmt.Errorf("fetching %+v returned err: %w", seed, err)
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			print(err)
-		}
-	}(resp.Body)
-
-	reader := csv.NewReader(resp.Body)
-	reader.Comma = ','
-	reader.FieldsPerRecord = -1
-	data, err := reader.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("reading data for %+v returned err: %w", seed, err)
+		return nil, err
 	}
 
 	if len(data) <= seed.Header.SkippableLines {

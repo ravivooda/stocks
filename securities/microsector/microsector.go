@@ -11,7 +11,6 @@ import (
 	"stocks/securities"
 	"stocks/utils"
 	"strconv"
-	"time"
 )
 
 type client struct {
@@ -36,7 +35,7 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 	for _, row := range allRows {
 		parsedPercentage, _ := strconv.ParseFloat(row[2], 64)
 		rets = append(rets, models.LETFHolding{
-			TradeDate:         time.Now().Format("01-02-2006"),
+			TradeDate:         utils.TodayDate(),
 			LETFAccountTicker: utils.FetchAccountTicker(seed.Ticker),
 			StockTicker:       utils.FetchStockTicker(row[1]),
 			Description:       row[0],

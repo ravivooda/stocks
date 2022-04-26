@@ -16,6 +16,7 @@ type Provider string
 const (
 	Direxion    Provider = "direxion"
 	MicroSector          = "microsector"
+	ProShares            = "proshares"
 )
 
 type Seed struct {

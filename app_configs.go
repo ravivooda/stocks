@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/spf13/viper"
 	"stocks/alerts/movers/morning_star"
+	"stocks/securities/proshares"
 )
 
 type Config struct {
@@ -19,6 +20,9 @@ type Config struct {
 		Artifacts string `mapstrucutre:"artifacts"`
 		Websites  string `mapstructure:"websites"`
 	} `mapstructure:"directories"`
+	Securities struct {
+		ProShares proshares.Config `mapstructure:"pro_shares"`
+	} `mapstructure:"securities"`
 }
 
 func NewConfig() (Config, error) {
