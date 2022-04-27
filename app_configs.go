@@ -30,6 +30,14 @@ type Config struct {
 		ProShares proshares.Config `mapstructure:"pro_shares"`
 	} `mapstructure:"securities"`
 	Secrets Secrets
+	Outputs struct {
+		Insights struct {
+			MinThresholdPercentage int `mapstructure:"min_threshold_percentage"`
+		}
+		Websites struct {
+			MinThresholdPercentage int `mapstructure:"min_threshold_percentage"`
+		}
+	}
 }
 
 func NewConfig() (Config, error) {

@@ -10,6 +10,7 @@ type Generator interface {
 }
 
 type generator struct {
+	c Config
 }
 
 func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) []models.LETFOverlapAnalysis {
@@ -20,7 +21,10 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
 		for rkey, rLETFHoldings := range holdingsWithAccountTickerMap {
 			if lkey != rkey {
-				outputs = append(outputs, g.compare(lLETFHoldings, rLETFHoldings))
+				overlapAnalysis := g.compare(lLETFHoldings, rLETFHoldings)
+				if int(overlapAnalysis.OverlapPercentage) > g.c.MinThreshold {
+					outputs = append(outputs, overlapAnalysis)
+				}
 			}
 		}
 	}
@@ -84,6 +88,10 @@ func mapStockHoldings(h []models.LETFHolding) map[models.StockTicker]holdingRowM
 	return rets
 }
 
-func NewOverlapGenerator() Generator {
-	return &generator{}
+type Config struct {
+	MinThreshold int
+}
+
+func NewOverlapGenerator(config Config) Generator {
+	return &generator{c: config}
 }

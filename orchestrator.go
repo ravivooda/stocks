@@ -184,9 +184,9 @@ func main() {
 		},
 		parsers:           alertParsers,
 		notifier:          notifier,
-		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator()},
+		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(overlap.Config{MinThreshold: config.Outputs.Insights.MinThresholdPercentage})},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
-		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites})},
+		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})},
 	})
 	if err != nil {
 		log.Fatal(err)

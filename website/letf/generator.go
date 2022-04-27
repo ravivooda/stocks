@@ -12,6 +12,7 @@ import (
 
 type Config struct {
 	WebsiteDirectoryRoot string
+	MinThreshold         int
 }
 
 type Generator interface {
@@ -35,19 +36,23 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 		return false, err
 	}
 
-	for LETFTicker, allAnalysis := range analysisMap {
+	for LETFTicker, holdings := range letfs {
 		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", summariesFileRoot, LETFTicker)
+		allAnalysis := analysisMap[LETFTicker]
 		sort.Slice(allAnalysis, func(i, j int) bool {
 			return allAnalysis[i].OverlapPercentage > allAnalysis[j].OverlapPercentage
 		})
 
 		// Generate Summary for the ticker
-		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, letfs[LETFTicker], allAnalysis); err != nil {
+		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis); err != nil {
 			return b, err
 		}
 
 		// Generate Overlap details
 		for _, analysis := range allAnalysis {
+			if int(analysis.OverlapPercentage) >= g.config.MinThreshold {
+
+			}
 			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolding1, analysis.LETFHolding2)
 			b, err := g.logOverlapToHTML(overlapOutputFilePath, analysis)
 			if err != nil {

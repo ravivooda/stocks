@@ -22,3 +22,8 @@ securities:
       - Shares/Contracts
       - Exposure Value (Notional + G/L)
       - Market Value
+outputs:
+  insights:
+    min_threshold_percentage: 0
+  websites:
+    min_threshold_percentage: 10
