@@ -82,6 +82,7 @@ jobs:
         path: tmp/build/artifacts
         destination: 'letf_overlaps/github_action'
         parent: false
+        concurrency: 10
 
 #    # Example of using the output
 #    - id: 'upload_'
