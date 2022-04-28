@@ -48,3 +48,7 @@ With that, it's simple to run
 ```bash
 go run orchestrator.go
 ```
+
+--
+
+[![Run Prod](https://github.com/ravivooda/stocks/actions/workflows/production.yml/badge.svg)](https://github.com/ravivooda/stocks/actions/workflows/production.yml)
