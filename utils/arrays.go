@@ -9,3 +9,13 @@ func Trimmed(input []string) []string {
 	}
 	return rets
 }
+
+func FilterNonStockRows(rows [][]string, validator func(row []string) bool) [][]string {
+	var retRows [][]string
+	for _, row := range rows {
+		if validator(row) {
+			retRows = append(retRows, row)
+		}
+	}
+	return retRows
+}

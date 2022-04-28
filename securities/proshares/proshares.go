@@ -94,6 +94,9 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 		})
 		totalMarketValue := int64(0)
 		for _, csvHoldingRow := range groupedArray {
+			if getStockTicker(csvHoldingRow) == "" {
+				continue
+			}
 			marketValue, err := getMarketValue(csvHoldingRow, ".")
 			if err != nil {
 				return nil, errors.Wrapf(err, "parsing market value from the values: %+v", csvHoldingRow)
@@ -106,6 +109,10 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 		}
 
 		for _, csvHoldingRow := range groupedArray {
+			stockTicker := getStockTicker(csvHoldingRow)
+			if stockTicker == "" {
+				continue
+			}
 			shares, err := strconv.ParseInt(splitForIntString(csvHoldingRow[7], "."), 10, 0)
 			if err != nil {
 				return nil, err
@@ -117,19 +124,23 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 			holdingsArray = append(holdingsArray, models.LETFHolding{
 				TradeDate:         utils.TodayDate(),
 				LETFAccountTicker: rowTicker,
-				StockTicker:       utils.FetchStockTicker(csvHoldingRow[2]),
+				StockTicker:       stockTicker,
 				LETFDescription:   csvHoldingRow[1],
 				StockDescription:  csvHoldingRow[4],
 				Shares:            shares,
 				Price:             0,
 				MarketValue:       marketValue,
-				PercentContained:  float64(marketValue) / float64(totalMarketValue),
+				PercentContained:  float64(marketValue) / float64(totalMarketValue) * 100,
 				Provider:          "ProShares",
 			})
 		}
 		cachedHoldings[rowTicker] = holdingsArray
 	}
 	return seeds, nil
+}
+
+func getStockTicker(csvHoldingRow []string) models.StockTicker {
+	return utils.FetchStockTicker(csvHoldingRow[2])
 }
 
 func getMarketValue(row []string, separator string) (int64, error) {

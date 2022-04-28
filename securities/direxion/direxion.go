@@ -29,21 +29,20 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 		return nil, errors.New(fmt.Sprintf("columns did not match -> expected: (%s), received: (%s) for seed %+v", seed.Header.ExpectedColumns, data[seed.Header.SkippableLines-1], seed))
 	}
 
+	data = data[seed.Header.SkippableLines:]
+	data = utils.FilterNonStockRows(data, func(row []string) bool {
+		return utils.FetchStockTicker(row[2]) != ""
+	})
+
 	var totalSum int64
-	for i := seed.Header.SkippableLines; i < len(data); i++ {
-		if shouldIgnoreCashFund(data[i][3]) {
-			continue
-		}
+	for i := 0; i < len(data); i++ {
 		totalSum += parseInt(data[i][6])
 	}
 
 	//fmt.Println(totalSum)
 	var totalPercent float64
 	var holdings []models.LETFHolding
-	for i := seed.Header.SkippableLines; i < len(data); i++ {
-		if shouldIgnoreCashFund(data[i][3]) {
-			continue
-		}
+	for i := 0; i < len(data); i++ {
 		holdings = append(holdings, models.LETFHolding{
 			TradeDate:         data[i][0],
 			LETFAccountTicker: utils.FetchAccountTicker(data[i][1]),
@@ -64,13 +63,6 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 	}
 
 	return holdings, nil
-}
-
-func shouldIgnoreCashFund(name string) bool {
-	if name == "TECHNOLOGY SELECT SECTOR INDEX SWAP" || name == "ICE SEMICONDUCTOR INDEX SWAP" || name == "DREYFUS GOVT CASH MGMT" {
-		return true
-	}
-	return false
 }
 
 func parseInt(s string) int64 {

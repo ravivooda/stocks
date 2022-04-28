@@ -2,22 +2,23 @@ seeds:
   direxion:
     url_base: https://www.direxion.com/holdings
     simple:
+      negative_tickers:
+        - WEBL
+        - FAZ
+        - DRV
+        - HIBS
       tickers:
         - DFEN
         - WANT
         - WEBS
-        - WEBL
-        - FAZ
         - FAS
         - CURE
         - NAIL
         - DUSL
         - PILL
-        - DRV
         - DRN
         - DPST
         - RETL
-        - HIBS
         - HIBL
         - LABD
         - LABU
