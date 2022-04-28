@@ -1,86 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <title>{{ .AccountTicker }} Summary</title>
     <style>
-    * {
-      font-family: Arial, Helvetica, sans-serif;
-    }
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-    table {
-      margin-left: auto;
-      margin-right: auto;
-    }
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    h1 {
-      text-align:center;
-      padding: 16px;
-      margin-bottom: 16px
-    }
+        h1 {
+            text-align: center;
+            padding: 16px;
+            margin-bottom: 16px
+        }
 
-    h2 {
-      text-align:center;
-      padding: 12px;
-      margin-bottom: 12px
-    }
+        h2 {
+            text-align: center;
+            padding: 12px;
+            margin-bottom: 12px
+        }
 
-    td, th {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
 
-    tr:nth-child(even){background-color: #f2f2f2;}
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-    tr:hover {background-color: #ddd;}
+        tr:hover {
+            background-color: #ddd;
+        }
 
-    th {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      text-align: left;
-      background-color: #04AA6D;
-      color: white;
-    }
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
     </style>
-  </head>
-  <body>
-    <h1>
-      Summary for {{ .AccountTicker }}
-    </h1>
-    <h2>Holdings for {{ .AccountTicker }}</h2>
-    <table>
-      	<tr>
-          <th>Holding Stock Name</th>
-          <th>Ticker</th>
-          <th>Percentage Change Today</th>
-          <th>Percentage Exposure in {{ .AccountTicker }} </th>
-    	</tr>
-      	{{ with .Holdings }}
-			{{ range . }}
-      			<tr>
-      			    <td>{{ .StockDescription }}</td>
-              		<td>{{ .StockTicker }}</td>
-              		<td>N/A</td>
-                    <td>{{ .PercentContained }}</td>
-      			</tr>
-			{{ end }}
-      	{{ end }}
-    </table>
-    <h2>Most Similar other LETFs</h2>
-    <table>
-        <tr>
-          <th>LETF Name</th>
-          <th>LETF Ticker</th>
-          <th>Percentage Overlap Today</th>
-        </tr>
-        {{ with .Overlaps }}
-            {{ range . }}
-                <tr>
-                    <td>[Name TBD]</td>
-                    <td><a href="overlap/{{ $.AccountTicker }}_{{ .LETFHolding2 }}.html">{{ .LETFHolding2 }}</a></td>
-                    <td>{{ .OverlapPercentage }}</td>
-                </tr>
-            {{ end }}
-        {{ end }}
-    </table>
-  </body>
+</head>
+<body>
+<h1>
+    Summary for {{ .AccountTicker }}
+</h1>
+<table>
+    <tr>
+        <td>Provider</td>
+        <td>{{ (index $.Holdings 0).Provider }}</td>
+    </tr>
+    <tr>
+        <td>LETF Name</td>
+        <td>{{ (index $.Holdings 0).LETFDescription }}</td>
+    </tr>
+</table>
+<h2>Holdings for {{ .AccountTicker }}</h2>
+<table>
+    <tr>
+        <th>Holding Stock Name</th>
+        <th>Ticker</th>
+        <th>Percentage Change Today</th>
+        <th>Percentage Exposure in {{ .AccountTicker }}</th>
+    </tr>
+    {{ with .Holdings }}
+    {{ range . }}
+    <tr>
+        <td>{{ .StockDescription }}</td>
+        <td>{{ .StockTicker }}</td>
+        <td>N/A</td>
+        <td>{{ .PercentContained }}</td>
+    </tr>
+    {{ end }}
+    {{ end }}
+</table>
+<h2>Most Similar other LETFs</h2>
+<table>
+    <tr>
+        <th>LETF Provider</th>
+        <th>LETF Name</th>
+        <th>LETF Ticker</th>
+        <th>Percentage Overlap Today</th>
+    </tr>
+    {{ with .Overlaps }}
+    {{ range . }}
+    <tr>
+        <td>{{ (index (index $.AccountsMap .LETFHolding2) 0).Provider }}</td>
+        <td><a href="{{ .LETFHolding2 }}.html">{{ (index (index $.AccountsMap .LETFHolding2) 0).LETFDescription }}</a>
+        </td>
+        <td><a href="{{ .LETFHolding2 }}.html">{{ .LETFHolding2 }}</a></td>
+        <td><a href="overlap/{{ $.AccountTicker }}_{{ .LETFHolding2 }}.html">{{ .OverlapPercentage }}</a></td>
+    </tr>
+    {{ end }}
+    {{ end }}
+</table>
+</body>
 </html>

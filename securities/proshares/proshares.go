@@ -124,6 +124,7 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 				Price:             0,
 				MarketValue:       marketValue,
 				PercentContained:  float64(marketValue) / float64(totalMarketValue),
+				Provider:          "ProShares",
 			})
 		}
 		cachedHoldings[rowTicker] = holdingsArray

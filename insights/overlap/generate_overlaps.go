@@ -3,6 +3,7 @@ package overlap
 import (
 	"math"
 	"stocks/models"
+	"stocks/utils"
 )
 
 type Generator interface {
@@ -55,7 +56,7 @@ func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) mode
 	for ticker, percentMap := range rmap {
 		details = append(details, models.LETFOverlap{
 			Ticker:     ticker,
-			Percentage: percentMap.minPercentage,
+			Percentage: utils.RoundedPercentage(percentMap.minPercentage),
 			IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
 				l[0].LETFAccountTicker: percentMap.lLetfPercentage,
 				r[0].LETFAccountTicker: percentMap.rLetfPercentage,
@@ -65,7 +66,7 @@ func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) mode
 	return models.LETFOverlapAnalysis{
 		LETFHolding1:      l[0].LETFAccountTicker,
 		LETFHolding2:      r[0].LETFAccountTicker,
-		OverlapPercentage: totalOverlapPercentage,
+		OverlapPercentage: utils.RoundedPercentage(totalOverlapPercentage),
 		DetailedOverlap:   details,
 	}
 }

@@ -44,7 +44,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 		})
 
 		// Generate Summary for the ticker
-		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis); err != nil {
+		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis, letfs); err != nil {
 			return b, err
 		}
 
@@ -80,13 +80,7 @@ func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis mode
 	return false, nil
 }
 
-func (g *generator) logSummaryToHTML(
-	summaryTemplateLoc string,
-	outputFilePath string,
-	accountTicker models.LETFAccountTicker,
-	letfHoldings []models.LETFHolding,
-	allAnalysis []models.LETFOverlapAnalysis,
-) (bool, error) {
+func (g *generator) logSummaryToHTML(summaryTemplateLoc string, outputFilePath string, accountTicker models.LETFAccountTicker, letfHoldings []models.LETFHolding, allAnalysis []models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
 	t := template.Must(template.ParseFiles(summaryTemplateLoc))
 	output, err := os.Create(outputFilePath)
 	defer func(output *os.File) {
@@ -99,10 +93,12 @@ func (g *generator) logSummaryToHTML(
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding
 		Overlaps      []models.LETFOverlapAnalysis
+		AccountsMap   map[models.LETFAccountTicker][]models.LETFHolding
 	}{
 		AccountTicker: accountTicker,
 		Holdings:      letfHoldings,
 		Overlaps:      allAnalysis,
+		AccountsMap:   letfs,
 	})
 	if err != nil {
 		return false, err

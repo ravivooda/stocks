@@ -37,12 +37,14 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 		rets = append(rets, models.LETFHolding{
 			TradeDate:         utils.TodayDate(),
 			LETFAccountTicker: utils.FetchAccountTicker(seed.Ticker),
+			LETFDescription:   "[Name TBD]",
 			StockTicker:       utils.FetchStockTicker(row[1]),
 			StockDescription:  row[0],
 			Shares:            0,
 			Price:             0,
 			MarketValue:       0,
 			PercentContained:  parsedPercentage,
+			Provider:          "MicroSector",
 		})
 		totalPercentage += parsedPercentage
 	}
