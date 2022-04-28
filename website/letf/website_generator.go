@@ -37,7 +37,12 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 		return b, err
 	}
 
-	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/welcome.html", g.config.WebsiteDirectoryRoot), letfs)
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/index.html", g.config.WebsiteDirectoryRoot), letfs)
+	if err != nil {
+		return b, err
+	}
+
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), letfs)
 	if err != nil {
 		return b, err
 	}

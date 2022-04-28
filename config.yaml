@@ -5,7 +5,7 @@ directories:
   tmp: tmp
   build: tmp/build
   artifacts: tmp/build/artifacts
-  websites: tmp/build/artifacts/websites
+  websites: tmp/build/websites
   # TODO: All the above directories should depend on each other
 securities:
   pro_shares:
