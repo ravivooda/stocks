@@ -60,8 +60,7 @@ func New(config Config) (SeedProvider, error) {
 
 	mappedHoldings := createMapWithAccountTicker(config, csvFromUrl)
 
-	cachedHoldings := map[models.LETFAccountTicker][]models.LETFHolding{}
-	seeds, err := parseMappedHoldings(mappedHoldings, cachedHoldings)
+	seeds, cachedHoldings, err := parseMappedHoldings(mappedHoldings)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +82,8 @@ func createMapWithAccountTicker(config Config, csvFromUrl [][]string) map[models
 	return mappedHoldings
 }
 
-func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string, cachedHoldings map[models.LETFAccountTicker][]models.LETFHolding) ([]models.Seed, error) {
+func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string) ([]models.Seed, map[models.LETFAccountTicker][]models.LETFHolding, error) {
+	var cachedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
 	var seeds []models.Seed
 	for rowTicker, groupedArray := range mappedHoldings {
 		if _, found := ignoreHoldings[rowTicker]; found {
@@ -103,7 +103,7 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 		for _, csvHoldingRow := range groupedArray {
 			marketValue, err := getMarketValue(csvHoldingRow, ".")
 			if err != nil {
-				return nil, errors.Wrapf(err, "parsing market value from the values: %+v", csvHoldingRow)
+				return nil, nil, errors.Wrapf(err, "parsing market value from the values: %+v", csvHoldingRow)
 			}
 			totalMarketValue += marketValue
 		}
@@ -119,11 +119,11 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 			}
 			shares, err := strconv.ParseInt(splitForIntString(csvHoldingRow[7], "."), 10, 0)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			marketValue, err := getMarketValue(csvHoldingRow, ".")
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			holdingsArray = append(holdingsArray, models.LETFHolding{
 				TradeDate:         utils.TodayDate(),
@@ -140,7 +140,7 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 		}
 		cachedHoldings[rowTicker] = holdingsArray
 	}
-	return seeds, nil
+	return seeds, cachedHoldings, nil
 }
 
 func getStockTicker(csvHoldingRow []string) models.StockTicker {
