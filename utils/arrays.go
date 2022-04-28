@@ -1,6 +1,9 @@
 package utils
 
-import "strings"
+import (
+	"stocks/models"
+	"strings"
+)
 
 func Trimmed(input []string) []string {
 	var rets []string
@@ -18,4 +21,12 @@ func FilterNonStockRows(rows [][]string, validator func(row []string) bool) [][]
 		}
 	}
 	return retRows
+}
+
+func SumHoldings(holdings []models.LETFHolding) float64 {
+	var totalPercent float64
+	for _, holding := range holdings {
+		totalPercent += holding.PercentContained
+	}
+	return totalPercent
 }

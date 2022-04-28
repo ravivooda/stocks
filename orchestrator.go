@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"sort"
 	"stocks/alerts"
 	"stocks/alerts/movers"
@@ -134,6 +135,10 @@ func fetchHoldings(
 		holdings, err := client.GetHoldings(ctx, seed)
 		if err != nil {
 			return nil, err
+		}
+
+		if sum := utils.SumHoldings(holdings); math.Abs(sum-100) > 0.1 {
+			return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", sum, seed))
 		}
 		allHoldings = append(allHoldings, holdings...)
 	}

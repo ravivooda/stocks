@@ -86,6 +86,10 @@ func createMapWithAccountTicker(config Config, csvFromUrl [][]string) map[models
 func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string, cachedHoldings map[models.LETFAccountTicker][]models.LETFHolding) ([]models.Seed, error) {
 	var seeds []models.Seed
 	for rowTicker, groupedArray := range mappedHoldings {
+		if _, found := ignoreHoldings[rowTicker]; found {
+			//TODO: Holdings ignored because of problems in the csv from ProShares
+			continue
+		}
 		seeds = append(seeds, models.Seed{
 			URL:      "",
 			Ticker:   string(rowTicker),

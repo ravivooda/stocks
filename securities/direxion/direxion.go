@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
-	"math"
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
@@ -39,8 +38,6 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 		totalSum += parseInt(data[i][6])
 	}
 
-	//fmt.Println(totalSum)
-	var totalPercent float64
 	var holdings []models.LETFHolding
 	for i := 0; i < len(data); i++ {
 		holdings = append(holdings, models.LETFHolding{
@@ -55,11 +52,6 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 			PercentContained:  utils.RoundedPercentage(float64(parseInt(data[i][6])) / float64(totalSum) * 100),
 			Provider:          "Direxion",
 		})
-		totalPercent += float64(parseInt(data[i][6])) / float64(totalSum) * 100
-	}
-
-	if math.Abs(totalPercent-100) >= 0.1 {
-		return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", totalPercent, seed))
 	}
 
 	return holdings, nil
