@@ -43,6 +43,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		}
 		seeds = append(seeds, _seeds...)
 	}
+	fmt.Printf("found %d seeds", len(seeds))
 
 	holdings, err := fetchHoldings(ctx, seeds, request.clients)
 	if err != nil {

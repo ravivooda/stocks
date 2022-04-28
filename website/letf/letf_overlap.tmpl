@@ -1,70 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <title>{{ .Analysis.LETFHolding1 }} overlap with {{ .Analysis.LETFHolding2 }}</title>
     <style>
-    * {
-      font-family: Arial, Helvetica, sans-serif;
-    }
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-    table {
-      margin-left: auto;
-      margin-right: auto;
-    }
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    h1 {
-      text-align:center;
-      padding: 16px;
-      margin-bottom: 16px
-    }
+        h1 {
+            text-align: center;
+            padding: 16px;
+            margin-bottom: 16px
+        }
 
-    h2 {
-      text-align:center;
-      padding: 12px;
-      margin-bottom: 12px
-    }
+        h2 {
+            text-align: center;
+            padding: 12px;
+            margin-bottom: 12px
+        }
 
-    td, th {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
 
-    tr:nth-child(even){background-color: #f2f2f2;}
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-    tr:hover {background-color: #ddd;}
+        tr:hover {
+            background-color: #ddd;
+        }
 
-    th {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      text-align: left;
-      background-color: #04AA6D;
-      color: white;
-    }
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
     </style>
-  </head>
-  <body>
-    <h1>
-        Overlap between {{ .Analysis.LETFHolding1 }} overlap with {{ .Analysis.LETFHolding2 }}
-    </h1>
-    <table>
-        <tr>
-            <th>Holding Stock Name</th>
-            <th>Ticker</th>
-            <th>Percentage Exposure in {{ .Analysis.LETFHolding1 }}</th>
-            <th>Percentage Exposure in {{ .Analysis.LETFHolding2 }}</th>
-            <th>Minimum Percentage Overlap</th>
-        </tr>
-        {{ with .Analysis.DetailedOverlap }}
-        {{ range . }}
-        <tr>
-            <td>{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</td>
-            <td>{{ .Ticker }}</td>
-            <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding1}}</td>
-            <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding2}}</td>
-            <td>{{ .Percentage }}</td>
-        </tr>
-			{{ end }}
-      	{{ end }}
-    </table>
-  </body>
+</head>
+<body>
+<h1>
+    Overlap between {{ .Analysis.LETFHolding1 }} overlap with {{ .Analysis.LETFHolding2 }}
+</h1>
+<table>
+    <tr>
+        <th>Holding Stock Name</th>
+        <th>Ticker</th>
+        <th>Percentage Exposure in {{ .Analysis.LETFHolding1 }}</th>
+        <th>Percentage Exposure in {{ .Analysis.LETFHolding2 }}</th>
+        <th>Minimum Percentage Overlap</th>
+    </tr>
+    {{ with .Analysis.DetailedOverlap }}
+    {{ range . }}
+    <tr>
+        <td>{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</td>
+        <td>{{ .Ticker }}</td>
+        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding1}}</td>
+        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding2}}</td>
+        <td>{{ .Percentage }}</td>
+    </tr>
+    {{ end }}
+    {{ end }}
+</table>
+</body>
 </html>

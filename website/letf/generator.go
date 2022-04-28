@@ -26,14 +26,20 @@ type generator struct {
 const (
 	summaryTemplateLoc = "website/letf/letf_summary.tmpl"
 	overlapTemplateLoc = "website/letf/letf_overlap.tmpl"
+	welcomeTemplateLoc = "website/letf/letf_welcome.tmpl"
 )
 
 func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error) {
 	summariesFileRoot := fmt.Sprintf("%s/summary", g.config.WebsiteDirectoryRoot)
 	overlapsFileRoot := fmt.Sprintf("%s/overlap", summariesFileRoot)
-	_, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
+	b, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
 	if err != nil {
-		return false, err
+		return b, err
+	}
+
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/welcome.html", g.config.WebsiteDirectoryRoot), letfs)
+	if err != nil {
+		return b, err
 	}
 
 	for LETFTicker, holdings := range letfs {
@@ -54,7 +60,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 
 			}
 			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolding1, analysis.LETFHolding2)
-			b, err := g.logOverlapToHTML(overlapOutputFilePath, analysis, stocksMap)
+			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, stocksMap)
 			if err != nil {
 				return b, err
 			}
@@ -64,38 +70,19 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 	return true, nil
 }
 
-func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
-	t := template.Must(template.ParseFiles(overlapTemplateLoc))
-	outputFile, err := os.Create(overlapOutputFilePath)
-	defer func(outputFile *os.File) {
-		_ = outputFile.Close()
-	}(outputFile)
-	if err != nil {
-		return false, err
-	}
-	err = t.Execute(outputFile, struct {
+func (g *generator) logOverlapToHTML(overlapTemplateLoc string, overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
+	var data = struct {
 		Analysis  models.LETFOverlapAnalysis
 		StocksMap map[models.StockTicker][]models.LETFHolding
 	}{
 		Analysis:  analysis,
 		StocksMap: letfs,
-	})
-	if err != nil {
-		return false, err
 	}
-	return false, nil
+	return g.logHTMLWithData(overlapTemplateLoc, overlapOutputFilePath, data)
 }
 
 func (g *generator) logSummaryToHTML(summaryTemplateLoc string, outputFilePath string, accountTicker models.LETFAccountTicker, letfHoldings []models.LETFHolding, allAnalysis []models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
-	t := template.Must(template.ParseFiles(summaryTemplateLoc))
-	output, err := os.Create(outputFilePath)
-	defer func(output *os.File) {
-		_ = output.Close()
-	}(output)
-	if err != nil {
-		return false, err
-	}
-	err = t.Execute(output, struct {
+	data := struct {
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding
 		Overlaps      []models.LETFOverlapAnalysis
@@ -105,7 +92,42 @@ func (g *generator) logSummaryToHTML(summaryTemplateLoc string, outputFilePath s
 		Holdings:      letfHoldings,
 		Overlaps:      allAnalysis,
 		AccountsMap:   letfs,
-	})
+	}
+	return g.logHTMLWithData(summaryTemplateLoc, outputFilePath, data)
+}
+
+func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath string, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
+	var mapped = map[string]map[models.LETFAccountTicker]bool{}
+	for ticker, holdings := range letfs {
+		providerMap := mapped[holdings[0].Provider]
+		if providerMap == nil {
+			providerMap = map[models.LETFAccountTicker]bool{}
+		}
+		providerMap[ticker] = true
+		mapped[holdings[0].Provider] = providerMap
+	}
+	var data = struct {
+		TotalProvider int
+		TotalSeeds    int
+		Providers     map[string]map[models.LETFAccountTicker]bool
+	}{
+		TotalProvider: len(mapped),
+		TotalSeeds:    len(letfs),
+		Providers:     mapped,
+	}
+	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)
+}
+
+func (g *generator) logHTMLWithData(templateLoc string, outputFilePath string, data interface{}) (bool, error) {
+	t := template.Must(template.ParseFiles(templateLoc))
+	outputFile, err := os.Create(outputFilePath)
+	defer func(outputFile *os.File) {
+		_ = outputFile.Close()
+	}(outputFile)
+	if err != nil {
+		return false, err
+	}
+	err = t.Execute(outputFile, data)
 	if err != nil {
 		return false, err
 	}
