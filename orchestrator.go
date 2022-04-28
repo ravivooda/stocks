@@ -81,7 +81,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 
 	analysisMap := utils.MapLETFAnalysisWithAccountTicker(gatheredInsights)
 	for _, generator := range request.websiteGenerators {
-		_, err := generator.Generate(ctx, analysisMap, holdingsWithAccountTickerMap)
+		_, err := generator.Generate(ctx, analysisMap, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 		if err != nil {
 			return err
 		}

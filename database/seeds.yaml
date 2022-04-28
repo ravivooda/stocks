@@ -3,14 +3,31 @@ seeds:
     url_base: https://www.direxion.com/holdings
     simple:
       negative_tickers:
-        - WEBL
+        - WEBS
         - FAZ
         - DRV
         - HIBS
+        - CHAD
+        - SPDN
+        - RUSL
+        - DUST
+        - ERY
+        - CLDS
+        - EDZ
+        - YANG
+        - TZA
+        - SPXS
+        - LABD
+        - SOXS
+        - TECS
+        - TYO
+        - TMV
+        - DRIP
+        - JDST
       tickers:
         - DFEN
         - WANT
-        - WEBS
+        - WEBL
         - FAS
         - CURE
         - NAIL
@@ -20,59 +37,42 @@ seeds:
         - DPST
         - RETL
         - HIBL
-        - LABD
         - LABU
-        - SOXS
         - SOXL
-        - TECS
         - TECL
         - TPOR
         - UTSL
-        - TMV
         - TMF
-        - TYO
         - TYD
         - MIDU
-        - SPXS
         - SPXL
-        - TZA
         - TNA
-        - YANG
         - YINN
         - EURL
-        - EDZ
         - EDC
         - MEXX
         - KORU
         - TENG
         - CHAU
         - CWEB
-        - CLDS
         - CLDL
-        - ERY
         - ERX
         - FNTC
-        - DUST
         - NUGT
-        - JDST
         - JNUG
         - BRZU
         - INDL
         - MNM
         - ONG
         - UBOT
-        - RUSL
         - SPUU
         - EVEN
-        - DRIP
         - GUSH
         - FNGG
         - SWAR
         - OOTO
         - DOZR
         - KLNE
-        - CHAD
-        - SPDN
       header:
         expected_columns:
           - TradeDate

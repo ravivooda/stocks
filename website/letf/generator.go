@@ -16,7 +16,7 @@ type Config struct {
 }
 
 type Generator interface {
-	Generate(ctx context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error)
+	Generate(ctx context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error)
 }
 
 type generator struct {
@@ -28,7 +28,7 @@ const (
 	overlapTemplateLoc = "website/letf/letf_overlap.tmpl"
 )
 
-func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
+func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error) {
 	summariesFileRoot := fmt.Sprintf("%s/summary", g.config.WebsiteDirectoryRoot)
 	overlapsFileRoot := fmt.Sprintf("%s/overlap", summariesFileRoot)
 	_, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
@@ -54,7 +54,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 
 			}
 			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolding1, analysis.LETFHolding2)
-			b, err := g.logOverlapToHTML(overlapOutputFilePath, analysis)
+			b, err := g.logOverlapToHTML(overlapOutputFilePath, analysis, stocksMap)
 			if err != nil {
 				return b, err
 			}
@@ -64,7 +64,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 	return true, nil
 }
 
-func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis models.LETFOverlapAnalysis) (bool, error) {
+func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
 	t := template.Must(template.ParseFiles(overlapTemplateLoc))
 	outputFile, err := os.Create(overlapOutputFilePath)
 	defer func(outputFile *os.File) {
@@ -73,7 +73,13 @@ func (g *generator) logOverlapToHTML(overlapOutputFilePath string, analysis mode
 	if err != nil {
 		return false, err
 	}
-	err = t.Execute(outputFile, analysis)
+	err = t.Execute(outputFile, struct {
+		Analysis  models.LETFOverlapAnalysis
+		StocksMap map[models.StockTicker][]models.LETFHolding
+	}{
+		Analysis:  analysis,
+		StocksMap: letfs,
+	})
 	if err != nil {
 		return false, err
 	}

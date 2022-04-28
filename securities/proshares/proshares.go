@@ -92,11 +92,11 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 			Header:   models.Header{},
 			Provider: models.ProShares,
 		})
+		groupedArray = utils.FilterNonStockRows(groupedArray, func(row []string) bool {
+			return getStockTicker(row) != ""
+		})
 		totalMarketValue := int64(0)
 		for _, csvHoldingRow := range groupedArray {
-			if getStockTicker(csvHoldingRow) == "" {
-				continue
-			}
 			marketValue, err := getMarketValue(csvHoldingRow, ".")
 			if err != nil {
 				return nil, errors.Wrapf(err, "parsing market value from the values: %+v", csvHoldingRow)
@@ -130,7 +130,7 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string,
 				Shares:            shares,
 				Price:             0,
 				MarketValue:       marketValue,
-				PercentContained:  float64(marketValue) / float64(totalMarketValue) * 100,
+				PercentContained:  utils.RoundedPercentage(float64(marketValue) / float64(totalMarketValue) * 100),
 				Provider:          "ProShares",
 			})
 		}
