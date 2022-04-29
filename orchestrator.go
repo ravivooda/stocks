@@ -138,7 +138,7 @@ func fetchHoldings(
 			return nil, err
 		}
 
-		if sum := utils.SumHoldings(holdings); math.Abs(sum-100) > 0.1 {
+		if sum := utils.SumHoldings(holdings); math.Abs(sum-100) > 0.5 {
 			return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", sum, seed))
 		}
 		allHoldings = append(allHoldings, holdings...)

@@ -44,6 +44,37 @@
             background-color: #04AA6D;
             color: white;
         }
+
+        #bottom {
+            background-color: #04AA6D;
+            padding: 50px;
+            margin-top: 200px;
+        }
+
+        #bottom_table {
+            color: white;
+        }
+
+        #bottom_table > tr:hover {
+            background-color: #04AA6D;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        a:active {
+            text-decoration: none;
+        }
+
     </style>
 </head>
 <body>
@@ -80,7 +111,7 @@
     {{ end }}
 </table>
 <h2>Most Similar other LETFs</h2>
-<table>
+<table id="overlap_table">
     <tr>
         <th>LETF Provider</th>
         <th>LETF Name</th>
@@ -99,5 +130,20 @@
     {{ end }}
     {{ end }}
 </table>
+<div id="bottom">
+    <table id="bottom_table">
+        <tr>
+            <td>
+                Powered by GitHub
+            </td>
+            <td>
+                Powered by GCP
+            </td>
+            <td>
+                Please file issues, features <a href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
+            </td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>
