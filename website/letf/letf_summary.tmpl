@@ -121,11 +121,24 @@
     {{ with .Overlaps }}
     {{ range . }}
     <tr>
-        <td>{{ (index (index $.AccountsMap .LETFHolding2) 0).Provider }}</td>
-        <td><a href="{{ .LETFHolding2 }}.html">{{ (index (index $.AccountsMap .LETFHolding2) 0).LETFDescription }}</a>
+        <td>
+            {{ range .LETFHoldees }}
+            <span id="overlap_holdees_provider">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
+            {{ end }}
         </td>
-        <td><a href="{{ .LETFHolding2 }}.html">{{ .LETFHolding2 }}</a></td>
-        <td><a href="overlap/{{ $.AccountTicker }}_{{ .LETFHolding2 }}.html">{{ .OverlapPercentage }}</a></td>
+        <td>
+            {{ range .LETFHoldees }}
+            <span id="overlap_description_span"><a href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+            {{ end }}
+        </td>
+        <td>
+            {{ range .LETFHoldees }}
+            <span id="overlap_ticker_span"><a href="{{ . }}.html">{{ . }}</a></span>
+            {{ end }}
+        </td>
+        <td>
+            <a href="overlap/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+                .OverlapPercentage }}</a></td>
     </tr>
     {{ end }}
     {{ end }}

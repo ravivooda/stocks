@@ -64,7 +64,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 			if int(analysis.OverlapPercentage) >= g.config.MinThreshold {
 
 			}
-			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolding1, analysis.LETFHolding2)
+			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolder, analysis.LETFHoldees)
 			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, stocksMap)
 			if err != nil {
 				return b, err

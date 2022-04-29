@@ -28,7 +28,7 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 		return "", err
 	}
 
-	fileName := fmt.Sprintf("%s_%s.csv", analysis.LETFHolding1, analysis.LETFHolding2)
+	fileName := fmt.Sprintf("%s_%s.csv", analysis.LETFHolder, analysis.LETFHoldees)
 	fileAddr := fmt.Sprintf("%s/%s", l.c.RootDir, fileName)
 	csvFile, err := os.Create(fileAddr)
 	defer func(csvFile *os.File) {
@@ -41,7 +41,8 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 	csvWriter := csv.NewWriter(csvFile)
 	defer csvWriter.Flush()
 	// Heading
-	err = csvWriter.Write([]string{"Stock Ticker", string(analysis.LETFHolding1), string(analysis.LETFHolding2), "Minimum"})
+	err = csvWriter.Write([]string{"Stock Ticker", string(analysis.LETFHolder), string(analysis.LETFHoldees[0]), "Minimum"})
+	//TODO: Fix the zero index assumption made above
 	if err != nil {
 		return "", err
 	}
@@ -53,8 +54,9 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 	)
 
 	for _, overlap := range analysis.DetailedOverlap {
-		lPercent := overlap.IndividualPercentagesMap[analysis.LETFHolding1]
-		rPercent := overlap.IndividualPercentagesMap[analysis.LETFHolding2]
+		lPercent := overlap.IndividualPercentagesMap[analysis.LETFHolder]
+		rPercent := overlap.IndividualPercentagesMap[analysis.LETFHoldees[0]]
+		//TODO: Fix the zero index assumption made above
 		err = csvWriter.Write([]string{string(overlap.Ticker), floatToString(lPercent), floatToString(rPercent), floatToString(overlap.Percentage)})
 		if err != nil {
 			return "", err

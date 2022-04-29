@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ .Analysis.LETFHolding1 }} overlap with {{ .Analysis.LETFHolding2 }}</title>
+    <title>{{ .Analysis.LETFHolder }} overlap with {{$equipment := .Analysis.LETFHoldees}}{{ range $index, $element :=
+        .Analysis.LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}</title>
     <style>
         * {
             font-family: Arial, Helvetica, sans-serif;
@@ -78,14 +79,18 @@
 </head>
 <body>
 <h1>
-    Overlap between {{ .Analysis.LETFHolding1 }} overlap with {{ .Analysis.LETFHolding2 }}
+    Overlap between {{ .Analysis.LETFHolder }} overlap with [{{$equipment := .Analysis.LETFHoldees}}{{ range $index,
+    $element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
 </h1>
 <table>
     <tr>
         <th>Holding Stock Name</th>
         <th>Ticker</th>
-        <th>Percentage Exposure in {{ .Analysis.LETFHolding1 }}</th>
-        <th>Percentage Exposure in {{ .Analysis.LETFHolding2 }}</th>
+        <th>Percentage Exposure in {{ .Analysis.LETFHolder }}</th>
+        {{ range .Analysis.LETFHoldees }}
+        <th>Percentage Exposure in {{ . }}</th>
+        {{ end }}
+        <th></th>
         <th>Minimum Percentage Overlap</th>
     </tr>
     {{ with .Analysis.DetailedOverlap }}
@@ -93,8 +98,11 @@
     <tr>
         <td>{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</td>
         <td>{{ .Ticker }}</td>
-        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding1}}</td>
-        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolding2}}</td>
+        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
+        {{ $individualPercentagesMap := .IndividualPercentagesMap }}
+        {{ range $.Analysis.LETFHoldees }}
+        <td>{{index $individualPercentagesMap .}}</td>
+        {{ end }}
         <td>{{ .Percentage }}</td>
     </tr>
     {{ end }}

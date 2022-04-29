@@ -57,11 +57,11 @@ func MapLETFAnalysisWithAccountTicker(analysis []models.LETFOverlapAnalysis) map
 	analysisMap := map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	for _, overlapAnalysis := range analysis {
 		var arr []models.LETFOverlapAnalysis
-		if elem, ok := analysisMap[overlapAnalysis.LETFHolding1]; ok {
+		if elem, ok := analysisMap[overlapAnalysis.LETFHolder]; ok {
 			arr = elem
 		}
 		arr = append(arr, overlapAnalysis)
-		analysisMap[overlapAnalysis.LETFHolding1] = arr
+		analysisMap[overlapAnalysis.LETFHolder] = arr
 	}
 	return analysisMap
 }

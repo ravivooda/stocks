@@ -64,8 +64,8 @@ func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) mode
 		})
 	}
 	return models.LETFOverlapAnalysis{
-		LETFHolding1:      l[0].LETFAccountTicker,
-		LETFHolding2:      r[0].LETFAccountTicker,
+		LETFHolder:        l[0].LETFAccountTicker,
+		LETFHoldees:       []models.LETFAccountTicker{r[0].LETFAccountTicker},
 		OverlapPercentage: utils.RoundedPercentage(totalOverlapPercentage),
 		DetailedOverlap:   details,
 	}
