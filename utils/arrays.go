@@ -30,3 +30,11 @@ func SumHoldings(holdings []models.LETFHolding) float64 {
 	}
 	return totalPercent
 }
+
+func JoinLETFAccountTicker(input []models.LETFAccountTicker, separator string) string {
+	var rets []string
+	for _, ticker := range input {
+		rets = append(rets, string(ticker))
+	}
+	return strings.Join(rets, separator)
+}

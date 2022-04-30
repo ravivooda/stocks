@@ -28,7 +28,7 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 		return "", err
 	}
 
-	fileName := fmt.Sprintf("%s_%s.csv", analysis.LETFHolder, analysis.LETFHoldees)
+	fileName := fmt.Sprintf("%s_%s.csv", analysis.LETFHolder, utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
 	fileAddr := fmt.Sprintf("%s/%s", l.c.RootDir, fileName)
 	csvFile, err := os.Create(fileAddr)
 	defer func(csvFile *os.File) {
@@ -50,28 +50,46 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 	// Write detailed
 	var (
 		lsum = float64(0)
-		rsum = float64(0)
+		rsum = map[int]float64{}
 	)
 
 	for _, overlap := range analysis.DetailedOverlap {
 		lPercent := overlap.IndividualPercentagesMap[analysis.LETFHolder]
-		rPercent := overlap.IndividualPercentagesMap[analysis.LETFHoldees[0]]
 		//TODO: Fix the zero index assumption made above
-		err = csvWriter.Write([]string{string(overlap.Ticker), floatToString(lPercent), floatToString(rPercent), floatToString(overlap.Percentage)})
+
+		columnsToWrite := []string{string(overlap.Ticker), floatToString(lPercent)}
+		for i, holdee := range analysis.LETFHoldees {
+			rPercent := overlap.IndividualPercentagesMap[holdee]
+			rPercentStrings := floatToString(rPercent)
+			columnsToWrite = append(columnsToWrite, rPercentStrings)
+			rsum[i] = rsum[i] + rPercent
+		}
+		columnsToWrite = append(columnsToWrite, floatToString(overlap.Percentage))
+		err = csvWriter.Write(columnsToWrite)
 		if err != nil {
 			return "", err
 		}
 		lsum += lPercent
-		rsum += rPercent
 	}
 
 	// Last summation row
-	err = csvWriter.Write([]string{"", floatToString(lsum), floatToString(rsum), floatToString(analysis.OverlapPercentage)})
+	lastSummationRow := []string{"", floatToString(lsum)}
+	lastSummationRow = append(lastSummationRow, orderExactly(rsum)...)
+	lastSummationRow = append(lastSummationRow, floatToString(analysis.OverlapPercentage))
+	err = csvWriter.Write(lastSummationRow)
 	if err != nil {
 		return "", err
 	}
 
 	return FileName(fileName), nil
+}
+
+func orderExactly(input map[int]float64) []string {
+	var rets []string
+	for i := 0; i < len(input); i++ {
+		rets = append(rets, floatToString(input[i]))
+	}
+	return rets
 }
 
 func floatToString(input float64) string {

@@ -123,17 +123,17 @@
     <tr>
         <td>
             {{ range .LETFHoldees }}
-            <span id="overlap_holdees_provider">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
+            <span class="overlap_holdees_provider">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
             {{ end }}
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span id="overlap_description_span"><a href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+            <span class="overlap_description_span"><a href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
             {{ end }}
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span id="overlap_ticker_span"><a href="{{ . }}.html">{{ . }}</a></span>
+            <span class="overlap_ticker_span"><a href="{{ . }}.html">{{ . }}</a></span>
             {{ end }}
         </td>
         <td>
