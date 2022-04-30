@@ -82,6 +82,9 @@
     Overlap between {{ .Analysis.LETFHolder }} overlap with [{{$equipment := .Analysis.LETFHoldees}}{{ range $index,
     $element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
 </h1>
+<h2>
+    Total Overlap Percentage: {{ .Analysis.OverlapPercentage }}
+</h2>
 <table>
     <tr>
         <th>Holding Stock Name</th>
@@ -90,7 +93,6 @@
         {{ range .Analysis.LETFHoldees }}
         <th>Percentage Exposure in {{ . }}</th>
         {{ end }}
-        <th></th>
         <th>Minimum Percentage Overlap</th>
     </tr>
     {{ with .Analysis.DetailedOverlap }}
