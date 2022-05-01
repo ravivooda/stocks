@@ -7,16 +7,20 @@ import (
 )
 
 type Generator interface {
-	Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) []models.LETFOverlapAnalysis
+	Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	MergeInsights(
+		analysis map[models.LETFAccountTicker][]models.LETFOverlapAnalysis,
+		letfHoldingsMap map[models.LETFAccountTicker][]models.LETFHolding,
+	) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
 }
 
 type generator struct {
 	c Config
 }
 
-func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) []models.LETFOverlapAnalysis {
+func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis {
 	if len(holdingsWithAccountTickerMap) <= 1 {
-		return []models.LETFOverlapAnalysis{}
+		return map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	}
 	var outputs []models.LETFOverlapAnalysis
 	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
@@ -29,7 +33,9 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 			}
 		}
 	}
-	return outputs
+
+	mappedOutputs := utils.MapLETFAnalysisWithAccountTicker(outputs)
+	return mappedOutputs
 }
 
 func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) models.LETFOverlapAnalysis {
@@ -90,7 +96,8 @@ func mapStockHoldings(h []models.LETFHolding) map[models.StockTicker]holdingRowM
 }
 
 type Config struct {
-	MinThreshold int
+	MinThreshold    int
+	MergedThreshold int
 }
 
 func NewOverlapGenerator(config Config) Generator {

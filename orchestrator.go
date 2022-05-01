@@ -67,21 +67,21 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		}
 	}
 
-	gatheredInsights, err := gatherInsights(ctx, request.insightGenerators, holdingsWithAccountTickerMap)
+	analysisMap, totalInsightsCount, err := gatherInsights(ctx, request.insightGenerators, holdingsWithAccountTickerMap)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Total insights count: %d\n", len(gatheredInsights))
+	fmt.Printf("Total insights count: %d\n", totalInsightsCount)
 
-	for _, insight := range gatheredInsights {
-		_, err := request.insightsLogger.Log(insight)
-		if err != nil {
-			return err
+	for _, analysis := range analysisMap {
+		for _, insight := range analysis {
+			_, err := request.insightsLogger.Log(insight)
+			if err != nil {
+				return err
+			}
 		}
-		//fmt.Printf("Logged %s\n", fileName)
 	}
 
-	analysisMap := utils.MapLETFAnalysisWithAccountTicker(gatheredInsights)
 	for _, generator := range request.websiteGenerators {
 		_, err := generator.Generate(ctx, analysisMap, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 		if err != nil {
@@ -92,12 +92,21 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 	return nil
 }
 
-func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings map[models.LETFAccountTicker][]models.LETFHolding) ([]models.LETFOverlapAnalysis, error) {
-	var gatheredInsights []models.LETFOverlapAnalysis
+func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings map[models.LETFAccountTicker][]models.LETFHolding) (map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, int, error) {
+	var mapGatheredInsights = map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
+	var totalGatheredInsights = 0
 	for _, generator := range generators {
-		gatheredInsights = append(gatheredInsights, generator.Generate(letfHoldings)...)
+		overlapAnalyses := generator.Generate(letfHoldings)
+		mergedAnalyses := generator.MergeInsights(overlapAnalyses, letfHoldings)
+		for ticker, analyses := range mergedAnalyses {
+			overlapAnalyses[ticker] = append(overlapAnalyses[ticker], analyses...)
+		}
+		for ticker, analyses := range overlapAnalyses {
+			mapGatheredInsights[ticker] = append(mapGatheredInsights[ticker], analyses...)
+			totalGatheredInsights += len(analyses)
+		}
 	}
-	return gatheredInsights, nil
+	return mapGatheredInsights, totalGatheredInsights, nil
 }
 
 func gatherAlerts(
@@ -190,7 +199,7 @@ func main() {
 		},
 		parsers:           alertParsers,
 		notifier:          notifier,
-		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(overlap.Config{MinThreshold: config.Outputs.Insights.MinThresholdPercentage})},
+		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(overlap.Config{MinThreshold: config.Outputs.Insights.MinThresholdPercentage, MergedThreshold: 70})}, //TODO: Read MergedThreshold from config.yaml instead
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
 		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})},
 	})
