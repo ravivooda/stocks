@@ -32,7 +32,8 @@ type Config struct {
 	Secrets Secrets
 	Outputs struct {
 		Insights struct {
-			MinThresholdPercentage int `mapstructure:"min_threshold_percentage"`
+			MinThresholdPercentage       int `mapstructure:"min_threshold_percentage"`
+			MinMergedThresholdPercentage int `mapstructure:"min_merged_threshold_percentage"`
 		}
 		Websites struct {
 			MinThresholdPercentage int `mapstructure:"min_threshold_percentage"`

@@ -199,7 +199,7 @@ func main() {
 		},
 		parsers:           alertParsers,
 		notifier:          notifier,
-		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(overlap.Config{MinThreshold: config.Outputs.Insights.MinThresholdPercentage, MergedThreshold: 70})}, //TODO: Read MergedThreshold from config.yaml instead
+		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(overlap.Config{MinThreshold: config.Outputs.Insights.MinThresholdPercentage, MergedThreshold: config.Outputs.Insights.MinMergedThresholdPercentage})},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
 		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})},
 	})

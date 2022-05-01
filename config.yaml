@@ -25,5 +25,6 @@ securities:
 outputs:
   insights:
     min_threshold_percentage: 0
+    min_merged_threshold_percentage: 70
   websites:
     min_threshold_percentage: 10
