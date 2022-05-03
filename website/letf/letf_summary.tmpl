@@ -120,8 +120,8 @@
     {{ with .Holdings }}
     {{ range . }}
     <tr>
-        <td>{{ .StockDescription }}</td>
-        <td>{{ .StockTicker }}</td>
+        <td><span class="rounded_border">{{ .StockDescription }}</span></td>
+        <td><span class="rounded_border">{{ .StockTicker }}</span></td>
         <td>N/A</td>
         <td>{{ .PercentContained }}</td>
     </tr>
