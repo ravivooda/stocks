@@ -76,6 +76,9 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 }
 
 func (g *generator) logOverlapToHTML(overlapTemplateLoc string, overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
+	sort.Slice(analysis.DetailedOverlap, func(i, j int) bool {
+		return analysis.DetailedOverlap[i].Percentage > analysis.DetailedOverlap[j].Percentage
+	})
 	var data = struct {
 		Analysis  models.LETFOverlapAnalysis
 		StocksMap map[models.StockTicker][]models.LETFHolding

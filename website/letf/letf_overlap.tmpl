@@ -98,8 +98,8 @@
 </head>
 <body>
 <h1>
-    Overlap between {{ .Analysis.LETFHolder }} overlap with [{{$equipment := .Analysis.LETFHoldees}}{{ range $index,
-    $element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
+    Overlap between {{ .Analysis.LETFHolder }} overlap with
+    [{{ range $index,$element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
 </h1>
 <h2>
     Total Overlap Percentage: {{ .Analysis.OverlapPercentage }}
