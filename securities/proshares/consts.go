@@ -24,7 +24,9 @@ var (
 		"URTY": true,
 		"GLL":  true,
 		"BOIL": true,
-		//TODO: Short ETFs are ignored, but should be handled differently
+	}
+	knowinglyIgnoredIssues = map[models.LETFAccountTicker]bool{
+		// TODO: Short ETFs are ignored, but should be handled differently
 		"EWV":  true,
 		"AGQ":  true,
 		"BIS":  true,
@@ -104,5 +106,7 @@ var (
 		"YXI":  true,
 		"ZBIO": true,
 		"ZSL":  true,
+		// TODO: interim issues with csvs
+		"ALTS": true,
 	}
 )

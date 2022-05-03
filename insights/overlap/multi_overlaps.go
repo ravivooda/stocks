@@ -22,6 +22,7 @@ func (g *generator) MergeInsights(
 			}
 			holdings, mappedPercentageHoldings := utils.MergeHoldings(combinedPercentageMatrices...)
 			overlapAnalysis := g.compare(targetedPercentageMatrix, holdings)
+			// TODO: Improvement should have minimum threshold as well
 			if int(overlapAnalysis.OverlapPercentage) >= g.c.MergedThreshold {
 				var computedOverlaps []models.LETFOverlap
 				for _, overlap := range overlapAnalysis.DetailedOverlap {
