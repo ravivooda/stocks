@@ -96,8 +96,9 @@ func mapStockHoldings(h []models.LETFHolding) map[models.StockTicker]holdingRowM
 }
 
 type Config struct {
-	MinThreshold    int
-	MergedThreshold int
+	MinThreshold              int `mapstructure:"min_threshold_percentage"`
+	MergedThreshold           int `mapstructure:"min_merged_threshold_percentage"`
+	MinimumIncrementThreshold int `mapstructure:"min_merged_improvement_threshold_percentage"`
 }
 
 func NewOverlapGenerator(config Config) Generator {

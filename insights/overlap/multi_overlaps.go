@@ -1,6 +1,7 @@
 package overlap
 
 import (
+	"math"
 	"stocks/models"
 	"stocks/utils"
 )
@@ -15,15 +16,16 @@ func (g *generator) MergeInsights(
 			var targetedPercentageMatrix = letfHoldingsMap[ticker]
 			var combinedPercentageMatrices [][]models.LETFHolding
 			var holdees []models.LETFAccountTicker
+			var maxPercentage = float64(0)
 			for _, c := range combination {
 				accountTicker := c.LETFHoldees[0]
 				combinedPercentageMatrices = append(combinedPercentageMatrices, letfHoldingsMap[accountTicker])
 				holdees = append(holdees, accountTicker)
+				maxPercentage = math.Max(c.OverlapPercentage, maxPercentage)
 			}
 			holdings, mappedPercentageHoldings := utils.MergeHoldings(combinedPercentageMatrices...)
 			overlapAnalysis := g.compare(targetedPercentageMatrix, holdings)
-			// TODO: Improvement should have minimum threshold as well
-			if int(overlapAnalysis.OverlapPercentage) >= g.c.MergedThreshold {
+			if z := int(overlapAnalysis.OverlapPercentage); z >= g.c.MergedThreshold && z-int(maxPercentage) >= g.c.MinimumIncrementThreshold {
 				var computedOverlaps []models.LETFOverlap
 				for _, overlap := range overlapAnalysis.DetailedOverlap {
 					overlap.IndividualPercentagesMap = mappedPercentageHoldings[overlap.Ticker]

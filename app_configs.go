@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/spf13/viper"
 	"stocks/alerts/movers/morning_star"
+	"stocks/insights/overlap"
 	"stocks/securities/proshares"
 )
 
@@ -31,10 +32,7 @@ type Config struct {
 	} `mapstructure:"securities"`
 	Secrets Secrets
 	Outputs struct {
-		Insights struct {
-			MinThresholdPercentage       int `mapstructure:"min_threshold_percentage"`
-			MinMergedThresholdPercentage int `mapstructure:"min_merged_threshold_percentage"`
-		}
+		Insights overlap.Config
 		Websites struct {
 			MinThresholdPercentage int `mapstructure:"min_threshold_percentage"`
 		}

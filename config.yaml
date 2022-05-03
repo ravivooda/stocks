@@ -26,5 +26,6 @@ outputs:
   insights:
     min_threshold_percentage: 0
     min_merged_threshold_percentage: 70
+    min_merged_improvement_threshold_percentage: 3
   websites:
     min_threshold_percentage: 10
