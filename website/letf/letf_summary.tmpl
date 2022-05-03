@@ -61,20 +61,38 @@
 
         a:link {
             text-decoration: none;
+            color: inherit;
         }
 
         a:visited {
             text-decoration: none;
+            color: inherit;
         }
 
         a:hover {
             text-decoration: none;
+            color: inherit;
         }
 
         a:active {
             text-decoration: none;
+            color: inherit;
         }
 
+        .rounded_border {
+            padding: 2px 2px;
+            margin: 2px 5px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            border-radius: 3px;
+            /*display: block;*/
+            border: 1px solid #4f4f4f;
+        }
+
+        .letf_ticker {
+            color: #166f9e;
+            background-color: #bcbcbc;
+        }
     </style>
 </head>
 <body>
@@ -123,22 +141,24 @@
     <tr>
         <td>
             {{ range .LETFHoldees }}
-            <span class="overlap_holdees_provider">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
+            <span class="rounded_border">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
             {{ end }}
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span class="overlap_description_span"><a href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+            <span class="rounded_border"><a
+                    href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
             {{ end }}
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span class="overlap_ticker_span"><a href="{{ . }}.html">{{ . }}</a></span>
+            <span class="rounded_border letf_ticker"><a href="{{ . }}.html">{{ . }}</a></span>
             {{ end }}
         </td>
         <td>
             <a href="overlap/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
-                .OverlapPercentage }}</a></td>
+                .OverlapPercentage }}<span>&#8594;</span></a>
+        </td>
     </tr>
     {{ end }}
     {{ end }}

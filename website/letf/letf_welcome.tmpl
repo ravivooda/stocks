@@ -46,19 +46,6 @@
             color: white;
         }
 
-        /*TODO: Align the css better*/
-        .letf_ticker {
-            padding: 2px 2px;
-            margin: 2px 5px;
-            border: 1px solid;
-            background-repeat: no-repeat;
-            background-position: 10px center;
-            border-radius: 3px;
-            /*display: block;*/
-            color: #8bd3fa;
-            background-color: #bcbcbc;
-        }
-
         #bottom {
             background-color: #04AA6D;
             padding: 50px;
@@ -75,18 +62,37 @@
 
         a:link {
             text-decoration: none;
+            color: inherit;
         }
 
         a:visited {
             text-decoration: none;
+            color: inherit;
         }
 
         a:hover {
             text-decoration: none;
+            color: inherit;
         }
 
         a:active {
             text-decoration: none;
+            color: inherit;
+        }
+
+        .rounded_border {
+            padding: 2px 2px;
+            margin: 2px 5px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            border-radius: 3px;
+            /*display: block;*/
+            border: 1px solid #4f4f4f;
+        }
+
+        .letf_ticker {
+            color: #166f9e;
+            background-color: #bcbcbc;
         }
     </style>
 </head>
@@ -109,7 +115,7 @@
         <td>{{len $value }}</td>
         <td>
             {{ range $ticker, $value := . }}
-            <span class="letf_ticker"><a href="summary/{{ $ticker }}.html">{{ $ticker }}</a></span>
+            <span class="letf_ticker rounded_border"><a href="summary/{{ $ticker }}.html">{{ $ticker }}</a></span>
             {{ end }}
         </td>
     </tr>

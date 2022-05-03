@@ -62,18 +62,37 @@
 
         a:link {
             text-decoration: none;
+            color: inherit;
         }
 
         a:visited {
             text-decoration: none;
+            color: inherit;
         }
 
         a:hover {
             text-decoration: none;
+            color: inherit;
         }
 
         a:active {
             text-decoration: none;
+            color: inherit;
+        }
+
+        .rounded_border {
+            padding: 2px 2px;
+            margin: 2px 5px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            border-radius: 3px;
+            /*display: block;*/
+            border: 1px solid #4f4f4f;
+        }
+
+        .letf_ticker {
+            color: #166f9e;
+            background-color: #bcbcbc;
         }
     </style>
 </head>
@@ -98,8 +117,8 @@
     {{ with .Analysis.DetailedOverlap }}
     {{ range . }}
     <tr>
-        <td>{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</td>
-        <td>{{ .Ticker }}</td>
+        <td><span class="rounded_border">{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</span></td>
+        <td><span class="rounded_border letf_ticker"><a href="{{ .Ticker }}.html">{{ .Ticker }}</a></span></td>
         <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
         {{ $individualPercentagesMap := .IndividualPercentagesMap }}
         {{ range $.Analysis.LETFHoldees }}
