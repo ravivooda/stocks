@@ -146,17 +146,17 @@
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span class="rounded_border"><a
-                    href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+                <span class="rounded_border"><a
+                            href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
             {{ end }}
         </td>
         <td>
             {{ range .LETFHoldees }}
-            <span class="rounded_border letf_ticker"><a href="{{ . }}.html">{{ . }}</a></span>
+                <span class="rounded_border letf_ticker"><a href="{{ $.WebsitePaths.Summary }}/{{ . }}.html">{{ . }}</a></span>
             {{ end }}
         </td>
         <td>
-            <a href="overlap/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+            <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
                 .OverlapPercentage }}<span>&#8594;</span></a>
         </td>
     </tr>

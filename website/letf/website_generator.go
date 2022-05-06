@@ -23,15 +23,30 @@ type generator struct {
 	config Config
 }
 
+type WebsitePaths struct {
+	Summary  string
+	Overlaps string
+}
+
 const (
 	summaryTemplateLoc = "website/letf/letf_summary.tmpl"
 	overlapTemplateLoc = "website/letf/letf_overlap.tmpl"
 	welcomeTemplateLoc = "website/letf/letf_welcome.tmpl"
 )
 
+var (
+	summariesPathFromRoot = "/summary"
+	overlapsPathFromRoot  = fmt.Sprintf("%s/overlap", summariesPathFromRoot)
+
+	websitePaths = WebsitePaths{
+		Summary:  summariesPathFromRoot,
+		Overlaps: overlapsPathFromRoot,
+	}
+)
+
 func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error) {
-	summariesFileRoot := fmt.Sprintf("%s/summary", g.config.WebsiteDirectoryRoot)
-	overlapsFileRoot := fmt.Sprintf("%s/overlap", summariesFileRoot)
+	summariesFileRoot := g.getFilePath(summariesPathFromRoot)
+	overlapsFileRoot := g.getFilePath(overlapsPathFromRoot)
 	b, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
 	if err != nil {
 		return b, err
@@ -75,16 +90,22 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 	return true, nil
 }
 
+func (g *generator) getFilePath(pathFromRoot string) string {
+	return fmt.Sprintf("%s%s", g.config.WebsiteDirectoryRoot, pathFromRoot)
+}
+
 func (g *generator) logOverlapToHTML(overlapTemplateLoc string, overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
 	sort.Slice(analysis.DetailedOverlap, func(i, j int) bool {
 		return analysis.DetailedOverlap[i].Percentage > analysis.DetailedOverlap[j].Percentage
 	})
 	var data = struct {
-		Analysis  models.LETFOverlapAnalysis
-		StocksMap map[models.StockTicker][]models.LETFHolding
+		Analysis     models.LETFOverlapAnalysis
+		StocksMap    map[models.StockTicker][]models.LETFHolding
+		WebsitePaths WebsitePaths
 	}{
-		Analysis:  analysis,
-		StocksMap: letfs,
+		Analysis:     analysis,
+		StocksMap:    letfs,
+		WebsitePaths: websitePaths,
 	}
 	return g.logHTMLWithData(overlapTemplateLoc, overlapOutputFilePath, data)
 }
@@ -95,11 +116,13 @@ func (g *generator) logSummaryToHTML(summaryTemplateLoc string, outputFilePath s
 		Holdings      []models.LETFHolding
 		Overlaps      []models.LETFOverlapAnalysis
 		AccountsMap   map[models.LETFAccountTicker][]models.LETFHolding
+		WebsitePaths  WebsitePaths
 	}{
 		AccountTicker: accountTicker,
 		Holdings:      letfHoldings,
 		Overlaps:      allAnalysis,
 		AccountsMap:   letfs,
+		WebsitePaths:  websitePaths,
 	}
 	return g.logHTMLWithData(summaryTemplateLoc, outputFilePath, data)
 }
@@ -118,10 +141,12 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 		TotalProvider int
 		TotalSeeds    int
 		Providers     map[string]map[models.LETFAccountTicker]bool
+		WebsitePaths  WebsitePaths
 	}{
 		TotalProvider: len(mapped),
 		TotalSeeds:    len(letfs),
 		Providers:     mapped,
+		WebsitePaths:  websitePaths,
 	}
 	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)
 }

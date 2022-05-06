@@ -115,7 +115,8 @@
         <td>{{len $value }}</td>
         <td>
             {{ range $ticker, $value := . }}
-            <span class="letf_ticker rounded_border"><a href="summary/{{ $ticker }}.html">{{ $ticker }}</a></span>
+                <span class="letf_ticker rounded_border"><a
+                            href="{{ $.WebsitePaths.Summary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
             {{ end }}
         </td>
     </tr>

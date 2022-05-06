@@ -116,16 +116,18 @@
     </tr>
     {{ with .Analysis.DetailedOverlap }}
     {{ range . }}
-    <tr>
-        <td><span class="rounded_border">{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</span></td>
-        <td><span class="rounded_border letf_ticker"><a href="{{ .Ticker }}.html">{{ .Ticker }}</a></span></td>
-        <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
-        {{ $individualPercentagesMap := .IndividualPercentagesMap }}
-        {{ range $.Analysis.LETFHoldees }}
-        <td>{{index $individualPercentagesMap .}}</td>
-        {{ end }}
-        <td>{{ .Percentage }}</td>
-    </tr>
+        <tr>
+            <td><span class="rounded_border">{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</span></td>
+            {{/* TODO: Fix the relative path below */}}
+            <td><span class="rounded_border letf_ticker"><a
+                            href="{{ $.WebsitePaths.Summary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span></td>
+            <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
+            {{ $individualPercentagesMap := .IndividualPercentagesMap }}
+            {{ range $.Analysis.LETFHoldees }}
+                <td>{{index $individualPercentagesMap .}}</td>
+            {{ end }}
+            <td>{{ .Percentage }}</td>
+        </tr>
     {{ end }}
     {{ end }}
 </table>
