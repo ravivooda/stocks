@@ -119,7 +119,7 @@
         <tr>
             <td><span class="rounded_border">{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</span></td>
             <td><span class="rounded_border letf_ticker"><a
-                            href="{{ $.WebsitePaths.LETFSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span></td>
+                            href="{{ $.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span></td>
             <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
             {{ $individualPercentagesMap := .IndividualPercentagesMap }}
             {{ range $.Analysis.LETFHoldees }}

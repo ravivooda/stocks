@@ -8,6 +8,7 @@ import (
 	"sort"
 	"stocks/models"
 	"stocks/utils"
+	"strings"
 )
 
 type Config struct {
@@ -36,9 +37,10 @@ type WebsitePaths struct {
 }
 
 const (
-	letfSummaryTemplateLoc = "website/letf/letf_summary.tmpl"
-	overlapTemplateLoc     = "website/letf/letf_overlap.tmpl"
-	welcomeTemplateLoc     = "website/letf/letf_welcome.tmpl"
+	letfSummaryTemplateLoc  = "website/letf/letf_summary.tmpl"
+	overlapTemplateLoc      = "website/letf/letf_overlap.tmpl"
+	welcomeTemplateLoc      = "website/letf/letf_welcome.tmpl"
+	stockSummaryTemplateLoc = "website/letf/stock_summary.tmpl"
 )
 
 var (
@@ -62,14 +64,23 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 		return b, err
 	}
 
-	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/index.html", g.config.WebsiteDirectoryRoot), request.Letfs)
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/index.html", g.config.WebsiteDirectoryRoot), request)
 	if err != nil {
 		return b, err
 	}
 
-	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), request.Letfs)
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), request)
 	if err != nil {
 		return b, err
+	}
+
+	for ticker, holdings := range request.StocksMap {
+		escapedTickerString := EscapeString(string(ticker))
+		stockSummaryFilePath := fmt.Sprintf("%s/%s.html", stockSummariesFileRoot, escapedTickerString)
+		_, err = g.logStockSummaryPageToHTML(stockSummaryTemplateLoc, stockSummaryFilePath, escapedTickerString, holdings)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	for LETFTicker, holdings := range request.Letfs {
@@ -98,6 +109,10 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func EscapeString(s string) string {
+	return strings.ReplaceAll(s, "/", "_")
 }
 
 func (g *generator) getFilePath(pathFromRoot string) string {
@@ -137,9 +152,9 @@ func (g *generator) logSummaryToHTML(summaryTemplateLoc string, outputFilePath s
 	return g.logHTMLWithData(summaryTemplateLoc, outputFilePath, data)
 }
 
-func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath string, letfs map[models.LETFAccountTicker][]models.LETFHolding) (bool, error) {
+func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath string, request Request) (bool, error) {
 	var mapped = map[string]map[models.LETFAccountTicker]bool{}
-	for ticker, holdings := range letfs {
+	for ticker, holdings := range request.Letfs {
 		providerMap := mapped[holdings[0].Provider]
 		if providerMap == nil {
 			providerMap = map[models.LETFAccountTicker]bool{}
@@ -151,14 +166,29 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 		TotalProvider int
 		TotalSeeds    int
 		Providers     map[string]map[models.LETFAccountTicker]bool
+		Stocks        map[models.StockTicker][]models.LETFHolding
 		WebsitePaths  WebsitePaths
 	}{
 		TotalProvider: len(mapped),
-		TotalSeeds:    len(letfs),
+		TotalSeeds:    len(request.Letfs),
 		Providers:     mapped,
+		Stocks:        request.StocksMap,
 		WebsitePaths:  websitePaths,
 	}
 	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)
+}
+
+func (g *generator) logStockSummaryPageToHTML(stockTemplateLoc string, outputFilePath string, ticker string, holdings []models.LETFHolding) (bool, error) {
+	data := struct {
+		Ticker       string
+		Holdings     []models.LETFHolding
+		WebsitePaths WebsitePaths
+	}{
+		Ticker:       ticker,
+		Holdings:     holdings,
+		WebsitePaths: websitePaths,
+	}
+	return g.logHTMLWithData(stockTemplateLoc, outputFilePath, data)
 }
 
 func (g *generator) logHTMLWithData(templateLoc string, outputFilePath string, data interface{}) (bool, error) {

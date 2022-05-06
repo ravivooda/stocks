@@ -119,12 +119,14 @@
     </tr>
     {{ with .Holdings }}
     {{ range . }}
-    <tr>
-        <td><span class="rounded_border">{{ .StockDescription }}</span></td>
-        <td><span class="rounded_border">{{ .StockTicker }}</span></td>
-        <td>N/A</td>
-        <td>{{ .PercentContained }}</td>
-    </tr>
+        <tr>
+            <td><span class="rounded_border">{{ .StockDescription }}</span></td>
+            <td><span class="rounded_border letf_ticker"><a
+                            href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+            </td>
+            <td>N/A</td>
+            <td>{{ .PercentContained }}</td>
+        </tr>
     {{ end }}
     {{ end }}
 </table>
