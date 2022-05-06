@@ -129,7 +129,9 @@ func retrieveAlerts(movers []models.MSHolding, holdingsMap map[models.StockTicke
 			retAlerts = append(retAlerts, alertHTML)
 		}
 	}
-	// TODO: Need to sort this additionally by either percentage movement today, or exposure
+	sort.Slice(retAlerts, func(i, j int) bool {
+		return retAlerts[i].PercentChange > retAlerts[j].PercentChange
+	})
 	return retAlerts, nil
 }
 
