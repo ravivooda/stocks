@@ -87,11 +87,11 @@ func parseMappedHoldings(mappedHoldings map[models.LETFAccountTicker][][]string)
 	var seeds []models.Seed
 	for rowTicker, groupedArray := range mappedHoldings {
 		if _, found := ignoreHoldings[rowTicker]; found {
-			//TODO: Holdings ignored because of problems in the csv from ProShares
+			// TODO: Holdings ignored because of problems in the csv from ProShares
 			continue
 		}
 		if _, found := knowinglyIgnoredIssues[rowTicker]; found {
-			//TODO: Holdings ignored because of problems in the csv from ProShares
+			// TODO: Holdings ignored because of problems in the csv from ProShares
 			continue
 		}
 		seeds = append(seeds, models.Seed{

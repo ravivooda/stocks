@@ -118,16 +118,16 @@
         <th>Percentage Exposure in {{ .AccountTicker }}</th>
     </tr>
     {{ with .Holdings }}
-    {{ range . }}
-        <tr>
-            <td><span class="rounded_border">{{ .StockDescription }}</span></td>
-            <td><span class="rounded_border letf_ticker"><a
-                            href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
-            </td>
-            <td>N/A</td>
-            <td>{{ .PercentContained }}</td>
-        </tr>
-    {{ end }}
+        {{ range . }}
+            <tr>
+                <td><span class="rounded_border">{{ .StockDescription }}</span></td>
+                <td><span class="rounded_border letf_ticker"><a
+                                href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+                </td>
+                <td>N/A</td>
+                <td>{{ .PercentContained }}</td>
+            </tr>
+        {{ end }}
     {{ end }}
 </table>
 <h2>Most Similar other LETFs</h2>
@@ -139,31 +139,31 @@
         <th>Percentage Overlap Today</th>
     </tr>
     {{ with .Overlaps }}
-    {{ range . }}
-    <tr>
-        <td>
-            {{ range .LETFHoldees }}
-            <span class="rounded_border">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
-            {{ end }}
-        </td>
-        <td>
-            {{ range .LETFHoldees }}
-                <span class="rounded_border"><a
-                            href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
-            {{ end }}
-        </td>
-        <td>
-            {{ range .LETFHoldees }}
-                <span class="rounded_border letf_ticker"><a
-                            href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
-            {{ end }}
-        </td>
-        <td>
-            <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
-                .OverlapPercentage }}<span>&#8594;</span></a>
-        </td>
-    </tr>
-    {{ end }}
+        {{ range . }}
+            <tr>
+                <td>
+                    {{ range .LETFHoldees }}
+                        <span class="rounded_border">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
+                    {{ end }}
+                </td>
+                <td>
+                    {{ range .LETFHoldees }}
+                        <span class="rounded_border"><a
+                                    href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+                    {{ end }}
+                </td>
+                <td>
+                    {{ range .LETFHoldees }}
+                        <span class="rounded_border letf_ticker"><a
+                                    href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
+                    {{ end }}
+                </td>
+                <td>
+                    <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+                        .OverlapPercentage }}<span>&#8594;</span></a>
+                </td>
+            </tr>
+        {{ end }}
     {{ end }}
 </table>
 <div id="bottom">

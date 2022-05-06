@@ -42,7 +42,7 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 	defer csvWriter.Flush()
 	// Heading
 	err = csvWriter.Write([]string{"Stock Ticker", string(analysis.LETFHolder), string(analysis.LETFHoldees[0]), "Minimum"})
-	//TODO: Fix the zero index assumption made above
+	// TODO: Fix the zero index assumption made above
 	if err != nil {
 		return "", err
 	}
@@ -55,7 +55,7 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 
 	for _, overlap := range analysis.DetailedOverlap {
 		lPercent := overlap.IndividualPercentagesMap[analysis.LETFHolder]
-		//TODO: Fix the zero index assumption made above
+		// TODO: Fix the zero index assumption made above
 
 		columnsToWrite := []string{string(overlap.Ticker), floatToString(lPercent)}
 		for i, holdee := range analysis.LETFHoldees {

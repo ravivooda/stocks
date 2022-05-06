@@ -15,7 +15,8 @@ func cleanAndMap(input string) string {
 	if aliasStockName, ok := knownAliases[trimmedInput]; ok {
 		trimmedInput = aliasStockName
 	}
-	return trimmedInput
+	// TODO: Handle / in ticker in a better way than the hack below
+	return strings.ReplaceAll(trimmedInput, "/", "_")
 }
 
 func FetchStockTicker(input string) models.StockTicker {

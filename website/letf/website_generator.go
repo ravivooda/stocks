@@ -8,7 +8,6 @@ import (
 	"sort"
 	"stocks/models"
 	"stocks/utils"
-	"strings"
 )
 
 type Config struct {
@@ -75,7 +74,7 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 	}
 
 	for ticker, holdings := range request.StocksMap {
-		escapedTickerString := EscapeString(string(ticker))
+		escapedTickerString := string(ticker)
 		stockSummaryFilePath := fmt.Sprintf("%s/%s.html", stockSummariesFileRoot, escapedTickerString)
 		_, err = g.logStockSummaryPageToHTML(stockSummaryTemplateLoc, stockSummaryFilePath, escapedTickerString, holdings)
 		if err != nil {
@@ -109,10 +108,6 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 	}
 
 	return true, nil
-}
-
-func EscapeString(s string) string {
-	return strings.ReplaceAll(s, "/", "_")
 }
 
 func (g *generator) getFilePath(pathFromRoot string) string {
@@ -162,17 +157,27 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 		providerMap[ticker] = true
 		mapped[holdings[0].Provider] = providerMap
 	}
+	var groupedStocks = map[string][]models.StockTicker{}
+	for ticker := range request.StocksMap {
+		s := string(ticker[0:1])
+		a := groupedStocks[s]
+		if a == nil {
+			a = []models.StockTicker{}
+		}
+		a = append(a, ticker)
+		groupedStocks[s] = a
+	}
 	var data = struct {
 		TotalProvider int
 		TotalSeeds    int
 		Providers     map[string]map[models.LETFAccountTicker]bool
-		Stocks        map[models.StockTicker][]models.LETFHolding
+		Stocks        map[string][]models.StockTicker
 		WebsitePaths  WebsitePaths
 	}{
 		TotalProvider: len(mapped),
 		TotalSeeds:    len(request.Letfs),
 		Providers:     mapped,
-		Stocks:        request.StocksMap,
+		Stocks:        groupedStocks,
 		WebsitePaths:  websitePaths,
 	}
 	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)

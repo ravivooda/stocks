@@ -9,8 +9,7 @@
         }
 
         table {
-            margin-left: auto;
-            margin-right: auto;
+            margin: 50px auto;
         }
 
         h1 {
@@ -93,7 +92,7 @@
         .letf_ticker {
             color: #166f9e;
             background-color: #bcbcbc;
-            line-height: 25px
+            line-height: 30px
         }
     </style>
 </head>
@@ -126,18 +125,22 @@
 </table>
 <table>
     <tr>
+        <th>Group</th>
         <th>Found Stocks</th>
     </tr>
-    <tr>
-        <td>
-            {{ with .Stocks }}
-                {{ range $ticker, $value := . }}
-                    <span class="rounded_border letf_ticker"><a
-                                href="{{ $.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
-                {{ end }}
-            {{ end }}
-        </td>
-    </tr>
+    {{ with .Stocks }}
+        {{ range $group, $value := . }}
+            <tr>
+                <td>{{ $group }}</td>
+                <td>
+                    {{ range $ticker := $value }}
+                        <span class="rounded_border letf_ticker"><a
+                                    href="{{ $.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
+                    {{ end }}
+                </td>
+            </tr>
+        {{ end }}
+    {{ end }}
 </table>
 <div id="bottom">
     <table id="bottom_table">
