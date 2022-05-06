@@ -15,8 +15,14 @@ type Config struct {
 	MinThreshold         int
 }
 
+type Request struct {
+	AnalysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	Letfs       map[models.LETFAccountTicker][]models.LETFHolding
+	StocksMap   map[models.StockTicker][]models.LETFHolding
+}
+
 type Generator interface {
-	Generate(ctx context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error)
+	Generate(ctx context.Context, request Request) (bool, error)
 }
 
 type generator struct {
@@ -24,53 +30,57 @@ type generator struct {
 }
 
 type WebsitePaths struct {
-	Summary  string
-	Overlaps string
+	LETFSummary  string
+	StockSummary string
+	Overlaps     string
 }
 
 const (
-	summaryTemplateLoc = "website/letf/letf_summary.tmpl"
-	overlapTemplateLoc = "website/letf/letf_overlap.tmpl"
-	welcomeTemplateLoc = "website/letf/letf_welcome.tmpl"
+	letfSummaryTemplateLoc = "website/letf/letf_summary.tmpl"
+	overlapTemplateLoc     = "website/letf/letf_overlap.tmpl"
+	welcomeTemplateLoc     = "website/letf/letf_welcome.tmpl"
 )
 
 var (
-	summariesPathFromRoot = "/summary"
-	overlapsPathFromRoot  = fmt.Sprintf("%s/overlap", summariesPathFromRoot)
+	letfSummariesPathFromRoot  = "/letf-summary"
+	stockSummariesPathFromRoot = "/stock-summary"
+	overlapsPathFromRoot       = fmt.Sprintf("%s/overlap", letfSummariesPathFromRoot)
 
 	websitePaths = WebsitePaths{
-		Summary:  summariesPathFromRoot,
-		Overlaps: overlapsPathFromRoot,
+		LETFSummary:  letfSummariesPathFromRoot,
+		Overlaps:     overlapsPathFromRoot,
+		StockSummary: stockSummariesPathFromRoot,
 	}
 )
 
-func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error) {
-	summariesFileRoot := g.getFilePath(summariesPathFromRoot)
+func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
+	letfSummariesFileRoot := g.getFilePath(letfSummariesPathFromRoot)
 	overlapsFileRoot := g.getFilePath(overlapsPathFromRoot)
-	b, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, summariesFileRoot, overlapsFileRoot})
+	stockSummariesFileRoot := g.getFilePath(stockSummariesPathFromRoot)
+	b, err := utils.MakeDirs([]string{g.config.WebsiteDirectoryRoot, letfSummariesFileRoot, overlapsFileRoot, stockSummariesFileRoot})
 	if err != nil {
 		return b, err
 	}
 
-	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/index.html", g.config.WebsiteDirectoryRoot), letfs)
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/index.html", g.config.WebsiteDirectoryRoot), request.Letfs)
 	if err != nil {
 		return b, err
 	}
 
-	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), letfs)
+	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), request.Letfs)
 	if err != nil {
 		return b, err
 	}
 
-	for LETFTicker, holdings := range letfs {
-		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", summariesFileRoot, LETFTicker)
-		allAnalysis := analysisMap[LETFTicker]
+	for LETFTicker, holdings := range request.Letfs {
+		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", letfSummariesFileRoot, LETFTicker)
+		allAnalysis := request.AnalysisMap[LETFTicker]
 		sort.Slice(allAnalysis, func(i, j int) bool {
 			return allAnalysis[i].OverlapPercentage > allAnalysis[j].OverlapPercentage
 		})
 
 		// Generate Summary for the ticker
-		if b, err := g.logSummaryToHTML(summaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis, letfs); err != nil {
+		if b, err := g.logSummaryToHTML(letfSummaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis, request.Letfs); err != nil {
 			return b, err
 		}
 
@@ -80,7 +90,7 @@ func (g *generator) Generate(_ context.Context, analysisMap map[models.LETFAccou
 
 			}
 			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolder, utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
-			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, stocksMap)
+			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, request.StocksMap)
 			if err != nil {
 				return b, err
 			}

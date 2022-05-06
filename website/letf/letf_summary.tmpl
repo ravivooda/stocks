@@ -152,7 +152,8 @@
         </td>
         <td>
             {{ range .LETFHoldees }}
-                <span class="rounded_border letf_ticker"><a href="{{ $.WebsitePaths.Summary }}/{{ . }}.html">{{ . }}</a></span>
+                <span class="rounded_border letf_ticker"><a
+                            href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
             {{ end }}
         </td>
         <td>

@@ -83,7 +83,11 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 	}
 
 	for _, generator := range request.websiteGenerators {
-		_, err := generator.Generate(ctx, analysisMap, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+		_, err := generator.Generate(ctx, letf.Request{
+			AnalysisMap: analysisMap,
+			Letfs:       holdingsWithAccountTickerMap,
+			StocksMap:   holdingsWithStockTickerMap,
+		})
 		if err != nil {
 			return err
 		}
