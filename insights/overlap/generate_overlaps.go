@@ -1,6 +1,7 @@
 package overlap
 
 import (
+	"fmt"
 	"math"
 	"stocks/models"
 	"stocks/utils"
@@ -23,13 +24,23 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 		return map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	}
 	var outputs []models.LETFOverlapAnalysis
+	var i = 0
+	var skipped = 0
 	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
 		for rkey, rLETFHoldings := range holdingsWithAccountTickerMap {
+			i += 1
 			if lkey != rkey {
+				if !utils.HasIntersection(lLETFHoldings, rLETFHoldings) {
+					skipped += 1
+					continue
+				}
 				overlapAnalysis := g.compare(lLETFHoldings, rLETFHoldings)
 				if int(overlapAnalysis.OverlapPercentage) > g.c.MinThreshold {
 					outputs = append(outputs, overlapAnalysis)
 				}
+			}
+			if i%1000 == 0 {
+				fmt.Printf("working on %d, skipped %d, out of %d\n", i, skipped, 2656899)
 			}
 		}
 	}
@@ -69,6 +80,8 @@ func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) mode
 			},
 		})
 	}
+	lmap = nil
+	rmap = nil
 	return models.LETFOverlapAnalysis{
 		LETFHolder:        l[0].LETFAccountTicker,
 		LETFHoldees:       []models.LETFAccountTicker{r[0].LETFAccountTicker},

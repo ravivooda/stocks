@@ -5,18 +5,12 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"reflect"
-	"stocks/database"
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
 	"strconv"
 	"strings"
 )
-
-type SeedProvider interface {
-	database.DB
-	securities.Client
-}
 
 type client struct {
 	seeds          []models.Seed
@@ -48,7 +42,7 @@ type Config struct {
 	ExpectedColumns []string `mapstructure:"expected_columns"`
 }
 
-func New(config Config) (SeedProvider, error) {
+func New(config Config) (securities.SeedProvider, error) {
 	csvFromUrl, err := utils.ReadCSVFromUrl(config.CSVURL, ',', -1)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Found error when parsing csv from url %v", config.CSVURL)

@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"sort"
 	"stocks/models"
 	"strings"
 )
@@ -107,4 +109,37 @@ func Combinations(set []models.LETFOverlapAnalysis, r int) (rt [][]models.LETFOv
 		copy(s2, result)
 		rt = append(rt, s2)
 	}
+}
+
+func FilteredForPrinting(holdings []models.LETFHolding) [][]string {
+	var filteredHoldings [][]string
+	for _, holding := range holdings {
+		filteredHoldings = append(filteredHoldings, []string{string(holding.StockTicker), fmt.Sprintf("%f", holding.PercentContained)})
+	}
+	sort.Slice(filteredHoldings, func(i, j int) bool {
+		return filteredHoldings[i][1] > filteredHoldings[j][1]
+	})
+	return filteredHoldings
+}
+
+func RetrieveStocks(input []models.LETFHolding) map[models.StockTicker]bool {
+	rets := map[models.StockTicker]bool{}
+	for _, holding := range input {
+		rets[holding.StockTicker] = true
+	}
+	return rets
+}
+
+func HasIntersection(l []models.LETFHolding, r []models.LETFHolding) bool {
+	var (
+		lmap = RetrieveStocks(l)
+		rmap = RetrieveStocks(r)
+	)
+	for ticker := range rmap {
+		if lmap[ticker] {
+			return true
+		}
+	}
+
+	return false
 }

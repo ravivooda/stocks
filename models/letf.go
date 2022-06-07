@@ -4,6 +4,7 @@ type LETFAccountTicker string
 type StockTicker string
 
 type LETFHolding struct {
+	//TODO: Rename this as Holding instead
 	TradeDate         string
 	LETFAccountTicker LETFAccountTicker
 	LETFDescription   string
@@ -11,6 +12,7 @@ type LETFHolding struct {
 	StockDescription  string
 	Shares            int64
 	Price             int64
+	NotionalValue     float64
 	MarketValue       int64
 	PercentContained  float64
 	Provider          string
