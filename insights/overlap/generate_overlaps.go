@@ -23,9 +23,12 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 	if len(holdingsWithAccountTickerMap) <= 1 {
 		return map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	}
-	var outputs []models.LETFOverlapAnalysis
-	var i = 0
-	var skipped = 0
+	var (
+		outputs  []models.LETFOverlapAnalysis
+		i        = 0
+		skipped  = 0
+		possible = len(holdingsWithAccountTickerMap) * len(holdingsWithAccountTickerMap)
+	)
 	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
 		for rkey, rLETFHoldings := range holdingsWithAccountTickerMap {
 			i += 1
@@ -40,7 +43,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 				}
 			}
 			if i%1000 == 0 {
-				fmt.Printf("working on %d, skipped %d, out of %d\n", i, skipped, 2656899)
+				fmt.Printf("working on %d, skipped %d, out of %d\n", i, skipped, possible)
 			}
 		}
 	}

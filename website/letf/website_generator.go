@@ -73,6 +73,7 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 		return b, err
 	}
 
+	var i = 0
 	for ticker, holdings := range request.StocksMap {
 		escapedTickerString := string(ticker)
 		stockSummaryFilePath := fmt.Sprintf("%s/%s.html", stockSummariesFileRoot, escapedTickerString)
@@ -80,8 +81,13 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		if i%1000 == 0 {
+			fmt.Printf("logged stock summary page %d out of %d\n", i, len(request.StocksMap))
+		}
+		i += 1
 	}
 
+	i = 0
 	for LETFTicker, holdings := range request.Letfs {
 		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", letfSummariesFileRoot, LETFTicker)
 		allAnalysis := request.AnalysisMap[LETFTicker]
@@ -96,8 +102,8 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 
 		// Generate Overlap details
 		for _, analysis := range allAnalysis {
-			if int(analysis.OverlapPercentage) >= g.config.MinThreshold {
-
+			if int(analysis.OverlapPercentage) < g.config.MinThreshold {
+				continue
 			}
 			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", overlapsFileRoot, analysis.LETFHolder, utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
 			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, request.StocksMap)
@@ -105,6 +111,10 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 				return b, err
 			}
 		}
+		if i%1000 == 0 {
+			fmt.Printf("logged letf summary and overlap page %d out of %d\n", i, len(request.Letfs))
+		}
+		i += 1
 	}
 
 	return true, nil
