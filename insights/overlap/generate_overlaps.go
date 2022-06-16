@@ -24,22 +24,47 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 		return map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	}
 	var (
-		outputs  []models.LETFOverlapAnalysis
 		i        = 0
 		skipped  = 0
 		possible = len(holdingsWithAccountTickerMap) * len(holdingsWithAccountTickerMap)
+		outputs  = make([]models.LETFOverlapAnalysis, 0, possible)
 	)
-	for lkey, lLETFHoldings := range holdingsWithAccountTickerMap {
-		for rkey, rLETFHoldings := range holdingsWithAccountTickerMap {
+	var visited = map[string]bool{}
+	for lkey := range holdingsWithAccountTickerMap {
+		for rkey := range holdingsWithAccountTickerMap {
 			i += 1
 			if lkey != rkey {
-				if !utils.HasIntersection(lLETFHoldings, rLETFHoldings) {
+				if visited[fmt.Sprintf("%s_%s", lkey, rkey)] {
 					skipped += 1
 					continue
 				}
-				overlapAnalysis := g.compare(lLETFHoldings, rLETFHoldings)
-				if int(overlapAnalysis.OverlapPercentage) > g.c.MinThreshold {
-					outputs = append(outputs, overlapAnalysis)
+				visited[fmt.Sprintf("%s_%s", lkey, rkey)] = true
+				visited[fmt.Sprintf("%s_%s", rkey, lkey)] = true
+				var (
+					lLETFHoldingsMap = utils.MapLETFHoldingsWithStockTicker(holdingsWithAccountTickerMap[lkey])
+					rLETFHoldingsMap = utils.MapLETFHoldingsWithStockTicker(holdingsWithAccountTickerMap[rkey])
+				)
+
+				if !utils.HasIntersection(lLETFHoldingsMap, rLETFHoldingsMap) {
+					skipped += 1
+					continue
+				}
+				totalOverlapPercentage, details := g.compare(lLETFHoldingsMap, rLETFHoldingsMap)
+				if int(totalOverlapPercentage) > g.c.MinThreshold {
+					outputs = append(outputs,
+						models.LETFOverlapAnalysis{
+							LETFHolder:        lkey,
+							LETFHoldees:       []models.LETFAccountTicker{rkey},
+							OverlapPercentage: totalOverlapPercentage,
+							DetailedOverlap:   &details,
+						},
+						models.LETFOverlapAnalysis{
+							LETFHolder:        rkey,
+							LETFHoldees:       []models.LETFAccountTicker{lkey},
+							OverlapPercentage: totalOverlapPercentage,
+							DetailedOverlap:   &details,
+						},
+					)
 				}
 			}
 			if i%1000 == 0 {
@@ -52,63 +77,50 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 	return mappedOutputs
 }
 
-func (g *generator) compare(l []models.LETFHolding, r []models.LETFHolding) models.LETFOverlapAnalysis {
-	lmap := mapStockHoldings(l)
-	rmap := mapStockHoldings(r)
+func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) (float64, []models.LETFOverlap) {
 	var totalOverlapPercentage float64 = 0
-	for lstock, lpercentageMap := range lmap {
-		if rpercentageMap, ok := rmap[lstock]; ok {
-			minPercentage := math.Min(lpercentageMap.rLetfPercentage, rpercentageMap.rLetfPercentage)
-			rmap[lstock] = holdingRowMap{
-				lLetfPercentage: lpercentageMap.rLetfPercentage,
-				rLetfPercentage: rpercentageMap.rLetfPercentage,
-				minPercentage:   minPercentage,
-			}
+	var details []models.LETFOverlap
+	var filledStocks = map[models.StockTicker]bool{}
+	for stockTicker, lHoldings := range l {
+		lHolding := lHoldings[0]
+		if rHoldings, ok := r[stockTicker]; ok {
+			rHolding := rHoldings[0]
+			minPercentage := math.Min(lHolding.PercentContained, rHolding.PercentContained)
 			totalOverlapPercentage += minPercentage
+			details = append(details, models.LETFOverlap{
+				Ticker:     stockTicker,
+				Percentage: utils.RoundedPercentage(minPercentage),
+				IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
+					lHolding.LETFAccountTicker: lHolding.PercentContained,
+					rHolding.LETFAccountTicker: rHolding.PercentContained,
+				},
+			})
+			filledStocks[stockTicker] = true
 		} else {
-			rmap[lstock] = holdingRowMap{
-				lLetfPercentage: lpercentageMap.rLetfPercentage,
-			}
+			details = append(details, models.LETFOverlap{
+				Ticker:     stockTicker,
+				Percentage: 0,
+				IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
+					lHolding.LETFAccountTicker: lHolding.PercentContained,
+				},
+			})
 		}
 	}
 
-	var details []models.LETFOverlap
-	for ticker, percentMap := range rmap {
+	for ticker, rHoldings := range r {
+		if filledStocks[ticker] {
+			continue
+		}
+		rHolding := rHoldings[0]
 		details = append(details, models.LETFOverlap{
 			Ticker:     ticker,
-			Percentage: utils.RoundedPercentage(percentMap.minPercentage),
+			Percentage: 0,
 			IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
-				l[0].LETFAccountTicker: percentMap.lLetfPercentage,
-				r[0].LETFAccountTicker: percentMap.rLetfPercentage,
+				rHolding.LETFAccountTicker: rHolding.PercentContained,
 			},
 		})
 	}
-	lmap = nil
-	rmap = nil
-	return models.LETFOverlapAnalysis{
-		LETFHolder:        l[0].LETFAccountTicker,
-		LETFHoldees:       []models.LETFAccountTicker{r[0].LETFAccountTicker},
-		OverlapPercentage: utils.RoundedPercentage(totalOverlapPercentage),
-		DetailedOverlap:   details,
-	}
-}
-
-type holdingRowMap struct {
-	lLetfPercentage float64
-	rLetfPercentage float64
-	minPercentage   float64
-}
-
-func mapStockHoldings(h []models.LETFHolding) map[models.StockTicker]holdingRowMap {
-	var rets = map[models.StockTicker]holdingRowMap{}
-	for _, holding := range h {
-		// TODO: Replace holdingRowMap hack
-		// We are hacking rLetfPercentage to get the minimum. This really is bad.
-		rets[holding.StockTicker] = holdingRowMap{
-			rLetfPercentage: holding.PercentContained,
-		}
-	}
-	return rets
+	return totalOverlapPercentage, details
 }
 
 type Config struct {

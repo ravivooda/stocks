@@ -125,9 +125,9 @@ func parse(record []string) models.LETFHolding {
 	}
 	return models.LETFHolding{
 		TradeDate:         record[7],
-		LETFAccountTicker: models.LETFAccountTicker(record[1]),
+		LETFAccountTicker: utils.FetchAccountTicker(record[1]),
 		LETFDescription:   record[2],
-		StockTicker:       models.StockTicker(record[3]),
+		StockTicker:       utils.FetchStockTicker(record[3]),
 		StockDescription:  record[4],
 		//TODO: Fill the following information from the csv
 		Shares:           int64(shares),

@@ -107,8 +107,8 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 	var i = 0
 	for _, analysis := range analysisMap {
 		for _, insight := range analysis {
-			if i%1000 == 0 {
-				fmt.Printf("logged %d out of %d", i, totalInsightsCount)
+			if i%10000 == 0 {
+				fmt.Printf("logged %d out of %d\n", i, totalInsightsCount)
 			}
 			i += 1
 			_, err := request.insightsLogger.Log(insight)

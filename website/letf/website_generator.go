@@ -81,7 +81,7 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		if i%1000 == 0 {
+		if i%10000 == 0 {
 			fmt.Printf("logged stock summary page %d out of %d\n", i, len(request.StocksMap))
 		}
 		i += 1
@@ -111,7 +111,7 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 				return b, err
 			}
 		}
-		if i%1000 == 0 {
+		if i%100 == 0 {
 			fmt.Printf("logged letf summary and overlap page %d out of %d\n", i, len(request.Letfs))
 		}
 		i += 1
@@ -124,12 +124,24 @@ func (g *generator) getFilePath(pathFromRoot string) string {
 	return fmt.Sprintf("%s%s", g.config.WebsiteDirectoryRoot, pathFromRoot)
 }
 
-func (g *generator) logOverlapToHTML(overlapTemplateLoc string, overlapOutputFilePath string, analysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
+func (g *generator) logOverlapToHTML(overlapTemplateLoc string, overlapOutputFilePath string, ptrAnalysis models.LETFOverlapAnalysis, letfs map[models.StockTicker][]models.LETFHolding) (bool, error) {
+	type UnPtrAnalysis struct {
+		LETFHolder        models.LETFAccountTicker
+		LETFHoldees       []models.LETFAccountTicker
+		OverlapPercentage float64
+		DetailedOverlap   []models.LETFOverlap `json:"detailed_overlap"`
+	}
+	analysis := UnPtrAnalysis{
+		LETFHolder:        ptrAnalysis.LETFHolder,
+		LETFHoldees:       ptrAnalysis.LETFHoldees,
+		OverlapPercentage: ptrAnalysis.OverlapPercentage,
+		DetailedOverlap:   *ptrAnalysis.DetailedOverlap,
+	}
 	sort.Slice(analysis.DetailedOverlap, func(i, j int) bool {
 		return analysis.DetailedOverlap[i].Percentage > analysis.DetailedOverlap[j].Percentage
 	})
 	var data = struct {
-		Analysis     models.LETFOverlapAnalysis
+		Analysis     UnPtrAnalysis
 		StocksMap    map[models.StockTicker][]models.LETFHolding
 		WebsitePaths WebsitePaths
 	}{
@@ -169,7 +181,10 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 	}
 	var groupedStocks = map[string][]models.StockTicker{}
 	for ticker := range request.StocksMap {
-		s := string(ticker[0:1])
+		s := "unknown"
+		if len(ticker) > 0 {
+			s = string(ticker[0:1])
+		}
 		a := groupedStocks[s]
 		if a == nil {
 			a = []models.StockTicker{}
@@ -208,6 +223,7 @@ func (g *generator) logStockSummaryPageToHTML(stockTemplateLoc string, outputFil
 
 func (g *generator) logHTMLWithData(templateLoc string, outputFilePath string, data interface{}) (bool, error) {
 	t := template.Must(template.ParseFiles(templateLoc))
+	//outputFilePath = strings.ReplaceAll(outputFilePath, "/", "_")
 	outputFile, err := os.Create(outputFilePath)
 	defer func(outputFile *os.File) {
 		_ = outputFile.Close()

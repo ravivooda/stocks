@@ -36,7 +36,7 @@ func (c *client) ListETFs(_ context.Context) ([]models.ETF, error) {
 	rows = rows[1:]
 	var rets []models.ETF
 	for _, row := range rows {
-		rets = append(rets, models.GenerateETFFromStrings(row))
+		rets = append(rets, utils.GenerateETFFromStrings(row))
 	}
 	return rets, nil
 }

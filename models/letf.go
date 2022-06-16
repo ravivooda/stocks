@@ -28,5 +28,5 @@ type LETFOverlapAnalysis struct {
 	LETFHolder        LETFAccountTicker
 	LETFHoldees       []LETFAccountTicker
 	OverlapPercentage float64
-	DetailedOverlap   []LETFOverlap `json:"detailed_overlap"`
+	DetailedOverlap   *[]LETFOverlap `json:"detailed_overlap"`
 }

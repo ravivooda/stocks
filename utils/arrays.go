@@ -122,21 +122,9 @@ func FilteredForPrinting(holdings []models.LETFHolding) [][]string {
 	return filteredHoldings
 }
 
-func RetrieveStocks(input []models.LETFHolding) map[models.StockTicker]bool {
-	rets := map[models.StockTicker]bool{}
-	for _, holding := range input {
-		rets[holding.StockTicker] = true
-	}
-	return rets
-}
-
-func HasIntersection(l []models.LETFHolding, r []models.LETFHolding) bool {
-	var (
-		lmap = RetrieveStocks(l)
-		rmap = RetrieveStocks(r)
-	)
-	for ticker := range rmap {
-		if lmap[ticker] {
+func HasIntersection(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) bool {
+	for ticker := range r {
+		if _, ok := l[ticker]; ok {
 			return true
 		}
 	}
