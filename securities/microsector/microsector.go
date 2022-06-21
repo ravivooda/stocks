@@ -16,7 +16,7 @@ import (
 type client struct {
 }
 
-func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
+func (c client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF) ([]models.LETFHolding, error) {
 	file, err := os.Open(fmt.Sprintf("securities/microsector/holdings/%s_Holdings.csv", seed.Ticker))
 	defer func(file *os.File) {
 		_ = file.Close()
@@ -37,7 +37,7 @@ func (c client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFH
 		rets = append(rets, models.LETFHolding{
 			TradeDate:         utils.TodayDate(),
 			LETFAccountTicker: utils.FetchAccountTicker(seed.Ticker),
-			LETFDescription:   "[Name TBD]",
+			LETFDescription:   etf.ETFName,
 			StockTicker:       utils.FetchStockTicker(row[1]),
 			StockDescription:  row[0],
 			Shares:            0,

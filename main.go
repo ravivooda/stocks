@@ -18,6 +18,7 @@ import (
 	"stocks/securities/masterdatareports"
 	"stocks/securities/microsector"
 	"stocks/securities/proshares"
+	"stocks/utils"
 	"stocks/website/letf"
 )
 
@@ -75,6 +76,7 @@ func main() {
 			models.ProShares:   proSharesClient,
 		},
 		backupClient: masterdatareportsClient,
+		etfsMaps:     utils.MappedLETFS(etfs),
 	})
 	if err != nil {
 		panic(err)
@@ -92,6 +94,7 @@ func main() {
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
 		websiteGenerators: []letf.Generator{generator},
+		etfsMaps:          utils.MappedLETFS(etfs),
 	}, totalHoldings)
 	if err != nil {
 		panic(err)

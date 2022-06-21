@@ -48,7 +48,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 						models.LETFOverlapAnalysis{
 							LETFHolder:        lkey,
 							LETFHoldees:       []models.LETFAccountTicker{rkey},
-							OverlapPercentage: totalOverlapPercentage,
+							OverlapPercentage: utils.RoundedPercentage(totalOverlapPercentage),
 							DetailedOverlap:   &details,
 						},
 					)

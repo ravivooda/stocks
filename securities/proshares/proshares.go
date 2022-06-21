@@ -21,7 +21,7 @@ func (c *client) ListSeeds(_ context.Context) ([]models.Seed, error) {
 	return c.seeds, nil
 }
 
-func (c *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
+func (c *client) GetHoldings(_ context.Context, seed models.Seed, _ models.ETF) ([]models.LETFHolding, error) {
 	if retVal, ok := c.cachedHoldings[models.LETFAccountTicker(seed.Ticker)]; ok {
 		return retVal, nil
 	}

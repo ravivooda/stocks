@@ -73,6 +73,14 @@ func MapLETFAnalysisWithAccountTicker(analysis []models.LETFOverlapAnalysis) map
 	return analysisMap
 }
 
+func MappedLETFS(etfs []models.ETF) map[models.LETFAccountTicker]models.ETF {
+	var s = map[models.LETFAccountTicker]models.ETF{}
+	for _, etf := range etfs {
+		s[etf.Symbol] = etf
+	}
+	return s
+}
+
 func GenerateETFFromStrings(input []string) models.ETF {
 	return models.ETF{
 		Symbol:                        FetchAccountTicker(input[0]),
@@ -157,8 +165,8 @@ func parseTime(s string) *time.Time {
 }
 
 func parseLeveraged(s string) string {
-	if strings.ToLower(s) == "false" {
-		return ""
+	if v := strings.TrimSpace(strings.ToLower(s)); v == "false" || v == "" {
+		return "1x"
 	}
 	return s
 }

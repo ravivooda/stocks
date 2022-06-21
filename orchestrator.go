@@ -25,6 +25,7 @@ type orchestrateRequest struct {
 	insightGenerators []overlap.Generator
 	insightsLogger    insights.Logger
 	websiteGenerators []letf.Generator
+	etfsMaps          map[models.LETFAccountTicker]models.ETF
 }
 
 type clientHoldingsRequest struct {
@@ -33,6 +34,7 @@ type clientHoldingsRequest struct {
 	seedGenerators []database.DB
 	clients        map[models.Provider]securities.Client
 	backupClient   masterdatareports.Client
+	etfsMaps       map[models.LETFAccountTicker]models.ETF
 }
 
 func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]models.LETFHolding, error) {
@@ -46,7 +48,7 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 	}
 	fmt.Printf("found %d seeds", len(seeds))
 
-	clientHoldings, err := fetchHoldings(ctx, seeds, holdingsRequest.clients)
+	clientHoldings, err := fetchHoldings(ctx, seeds, holdingsRequest.clients, holdingsRequest.etfsMaps)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +107,17 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 			for ticker, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
 				totalGatheredInsights += len(letfOverlapAnalyses)
 				for _, generator := range request.websiteGenerators {
-					_, err := generator.GenerateETF(ctx, ticker, letfOverlapAnalyses, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+					mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
+					for _, analysis := range letfOverlapAnalyses {
+						holdee := request.etfsMaps[analysis.LETFHoldees[0]]
+						// TODO: Hardcoded 0 index lookup above, and this will fail when we do merge
+						etfArray := mappedOverlapAnalysis[holdee.Leveraged]
+						if etfArray == nil {
+							etfArray = []models.LETFOverlapAnalysis{}
+						}
+						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
+					}
+					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 					if err != nil {
 						panic(err)
 					}
@@ -153,11 +165,7 @@ func gatherAlerts(
 	return gatheredAlerts, nil
 }
 
-func fetchHoldings(
-	ctx context.Context,
-	seeds []models.Seed,
-	clientsMap map[models.Provider]securities.Client,
-) ([]models.LETFHolding, error) {
+func fetchHoldings(ctx context.Context, seeds []models.Seed, clientsMap map[models.Provider]securities.Client, maps map[models.LETFAccountTicker]models.ETF) ([]models.LETFHolding, error) {
 	var allHoldings []models.LETFHolding
 	for _, seed := range seeds {
 		client := clientsMap[seed.Provider]
@@ -165,7 +173,7 @@ func fetchHoldings(
 			return nil, errors.New(fmt.Sprintf("did not find provider for seed: %+v", seed))
 		}
 		fmt.Printf("fetching information for %+v\n", seed)
-		holdings, err := client.GetHoldings(ctx, seed)
+		holdings, err := client.GetHoldings(ctx, seed, maps[utils.FetchAccountTicker(seed.Ticker)])
 		if err != nil {
 			return nil, err
 		}

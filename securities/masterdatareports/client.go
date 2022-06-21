@@ -135,6 +135,6 @@ func parse(record []string) models.LETFHolding {
 		MarketValue:      int64(marketValue),
 		NotionalValue:    notionalValue,
 		PercentContained: percentContained * 100.00, // The CSV reports weights summing up to 1
-		Provider:         models.MasterDataReports,
+		Provider:         "Master Data Reports",
 	}
 }

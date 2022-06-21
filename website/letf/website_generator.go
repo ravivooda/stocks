@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-	"sort"
 	"stocks/models"
 	"stocks/utils"
 )
@@ -16,14 +15,21 @@ type Config struct {
 }
 
 type Request struct {
-	AnalysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
-	Letfs       map[models.LETFAccountTicker][]models.LETFHolding
-	StocksMap   map[models.StockTicker][]models.LETFHolding
+	AnalysisMap         map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	Letfs               map[models.LETFAccountTicker][]models.LETFHolding
+	StocksMap           map[models.StockTicker][]models.LETFHolding
+	MappedAnalysisArray map[string][]models.LETFOverlapAnalysis
 }
 
 type Generator interface {
 	Generate(ctx context.Context, request Request) (bool, error)
-	GenerateETF(ctx context.Context, etf models.LETFAccountTicker, analysisArray []models.LETFOverlapAnalysis, letfs map[models.LETFAccountTicker][]models.LETFHolding, stocksMap map[models.StockTicker][]models.LETFHolding) (bool, error)
+	GenerateETF(
+		ctx context.Context,
+		etf models.LETFAccountTicker,
+		mappedAnalysisArray map[string][]models.LETFOverlapAnalysis,
+		letfs map[models.LETFAccountTicker][]models.LETFHolding,
+		stocksMap map[models.StockTicker][]models.LETFHolding,
+	) (bool, error)
 }
 
 type generator struct {
@@ -62,37 +68,6 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 		}
 		i += 1
 	}
-
-	i = 0
-	for LETFTicker, holdings := range request.Letfs {
-		summaryOutputFilePath := fmt.Sprintf("%s/%s.html", g.letfSummariesFileRoot, LETFTicker)
-		allAnalysis := request.AnalysisMap[LETFTicker]
-		sort.Slice(allAnalysis, func(i, j int) bool {
-			return allAnalysis[i].OverlapPercentage > allAnalysis[j].OverlapPercentage
-		})
-
-		// Generate Summary for the ticker
-		if b, err := g.logSummaryToHTML(letfSummaryTemplateLoc, summaryOutputFilePath, LETFTicker, holdings, allAnalysis, request.Letfs); err != nil {
-			return b, err
-		}
-
-		// Generate Overlap details
-		for _, analysis := range allAnalysis {
-			if int(analysis.OverlapPercentage) < g.config.MinThreshold {
-				continue
-			}
-			overlapOutputFilePath := fmt.Sprintf("%s/%s_%s.html", g.overlapsFileRoot, analysis.LETFHolder, utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
-			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, request.StocksMap)
-			if err != nil {
-				return b, err
-			}
-		}
-		if i%100 == 0 {
-			fmt.Printf("logged letf summary and overlap page %d out of %d\n", i, len(request.Letfs))
-		}
-		i += 1
-	}
-	// TODO: Need to filter out about for
 
 	return true, nil
 }
