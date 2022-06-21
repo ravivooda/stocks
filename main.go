@@ -80,13 +80,18 @@ func main() {
 		panic(err)
 	}
 
+	generator, err := letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})
+	if err != nil {
+		panic(err)
+	}
+
 	err = orchestrate(ctx, orchestrateRequest{
 		config:            config,
 		parsers:           alertParsers,
 		notifier:          notifier,
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
-		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})},
+		websiteGenerators: []letf.Generator{generator},
 	}, totalHoldings)
 	if err != nil {
 		panic(err)

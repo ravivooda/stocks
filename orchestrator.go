@@ -98,55 +98,38 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		}
 	}
 
-	analysisMap, totalInsightsCount, err := gatherInsights(ctx, request.insightGenerators, holdingsWithAccountTickerMap)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Total insights count: %d\n", totalInsightsCount)
-
-	var i = 0
-	for _, analysis := range analysisMap {
-		for _, insight := range analysis {
-			if i%10000 == 0 {
-				fmt.Printf("logged %d out of %d\n", i, totalInsightsCount)
-			}
-			i += 1
-			_, err := request.insightsLogger.Log(insight)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	for _, generator := range request.websiteGenerators {
-		_, err := generator.Generate(ctx, letf.Request{
-			AnalysisMap: analysisMap,
-			Letfs:       holdingsWithAccountTickerMap,
-			StocksMap:   holdingsWithStockTickerMap,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings map[models.LETFAccountTicker][]models.LETFHolding) (map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, int, error) {
-	var mapGatheredInsights = map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	var totalGatheredInsights = 0
-	for _, generator := range generators {
-		overlapAnalyses := generator.Generate(letfHoldings)
-		//mergedAnalyses := generator.MergeInsights(overlapAnalyses, letfHoldings)
-		//for ticker, analyses := range mergedAnalyses {
-		//	overlapAnalyses[ticker] = append(overlapAnalyses[ticker], analyses...)
+	for _, iGenerator := range request.insightGenerators {
+		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
+			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
+			for ticker, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
+				totalGatheredInsights += len(letfOverlapAnalyses)
+				for _, generator := range request.websiteGenerators {
+					_, err := generator.GenerateETF(ctx, ticker, letfOverlapAnalyses, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+					if err != nil {
+						panic(err)
+					}
+				}
+
+				for _, insight := range letfOverlapAnalyses {
+					_, err := request.insightsLogger.Log(insight)
+					if err != nil {
+						panic(err)
+					}
+				}
+			}
+			//mergedAnalyses := generator.MergeInsights(overlapAnalyses, letfHoldings)
+			//for ticker, analyses := range mergedAnalyses {
+			//	overlapAnalyses[ticker] = append(overlapAnalyses[ticker], analyses...)
+			//}
+		})
+
+		//for ticker, analyses := range overlapAnalyses {
+		//	mapGatheredInsights[ticker] = append(mapGatheredInsights[ticker], analyses...)
 		//}
-		for ticker, analyses := range overlapAnalyses {
-			mapGatheredInsights[ticker] = append(mapGatheredInsights[ticker], analyses...)
-			totalGatheredInsights += len(analyses)
-		}
 	}
-	return mapGatheredInsights, totalGatheredInsights, nil
+	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
+	return err
 }
 
 func gatherAlerts(

@@ -8,7 +8,7 @@ import (
 )
 
 type Generator interface {
-	Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding, iterator func(value []models.LETFOverlapAnalysis))
 	MergeInsights(
 		analysis map[models.LETFAccountTicker][]models.LETFOverlapAnalysis,
 		letfHoldingsMap map[models.LETFAccountTicker][]models.LETFHolding,
@@ -19,27 +19,20 @@ type generator struct {
 	c Config
 }
 
-func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis {
+func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding, iterator func(value []models.LETFOverlapAnalysis)) {
 	if len(holdingsWithAccountTickerMap) <= 1 {
-		return map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
+		return
 	}
 	var (
 		i        = 0
 		skipped  = 0
 		possible = len(holdingsWithAccountTickerMap) * len(holdingsWithAccountTickerMap)
-		outputs  = make([]models.LETFOverlapAnalysis, 0, possible)
 	)
-	var visited = map[string]bool{}
 	for lkey := range holdingsWithAccountTickerMap {
+		var outputs []models.LETFOverlapAnalysis
 		for rkey := range holdingsWithAccountTickerMap {
 			i += 1
 			if lkey != rkey {
-				if visited[fmt.Sprintf("%s_%s", lkey, rkey)] {
-					skipped += 1
-					continue
-				}
-				visited[fmt.Sprintf("%s_%s", lkey, rkey)] = true
-				visited[fmt.Sprintf("%s_%s", rkey, lkey)] = true
 				var (
 					lLETFHoldingsMap = utils.MapLETFHoldingsWithStockTicker(holdingsWithAccountTickerMap[lkey])
 					rLETFHoldingsMap = utils.MapLETFHoldingsWithStockTicker(holdingsWithAccountTickerMap[rkey])
@@ -58,12 +51,6 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 							OverlapPercentage: totalOverlapPercentage,
 							DetailedOverlap:   &details,
 						},
-						models.LETFOverlapAnalysis{
-							LETFHolder:        rkey,
-							LETFHoldees:       []models.LETFAccountTicker{lkey},
-							OverlapPercentage: totalOverlapPercentage,
-							DetailedOverlap:   &details,
-						},
 					)
 				}
 			}
@@ -71,10 +58,8 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 				fmt.Printf("working on %d, skipped %d, out of %d\n", i, skipped, possible)
 			}
 		}
+		iterator(outputs)
 	}
-
-	mappedOutputs := utils.MapLETFAnalysisWithAccountTicker(outputs)
-	return mappedOutputs
 }
 
 func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) (float64, []models.LETFOverlap) {
