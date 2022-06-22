@@ -31,6 +31,7 @@ var (
 		"AGQ":  true,
 		"BIS":  true,
 		"BITO": true,
+		"BITI": true,
 		"BZQ":  true,
 		"CROC": true,
 		"CSM":  true,
