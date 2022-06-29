@@ -1,6 +1,6 @@
 steps:
   # Run tests
-  - name: golang:1.18
+  - name: golang:1.17
     entrypoint: /bin/bash
     args:
       - -c
@@ -9,7 +9,7 @@ steps:
         echo "successfully tested"
 
   # TODO: Need to refactor this code with simple secrets.yaml creation
-  - name: golang:1.18
+  - name: golang:1.17
     entrypoint: /bin/bash
     args:
       - -c
@@ -22,13 +22,14 @@ steps:
         echo "  should_upload_insights_output_to_gcp: true" >> secrets.yaml
 
   # Running orchestrator
-  - name: golang:1.18
+  - name: golang:1.17
     entrypoint: /bin/bash
     args:
       - -c
       - |
         go run .
         echo "done"
+    timeout: 60000s
 
   # Upload to GCP
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
@@ -38,6 +39,9 @@ steps:
       - |
         du -sh .
         gsutil -m cp -r tmp/build/websites/* gs://letf_website/
+    timeout: 60000s
+
+timeout: 80000s
 
 options:
   logging: CLOUD_LOGGING_ONLY
