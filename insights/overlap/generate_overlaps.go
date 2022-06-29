@@ -48,7 +48,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 						models.LETFOverlapAnalysis{
 							LETFHolder:        lkey,
 							LETFHoldees:       []models.LETFAccountTicker{rkey},
-							OverlapPercentage: utils.RoundedPercentage(totalOverlapPercentage),
+							OverlapPercentage: totalOverlapPercentage,
 							DetailedOverlap:   &details,
 						},
 					)
@@ -56,6 +56,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 			}
 			if i%1000 == 0 {
 				fmt.Printf("working on %d, skipped %d, out of %d\n", i, skipped, possible)
+				utils.PrintMemUsage()
 			}
 		}
 		iterator(outputs)
@@ -105,7 +106,7 @@ func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map
 			},
 		})
 	}
-	return totalOverlapPercentage, details
+	return utils.RoundedPercentage(totalOverlapPercentage), details
 }
 
 type Config struct {

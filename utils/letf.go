@@ -165,7 +165,8 @@ func parseTime(s string) *time.Time {
 }
 
 func parseLeveraged(s string) string {
-	if v := strings.TrimSpace(strings.ToLower(s)); v == "false" || v == "" {
+	s = strings.TrimSpace(strings.ToLower(s))
+	if s == "false" || s == "" {
 		return "1x"
 	}
 	return s

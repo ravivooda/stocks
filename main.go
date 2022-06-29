@@ -40,7 +40,7 @@ func main() {
 
 	config, err := NewConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error occurred loading config: %+v \n", err)
 	}
 	fmt.Printf("Found Morning Star Config: %+v\n", config)
 

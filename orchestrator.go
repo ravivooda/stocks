@@ -63,6 +63,9 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 			continue
 		}
 		holdings, err := holdingsRequest.backupClient.GetHoldings(ctx, etf)
+		sort.Slice(holdings, func(i, j int) bool {
+			return holdings[i].PercentContained > holdings[j].PercentContained
+		})
 		if err != nil {
 			noMatchETFs = append(noMatchETFs, string(etf.Symbol))
 			continue
@@ -110,13 +113,25 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 					mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
 					for _, analysis := range letfOverlapAnalyses {
 						holdee := request.etfsMaps[analysis.LETFHoldees[0]]
-						// TODO: Hardcoded 0 index lookup above, and this will fail when we do merge
 						etfArray := mappedOverlapAnalysis[holdee.Leveraged]
 						if etfArray == nil {
 							etfArray = []models.LETFOverlapAnalysis{}
 						}
 						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
 					}
+
+					//for leverage, analyses := range mappedOverlapAnalysis {
+					//	fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+					//	if leverage == "" {
+					//		for _, analysis := range analyses {
+					//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+					//		}
+					//	}
+					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+					//	fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+					//	analyses = append(analyses, mergedInsights[ticker]...)
+					//	mappedOverlapAnalysis[leverage] = analyses
+					//}
 					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 					if err != nil {
 						panic(err)
@@ -130,15 +145,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 					}
 				}
 			}
-			//mergedAnalyses := generator.MergeInsights(overlapAnalyses, letfHoldings)
-			//for ticker, analyses := range mergedAnalyses {
-			//	overlapAnalyses[ticker] = append(overlapAnalyses[ticker], analyses...)
-			//}
 		})
-
-		//for ticker, analyses := range overlapAnalyses {
-		//	mapGatheredInsights[ticker] = append(mapGatheredInsights[ticker], analyses...)
-		//}
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
 	return err
