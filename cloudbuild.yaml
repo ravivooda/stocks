@@ -36,6 +36,7 @@ steps:
     args:
       - -c
       - |
+        du -sh .
         gsutil -m cp -r tmp/build/websites/* gs://letf_website/
 
 options:
