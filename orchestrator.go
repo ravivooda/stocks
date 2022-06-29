@@ -100,9 +100,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 					}
 
 					for leverage, analyses := range mappedOverlapAnalysis {
-						fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
 						mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
-						fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
 						analyses = append(analyses, mergedInsights[ticker]...)
 						mappedOverlapAnalysis[leverage] = analyses
 					}
