@@ -12,22 +12,31 @@ func (g *generator) MergeInsights(
 ) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis {
 	var mappedMergedInsights = map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	for ticker, analyses := range analysis {
-		for _, combination := range utils.Combinations(analyses, 2) {
-			var targetedPercentageMatrix = letfHoldingsMap[ticker]
-			var combinedPercentageMatrices [][]models.LETFHolding
-			var holdees []models.LETFAccountTicker
-			var maxPercentage = float64(0)
+		combinations := utils.Combinations(analyses, 2)
+		for _, combination := range combinations {
+			var (
+				targetedPercentageMatrix   = letfHoldingsMap[ticker]
+				combinedPercentageMatrices [][]models.LETFHolding
+				holdees                    []models.LETFAccountTicker
+				maxPercentage              = float64(0)
+				combinedPercentage         = float64(0)
+			)
 			for _, c := range combination {
 				accountTicker := c.LETFHoldees[0]
 				combinedPercentageMatrices = append(combinedPercentageMatrices, letfHoldingsMap[accountTicker])
 				holdees = append(holdees, accountTicker)
 				maxPercentage = math.Max(c.OverlapPercentage, maxPercentage)
+				combinedPercentage += c.OverlapPercentage
 			}
+			if int(combinedPercentage) < g.c.MergedThreshold {
+				continue
+			}
+			// TODO: Fix the merge insights logic with the new merge logic
 			holdings, mappedPercentageHoldings := utils.MergeHoldings(combinedPercentageMatrices...)
-			overlapAnalysis := g.compare(targetedPercentageMatrix, holdings)
-			if z := int(overlapAnalysis.OverlapPercentage); z >= g.c.MergedThreshold && z-int(maxPercentage) >= g.c.MinimumIncrementThreshold {
+			totalOverlapPercentage, overlapAnalysis := g.compare(utils.MapLETFHoldingsWithStockTicker(targetedPercentageMatrix), utils.MapLETFHoldingsWithStockTicker(holdings))
+			if z := int(totalOverlapPercentage); z >= g.c.MergedThreshold && z-int(maxPercentage) >= g.c.MinimumIncrementThreshold {
 				var computedOverlaps []models.LETFOverlap
-				for _, overlap := range overlapAnalysis.DetailedOverlap {
+				for _, overlap := range overlapAnalysis {
 					overlap.IndividualPercentagesMap = mappedPercentageHoldings[overlap.Ticker]
 					computedOverlaps = append(computedOverlaps, overlap)
 				}
@@ -42,8 +51,8 @@ func (g *generator) MergeInsights(
 				mappedMergedInsights[ticker] = append(mappedMergedInsights[ticker], models.LETFOverlapAnalysis{
 					LETFHolder:        ticker,
 					LETFHoldees:       holdees,
-					OverlapPercentage: overlapAnalysis.OverlapPercentage,
-					DetailedOverlap:   computedOverlaps,
+					OverlapPercentage: totalOverlapPercentage,
+					DetailedOverlap:   &computedOverlaps,
 				})
 			}
 		}

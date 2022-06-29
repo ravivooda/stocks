@@ -11,6 +11,7 @@ var knownAliases = map[string]string{
 }
 
 func cleanAndMap(input string) string {
+	input = strings.ReplaceAll(input, "/", "_")
 	trimmedInput := strings.ToUpper(strings.TrimSpace(input))
 	if aliasStockName, ok := knownAliases[trimmedInput]; ok {
 		trimmedInput = aliasStockName

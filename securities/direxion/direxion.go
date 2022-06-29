@@ -14,7 +14,7 @@ import (
 type client struct {
 }
 
-func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETFHolding, error) {
+func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF) ([]models.LETFHolding, error) {
 	data, err := utils.ReadCSVFromUrl(seed.URL, ',', -1)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed) ([]models.LETF
 		holdings = append(holdings, models.LETFHolding{
 			TradeDate:         data[i][0],
 			LETFAccountTicker: utils.FetchAccountTicker(data[i][1]),
-			LETFDescription:   "[Name TBD]",
+			LETFDescription:   etf.ETFName,
 			StockTicker:       utils.FetchStockTicker(data[i][2]),
 			StockDescription:  data[i][3],
 			Shares:            parseInt(data[i][4]),
