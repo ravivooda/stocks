@@ -34,7 +34,7 @@ func main() {
 	etfsGenerator := etfdb.New(etfdb.Config{})
 	etfs, err := etfsGenerator.ListETFs(ctx)
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 	fmt.Printf("Found %d etfs\n", len(etfs))
 

@@ -13,6 +13,7 @@ import (
 	"stocks/models"
 	"stocks/notifications"
 	"stocks/securities"
+	"stocks/securities/masterdatareports"
 	"stocks/utils"
 	"stocks/website/letf"
 )
@@ -32,6 +33,7 @@ type clientHoldingsRequest struct {
 	etfs           []models.ETF
 	seedGenerators []database.DB
 	clients        map[models.Provider]securities.Client
+	backupClient   masterdatareports.Client
 	etfsMaps       map[models.LETFAccountTicker]models.ETF
 }
 
@@ -52,6 +54,25 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 	}
 
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(clientHoldings)
+
+	var noMatchETFs []string
+	fmt.Println("Loading master data reports client")
+	for _, etf := range holdingsRequest.etfs {
+		// first, try the normal client
+		if _, ok := holdingsWithAccountTickerMap[etf.Symbol]; ok {
+			continue
+		}
+		holdings, err := holdingsRequest.backupClient.GetHoldings(ctx, etf)
+		sort.Slice(holdings, func(i, j int) bool {
+			return holdings[i].PercentContained > holdings[j].PercentContained
+		})
+		if err != nil {
+			noMatchETFs = append(noMatchETFs, string(etf.Symbol))
+			continue
+		}
+		holdingsWithAccountTickerMap[etf.Symbol] = holdings
+	}
+	fmt.Printf("did not find matching holdings for %+v (len: %d)\n", noMatchETFs, len(noMatchETFs))
 
 	var totalHoldings []models.LETFHolding
 	for seed, holdings := range holdingsWithAccountTickerMap {
@@ -111,6 +132,7 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 					//		}
 					//	}
 					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+					//	fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
 					//	analyses = append(analyses, mergedInsights[ticker]...)
 					//	mappedOverlapAnalysis[leverage] = analyses
 					//}
