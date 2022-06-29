@@ -4,55 +4,91 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"sort"
 	"stocks/alerts"
-	"stocks/alerts/movers"
-	"stocks/alerts/movers/morning_star"
 	"stocks/database"
 	"stocks/database/insights"
 	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/notifications"
 	"stocks/securities"
-	"stocks/securities/direxion"
-	"stocks/securities/microsector"
-	"stocks/securities/proshares"
+	"stocks/securities/masterdatareports"
 	"stocks/utils"
 	"stocks/website/letf"
 )
 
 type orchestrateRequest struct {
 	config            Config
-	seedGenerators    []database.DB
-	clients           map[models.Provider]securities.Client
 	parsers           []alerts.AlertParser
 	notifier          notifications.Notifier
 	insightGenerators []overlap.Generator
 	insightsLogger    insights.Logger
 	websiteGenerators []letf.Generator
+	etfsMaps          map[models.LETFAccountTicker]models.ETF
 }
 
-func orchestrate(ctx context.Context, request orchestrateRequest) error {
+type clientHoldingsRequest struct {
+	config         Config
+	etfs           []models.ETF
+	seedGenerators []database.DB
+	clients        map[models.Provider]securities.Client
+	backupClient   masterdatareports.Client
+	etfsMaps       map[models.LETFAccountTicker]models.ETF
+}
+
+func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]models.LETFHolding, error) {
 	var seeds []models.Seed
-	for _, generator := range request.seedGenerators {
+	for _, generator := range holdingsRequest.seedGenerators {
 		_seeds, err := generator.ListSeeds(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		seeds = append(seeds, _seeds...)
 	}
 	fmt.Printf("found %d seeds", len(seeds))
 
-	holdings, err := fetchHoldings(ctx, seeds, request.clients)
+	clientHoldings, err := fetchHoldings(ctx, seeds, holdingsRequest.clients, holdingsRequest.etfsMaps)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(clientHoldings)
+
+	var noMatchETFs []string
+	fmt.Println("Loading master data reports client")
+	for _, etf := range holdingsRequest.etfs {
+		// first, try the normal client
+		if _, ok := holdingsWithAccountTickerMap[etf.Symbol]; ok {
+			continue
+		}
+		holdings, err := holdingsRequest.backupClient.GetHoldings(ctx, etf)
+		sort.Slice(holdings, func(i, j int) bool {
+			return holdings[i].PercentContained > holdings[j].PercentContained
+		})
+		if err != nil {
+			noMatchETFs = append(noMatchETFs, string(etf.Symbol))
+			continue
+		}
+		holdingsWithAccountTickerMap[etf.Symbol] = holdings
+	}
+	fmt.Printf("did not find matching holdings for %+v (len: %d)\n", noMatchETFs, len(noMatchETFs))
+
+	var totalHoldings []models.LETFHolding
+	for seed, holdings := range holdingsWithAccountTickerMap {
+		if sum := utils.SumHoldings(holdings); math.Abs(sum-100) > 30 {
+			filteredHoldings := utils.FilteredForPrinting(holdings)
+			return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
+		}
+		totalHoldings = append(totalHoldings, holdings...)
+	}
+
+	return totalHoldings, nil
+}
+
+func orchestrate(ctx context.Context, request orchestrateRequest, holdings []models.LETFHolding) error {
 	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(holdings)
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(holdings)
-	//fmt.Println(holdingsWithStockTickerMap)
 
 	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsWithStockTickerMap)
 	if err != nil {
@@ -67,50 +103,52 @@ func orchestrate(ctx context.Context, request orchestrateRequest) error {
 		}
 	}
 
-	analysisMap, totalInsightsCount, err := gatherInsights(ctx, request.insightGenerators, holdingsWithAccountTickerMap)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Total insights count: %d\n", totalInsightsCount)
-
-	for _, analysis := range analysisMap {
-		for _, insight := range analysis {
-			_, err := request.insightsLogger.Log(insight)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	for _, generator := range request.websiteGenerators {
-		_, err := generator.Generate(ctx, letf.Request{
-			AnalysisMap: analysisMap,
-			Letfs:       holdingsWithAccountTickerMap,
-			StocksMap:   holdingsWithStockTickerMap,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func gatherInsights(_ context.Context, generators []overlap.Generator, letfHoldings map[models.LETFAccountTicker][]models.LETFHolding) (map[models.LETFAccountTicker][]models.LETFOverlapAnalysis, int, error) {
-	var mapGatheredInsights = map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{}
 	var totalGatheredInsights = 0
-	for _, generator := range generators {
-		overlapAnalyses := generator.Generate(letfHoldings)
-		mergedAnalyses := generator.MergeInsights(overlapAnalyses, letfHoldings)
-		for ticker, analyses := range mergedAnalyses {
-			overlapAnalyses[ticker] = append(overlapAnalyses[ticker], analyses...)
-		}
-		for ticker, analyses := range overlapAnalyses {
-			mapGatheredInsights[ticker] = append(mapGatheredInsights[ticker], analyses...)
-			totalGatheredInsights += len(analyses)
-		}
+	for _, iGenerator := range request.insightGenerators {
+		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
+			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
+			for ticker, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
+				totalGatheredInsights += len(letfOverlapAnalyses)
+				for _, generator := range request.websiteGenerators {
+					mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
+					for _, analysis := range letfOverlapAnalyses {
+						holdee := request.etfsMaps[analysis.LETFHoldees[0]]
+						etfArray := mappedOverlapAnalysis[holdee.Leveraged]
+						if etfArray == nil {
+							etfArray = []models.LETFOverlapAnalysis{}
+						}
+						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
+					}
+
+					//for leverage, analyses := range mappedOverlapAnalysis {
+					//	fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+					//	if leverage == "" {
+					//		for _, analysis := range analyses {
+					//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+					//		}
+					//	}
+					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+					//	fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+					//	analyses = append(analyses, mergedInsights[ticker]...)
+					//	mappedOverlapAnalysis[leverage] = analyses
+					//}
+					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+					if err != nil {
+						panic(err)
+					}
+				}
+
+				for _, insight := range letfOverlapAnalyses {
+					_, err := request.insightsLogger.Log(insight)
+					if err != nil {
+						panic(err)
+					}
+				}
+			}
+		})
 	}
-	return mapGatheredInsights, totalGatheredInsights, nil
+	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
+	return err
 }
 
 func gatherAlerts(
@@ -134,11 +172,7 @@ func gatherAlerts(
 	return gatheredAlerts, nil
 }
 
-func fetchHoldings(
-	ctx context.Context,
-	seeds []models.Seed,
-	clientsMap map[models.Provider]securities.Client,
-) ([]models.LETFHolding, error) {
+func fetchHoldings(ctx context.Context, seeds []models.Seed, clientsMap map[models.Provider]securities.Client, maps map[models.LETFAccountTicker]models.ETF) ([]models.LETFHolding, error) {
 	var allHoldings []models.LETFHolding
 	for _, seed := range seeds {
 		client := clientsMap[seed.Provider]
@@ -146,13 +180,9 @@ func fetchHoldings(
 			return nil, errors.New(fmt.Sprintf("did not find provider for seed: %+v", seed))
 		}
 		fmt.Printf("fetching information for %+v\n", seed)
-		holdings, err := client.GetHoldings(ctx, seed)
+		holdings, err := client.GetHoldings(ctx, seed, maps[utils.FetchAccountTicker(seed.Ticker)])
 		if err != nil {
 			return nil, err
-		}
-
-		if sum := utils.SumHoldings(holdings); math.Abs(sum-100) > 0.5 {
-			return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for seed %+v", sum, seed))
 		}
 		allHoldings = append(allHoldings, holdings...)
 	}
@@ -162,52 +192,4 @@ func fetchHoldings(
 	})
 
 	return allHoldings, nil
-}
-
-func main() {
-	ctx := context.Background()
-	db := database.NewDumbDatabase()
-	direxionClient, err := direxion.NewClient()
-	microSectorClient, err := microsector.NewClient()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	config, err := NewConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Found Morning Star Config: %+v\n", config)
-
-	msapi := morning_star.New(config.MSAPI)
-	proSharesClient, err := proshares.New(config.Securities.ProShares)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	alertParsers := []alerts.AlertParser{
-		movers.New(movers.Config{MSAPI: msapi}),
-	}
-
-	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
-	err = orchestrate(ctx, orchestrateRequest{
-		config: config,
-		seedGenerators: []database.DB{
-			db,
-			proSharesClient,
-		},
-		clients: map[models.Provider]securities.Client{
-			models.Direxion:    direxionClient,
-			models.MicroSector: microSectorClient,
-			models.ProShares:   proSharesClient,
-		},
-		parsers:           alertParsers,
-		notifier:          notifier,
-		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
-		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
-		websiteGenerators: []letf.Generator{letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
 }

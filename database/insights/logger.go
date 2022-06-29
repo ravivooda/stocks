@@ -53,7 +53,7 @@ func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
 		rsum = map[int]float64{}
 	)
 
-	for _, overlap := range analysis.DetailedOverlap {
+	for _, overlap := range *analysis.DetailedOverlap {
 		lPercent := overlap.IndividualPercentagesMap[analysis.LETFHolder]
 		// TODO: Fix the zero index assumption made above
 
