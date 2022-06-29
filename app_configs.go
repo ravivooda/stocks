@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"stocks/alerts/movers/morning_star"
 	"stocks/insights/overlap"
+	"stocks/securities/masterdatareports"
 	"stocks/securities/proshares"
 )
 
@@ -28,7 +29,8 @@ type Config struct {
 		Websites  string `mapstructure:"websites"`
 	} `mapstructure:"directories"`
 	Securities struct {
-		ProShares proshares.Config `mapstructure:"pro_shares"`
+		ProShares         proshares.Config         `mapstructure:"pro_shares"`
+		MasterDataReports masterdatareports.Config `mapstructure:"master_data_reports"`
 	} `mapstructure:"securities"`
 	Secrets Secrets
 	Outputs struct {

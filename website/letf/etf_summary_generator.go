@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sort"
 	"stocks/models"
-	"stocks/utils"
 )
 
 func (g *generator) logSummaryToHTML(
@@ -52,22 +51,22 @@ func (g *generator) GenerateETF(
 	}
 
 	// Generate Overlap details
-	for _, analysisArray := range mappedAnalysisArray {
-		for _, analysis := range analysisArray {
-			if int(analysis.OverlapPercentage) < g.config.MinThreshold {
-				continue
-			}
-			overlapOutputFilePath := fmt.Sprintf(
-				"%s/%s_%s.html",
-				g.overlapsFileRoot,
-				analysis.LETFHolder,
-				utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"),
-			)
-			b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, stocksMap)
-			if err != nil {
-				return b, err
-			}
-		}
-	}
+	//for _, analysisArray := range mappedAnalysisArray {
+	//	for _, analysis := range analysisArray {
+	//		if int(analysis.OverlapPercentage) < g.config.MinThreshold {
+	//			continue
+	//		}
+	//		overlapOutputFilePath := fmt.Sprintf(
+	//			"%s/%s_%s.html",
+	//			g.overlapsFileRoot,
+	//			analysis.LETFHolder,
+	//			utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"),
+	//		)
+	//		b, err := g.logOverlapToHTML(overlapTemplateLoc, overlapOutputFilePath, analysis, stocksMap)
+	//		if err != nil {
+	//			return b, err
+	//		}
+	//	}
+	//}
 	return false, nil
 }

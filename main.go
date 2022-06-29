@@ -8,14 +8,17 @@ import (
 	"stocks/alerts/movers"
 	"stocks/alerts/movers/morning_star"
 	"stocks/database"
+	"stocks/database/etfdb"
 	"stocks/database/insights"
 	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/notifications"
 	"stocks/securities"
 	"stocks/securities/direxion"
+	"stocks/securities/masterdatareports"
 	"stocks/securities/microsector"
 	"stocks/securities/proshares"
+	"stocks/utils"
 	"stocks/website/letf"
 )
 
@@ -27,6 +30,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	etfsGenerator := etfdb.New(etfdb.Config{})
+	etfs, err := etfsGenerator.ListETFs(ctx)
+	if err != nil {
+		return
+	}
+	fmt.Printf("Found %d etfs\n", len(etfs))
 
 	config, err := NewConfig()
 	if err != nil {
@@ -47,9 +57,15 @@ func main() {
 
 	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 
+	masterdatareportsClient, err := masterdatareports.New(config.Securities.MasterDataReports)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Loaded master data reports client, found %d number of etfs data\n", masterdatareportsClient.Count())
+
 	totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
 		config: config,
-		etfs:   []models.ETF{},
+		etfs:   etfs,
 		seedGenerators: []database.DB{
 			db,
 			proSharesClient,
@@ -59,6 +75,8 @@ func main() {
 			models.MicroSector: microSectorClient,
 			models.ProShares:   proSharesClient,
 		},
+		backupClient: masterdatareportsClient,
+		etfsMaps:     utils.MappedLETFS(etfs),
 	})
 	if err != nil {
 		panic(err)
@@ -76,6 +94,7 @@ func main() {
 		insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
 		insightsLogger:    insights.NewInsightsLogger(insights.Config{RootDir: config.Directories.Artifacts + "/insights"}),
 		websiteGenerators: []letf.Generator{generator},
+		etfsMaps:          utils.MappedLETFS(etfs),
 	}, totalHoldings)
 	if err != nil {
 		panic(err)

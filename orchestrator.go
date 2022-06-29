@@ -103,11 +103,17 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
 					}
 
-					for leverage, analyses := range mappedOverlapAnalysis {
-						mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
-						analyses = append(analyses, mergedInsights[ticker]...)
-						mappedOverlapAnalysis[leverage] = analyses
-					}
+					//for leverage, analyses := range mappedOverlapAnalysis {
+					//	fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+					//	if leverage == "" {
+					//		for _, analysis := range analyses {
+					//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+					//		}
+					//	}
+					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+					//	analyses = append(analyses, mergedInsights[ticker]...)
+					//	mappedOverlapAnalysis[leverage] = analyses
+					//}
 					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 					if err != nil {
 						panic(err)
