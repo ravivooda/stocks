@@ -23,19 +23,16 @@ import (
 )
 
 func main() {
+	defer utils.Elapsed("main")
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
 	direxionClient, err := direxion.NewClient()
 	microSectorClient, err := microsector.NewClient()
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.PanicErr(err)
 
 	etfsGenerator := etfdb.New(etfdb.Config{})
 	etfs, err := etfsGenerator.ListETFs(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.PanicErr(err)
 	fmt.Printf("Found %d etfs\n", len(etfs))
 
 	config, err := NewConfig()
@@ -58,9 +55,7 @@ func main() {
 	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 
 	masterdatareportsClient, err := masterdatareports.New(config.Securities.MasterDataReports)
-	if err != nil {
-		panic(err)
-	}
+	utils.PanicErr(err)
 	fmt.Printf("Loaded master data reports client, found %d number of etfs data\n", masterdatareportsClient.Count())
 
 	totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
@@ -78,16 +73,12 @@ func main() {
 		backupClient: masterdatareportsClient,
 		etfsMaps:     utils.MappedLETFS(etfs),
 	})
-	if err != nil {
-		panic(err)
-	}
+	utils.PanicErr(err)
 
 	generator, err := letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})
-	if err != nil {
-		panic(err)
-	}
+	utils.PanicErr(err)
 
-	err = orchestrate(ctx, orchestrateRequest{
+	orchestrate(ctx, orchestrateRequest{
 		config:            config,
 		parsers:           alertParsers,
 		notifier:          notifier,
@@ -96,7 +87,4 @@ func main() {
 		websiteGenerators: []letf.Generator{generator},
 		etfsMaps:          utils.MappedLETFS(etfs),
 	}, totalHoldings)
-	if err != nil {
-		panic(err)
-	}
 }

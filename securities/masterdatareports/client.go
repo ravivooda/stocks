@@ -38,19 +38,10 @@ func (c *client) GetHoldings(_ context.Context, etf models.ETF) ([]models.LETFHo
 
 const (
 	expectedHeaders = "Sponsor,Composite Ticker,Composite Name,Constituent Ticker,Constituent Name,Weighting,Identifier,Date,Location,Exchange,Total Shares Held,Notional Value,Market Value,Sponsor Sector,Last Trade,Currency,BloombergSymbol,BloombergExchange,NAICSSector,NAICSSubIndustry,Coupon,Maturity,Rating,Type,SharesOutstanding,MarketCap,Earnings,PE Ratio,Face,FIGI,TimeZone,DividendAmt,XDate,DividendYield,RIC,IssueType,NAICSSector,NAICSIndustry,NAICSSubIndustry,CUSIP,ISIN,FIGI"
-	//hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
 )
 
 func New(config Config) (Client, error) {
-	//records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
-	//fmt.Printf("From local file, number of records: %d\n", len(records))
-
-	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
-	records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
-	fmt.Printf("From remote file, number of records: %d\n", len(records))
-	if err != nil {
-		return nil, err
-	}
+	records := loadData()
 
 	if len(records) == 0 {
 		return nil, errors.Errorf("found empty rows when trying to load csv from url: %s", config.HoldingsCSVURL)
@@ -110,6 +101,19 @@ func New(config Config) (Client, error) {
 		config:   config,
 		holdings: mappedHoldings,
 	}, nil
+}
+
+func loadData() [][]string {
+	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
+	records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
+	fmt.Printf("From local file, number of records: %d\n", len(records))
+
+	//defer utils.Elapsed("Master Data Reports Loading")
+	//fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
+	//records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
+	//fmt.Printf("From remote file, number of records: %d\n", len(records))
+	utils.PanicErr(err)
+	return records
 }
 
 func parse(record []string) models.LETFHolding {
