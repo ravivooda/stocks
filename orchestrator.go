@@ -86,21 +86,17 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 	return totalHoldings, nil
 }
 
-func orchestrate(ctx context.Context, request orchestrateRequest, holdings []models.LETFHolding) error {
+func orchestrate(ctx context.Context, request orchestrateRequest, holdings []models.LETFHolding) {
 	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(holdings)
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(holdings)
 
 	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsWithStockTickerMap)
-	if err != nil {
-		return err
-	}
+	utils.PanicErr(err)
 	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
 
 	if request.config.Secrets.Notifications.ShouldSendEmails {
 		_, err := request.notifier.SendAll(ctx, gatheredAlerts)
-		if err != nil {
-			return err
-		}
+		utils.PanicErr(err)
 	}
 
 	if !request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
@@ -152,7 +148,15 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		})
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
-	return err
+
+	for _, generator := range request.websiteGenerators {
+		_, err := generator.Generate(ctx, letf.Request{
+			Letfs:     holdingsWithAccountTickerMap,
+			StocksMap: holdingsWithStockTickerMap,
+		})
+		utils.PanicErr(err)
+	}
+	return
 }
 
 func gatherAlerts(
