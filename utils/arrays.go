@@ -59,8 +59,13 @@ func MergeHoldings(holdingsList ...[]models.LETFHolding) ([]models.LETFHolding, 
 		}
 	}
 	var mergedHoldings []models.LETFHolding
-	for _, holding := range mappedHoldings {
-		mergedHoldings = append(mergedHoldings, holding)
+	for stock, holding := range mappedHoldings {
+		if holding.PercentContained > 0 {
+			mergedHoldings = append(mergedHoldings, holding)
+		} else {
+			delete(mappedHoldings, stock)
+			delete(originalMapping, stock)
+		}
 	}
 	return mergedHoldings, originalMapping
 }

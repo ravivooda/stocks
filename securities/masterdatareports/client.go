@@ -41,7 +41,7 @@ const (
 )
 
 func New(config Config) (Client, error) {
-	records := loadData()
+	records := loadData(config)
 
 	if len(records) == 0 {
 		return nil, errors.Errorf("found empty rows when trying to load csv from url: %s", config.HoldingsCSVURL)
@@ -103,15 +103,15 @@ func New(config Config) (Client, error) {
 	}, nil
 }
 
-func loadData() [][]string {
-	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
-	records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
-	fmt.Printf("From local file, number of records: %d\n", len(records))
+func loadData(config Config) [][]string {
+	//const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
+	//records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
+	//fmt.Printf("From local file, number of records: %d\n", len(records))
 
-	//defer utils.Elapsed("Master Data Reports Loading")
-	//fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
-	//records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
-	//fmt.Printf("From remote file, number of records: %d\n", len(records))
+	defer utils.Elapsed("Master Data Reports Loading")
+	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
+	records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
+	fmt.Printf("From remote file, number of records: %d\n", len(records))
 	utils.PanicErr(err)
 	return records
 }

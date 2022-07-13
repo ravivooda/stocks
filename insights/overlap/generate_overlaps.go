@@ -82,30 +82,33 @@ func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map
 				},
 			})
 			filledStocks[stockTicker] = true
-		} else {
-			details = append(details, models.LETFOverlap{
-				Ticker:     stockTicker,
-				Percentage: 0,
-				IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
-					lHolding.LETFAccountTicker: lHolding.PercentContained,
-				},
-			})
 		}
+		// Hiding 0 overlap holdings
+		//else {
+		//	details = append(details, models.LETFOverlap{
+		//		Ticker:     stockTicker,
+		//		Percentage: 0,
+		//		IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
+		//			lHolding.LETFAccountTicker: lHolding.PercentContained,
+		//		},
+		//	})
+		//}
 	}
 
-	for ticker, rHoldings := range r {
-		if filledStocks[ticker] {
-			continue
-		}
-		rHolding := rHoldings[0]
-		details = append(details, models.LETFOverlap{
-			Ticker:     ticker,
-			Percentage: 0,
-			IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
-				rHolding.LETFAccountTicker: rHolding.PercentContained,
-			},
-		})
-	}
+	// Hiding 0 overlap holdings
+	//for ticker, rHoldings := range r {
+	//	if filledStocks[ticker] {
+	//		continue
+	//	}
+	//	rHolding := rHoldings[0]
+	//	details = append(details, models.LETFOverlap{
+	//		Ticker:     ticker,
+	//		Percentage: 0,
+	//		IndividualPercentagesMap: map[models.LETFAccountTicker]float64{
+	//			rHolding.LETFAccountTicker: rHolding.PercentContained,
+	//		},
+	//	})
+	//}
 	return utils.RoundedPercentage(totalOverlapPercentage), details
 }
 

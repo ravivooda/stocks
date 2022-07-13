@@ -99,10 +99,13 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		utils.PanicErr(err)
 	}
 
-	if !request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		return nil
+	if request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
+		generateInsights(ctx, request, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 	}
+	return
+}
 
+func generateInsights(ctx context.Context, request orchestrateRequest, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
 	var totalGatheredInsights = 0
 	for _, iGenerator := range request.insightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
@@ -120,30 +123,31 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
 					}
 
-					//for leverage, analyses := range mappedOverlapAnalysis {
-					//	fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
-					//	if leverage == "" {
-					//		for _, analysis := range analyses {
-					//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
-					//		}
-					//	}
-					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
-					//	fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
-					//	analyses = append(analyses, mergedInsights[ticker]...)
-					//	mappedOverlapAnalysis[leverage] = analyses
-					//}
+					for leverage, analyses := range mappedOverlapAnalysis {
+						//fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+						if leverage == "" {
+							for _, analysis := range analyses {
+								panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+							}
+						}
+						mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+						//fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+						analyses = append(analyses, mergedInsights[ticker]...)
+						mappedOverlapAnalysis[leverage] = analyses
+					}
+					// TODO: Can we parallelize this stuff?
 					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 					if err != nil {
 						panic(err)
 					}
 				}
 
-				for _, insight := range letfOverlapAnalyses {
-					_, err := request.insightsLogger.Log(insight)
-					if err != nil {
-						panic(err)
-					}
-				}
+				//for _, insight := range letfOverlapAnalyses {
+				//	_, err := request.insightsLogger.Log(insight)
+				//	if err != nil {
+				//		panic(err)
+				//	}
+				//}
 			}
 		})
 	}
@@ -156,7 +160,6 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		})
 		utils.PanicErr(err)
 	}
-	return
 }
 
 func gatherAlerts(
