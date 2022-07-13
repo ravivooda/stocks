@@ -82,6 +82,10 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		}
 	}
 
+	if !request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
+		return nil
+	}
+
 	var totalGatheredInsights = 0
 	for _, iGenerator := range request.insightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {

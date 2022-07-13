@@ -33,7 +33,7 @@ jobs:
         echo "notifications:" >> secrets.yaml
         echo "  should_send_email: true" >> secrets.yaml
         echo "uploads:" >> secrets.yaml
-        echo "  should_upload_insights_output_to_gcp: true" >> secrets.yaml
+        echo "  should_upload_insights_output_to_gcp: false" >> secrets.yaml
 
     - name: Run orchestrator
       run: |
