@@ -26,17 +26,19 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 		groupedStocks[s] = a
 	}
 	var data = struct {
-		TotalProvider int
-		TotalSeeds    int
-		Providers     map[string]map[models.LETFAccountTicker]bool
-		Stocks        map[string][]models.StockTicker
-		WebsitePaths  WebsitePaths
+		TotalProvider     int
+		TotalSeeds        int
+		TotalStockTickers int
+		Providers         map[string]map[models.LETFAccountTicker]bool
+		Stocks            map[string][]models.StockTicker
+		WebsitePaths      WebsitePaths
 	}{
-		TotalProvider: len(mapped),
-		TotalSeeds:    len(request.Letfs),
-		Providers:     mapped,
-		Stocks:        groupedStocks,
-		WebsitePaths:  websitePaths,
+		TotalProvider:     len(mapped),
+		TotalSeeds:        len(request.Letfs),
+		TotalStockTickers: len(request.StocksMap),
+		Providers:         mapped,
+		Stocks:            groupedStocks,
+		WebsitePaths:      websitePaths,
 	}
 	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)
 }

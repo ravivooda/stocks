@@ -26,6 +26,17 @@ func cleanAndMap(input string) string {
 }
 
 func FetchStockTicker(input string) models.StockTicker {
+	input = strings.ReplaceAll(input, " ", "_")
+	input = strings.ReplaceAll(input, ".", "_")
+	input = strings.ReplaceAll(input, "-", "_")
+	input = strings.ReplaceAll(input, "_US", "")
+	input = strings.ReplaceAll(input, "_UQ", "")
+	input = strings.ReplaceAll(input, "_UN", "")
+	input = strings.ReplaceAll(input, "__", "_")
+	input = strings.ReplaceAll(input, "_", " ")
+	if len(input) > 1 && input[len(input)-1:] == "_" {
+		input = input[:len(input)-2]
+	}
 	return models.StockTicker(cleanAndMap(input))
 }
 

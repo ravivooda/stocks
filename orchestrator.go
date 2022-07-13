@@ -105,8 +105,30 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 	return
 }
 
-func generateInsights(ctx context.Context, request orchestrateRequest, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
+func generateInsights(
+	ctx context.Context,
+	request orchestrateRequest,
+	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
+	holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding,
+) {
 	var totalGatheredInsights = 0
+	fmt.Printf("Generating %d stock summaries\n", len(holdingsWithStockTickerMap))
+	for _, generator := range request.websiteGenerators {
+		for stockTicker, holdings := range holdingsWithStockTickerMap {
+			generator.GenerateStock(ctx, stockTicker, holdings)
+		}
+	}
+
+	fmt.Printf("Generating welcome pages")
+	for _, generator := range request.websiteGenerators {
+		_, err := generator.Generate(ctx, letf.Request{
+			Letfs:     holdingsWithAccountTickerMap,
+			StocksMap: holdingsWithStockTickerMap,
+		})
+		utils.PanicErr(err)
+	}
+
+	fmt.Printf("Generating ETF Pages")
 	for _, iGenerator := range request.insightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
 			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
@@ -136,6 +158,7 @@ func generateInsights(ctx context.Context, request orchestrateRequest, holdingsW
 						mappedOverlapAnalysis[leverage] = analyses
 					}
 					// TODO: Can we parallelize this stuff?
+					// Generate ETF summaries
 					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 					if err != nil {
 						panic(err)
@@ -152,14 +175,6 @@ func generateInsights(ctx context.Context, request orchestrateRequest, holdingsW
 		})
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
-
-	for _, generator := range request.websiteGenerators {
-		_, err := generator.Generate(ctx, letf.Request{
-			Letfs:     holdingsWithAccountTickerMap,
-			StocksMap: holdingsWithStockTickerMap,
-		})
-		utils.PanicErr(err)
-	}
 }
 
 func gatherAlerts(
