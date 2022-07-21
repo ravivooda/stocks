@@ -40,6 +40,17 @@ const (
 	expectedHeaders = "Sponsor,Composite Ticker,Composite Name,Constituent Ticker,Constituent Name,Weighting,Identifier,Date,Location,Exchange,Total Shares Held,Notional Value,Market Value,Sponsor Sector,Last Trade,Currency,BloombergSymbol,BloombergExchange,NAICSSector,NAICSSubIndustry,Coupon,Maturity,Rating,Type,SharesOutstanding,MarketCap,Earnings,PE Ratio,Face,FIGI,TimeZone,DividendAmt,XDate,DividendYield,RIC,IssueType,NAICSSector,NAICSIndustry,NAICSSubIndustry,CUSIP,ISIN,FIGI"
 )
 
+var (
+	skippables = map[string]bool{
+		"r1sm2":     true,
+		"parent":    true,
+		"weight":    true,
+		"ticker":    true,
+		"rank":      true,
+		"weighting": true,
+	}
+)
+
 func New(config Config) (Client, error) {
 	records := loadData(config)
 
@@ -54,8 +65,9 @@ func New(config Config) (Client, error) {
 	records = records[1:]
 	var parsedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
 	for _, record := range records {
-		if strings.ToLower(record[5]) == "parent" ||
-			strings.ToLower(record[5]) == "weight" {
+		if ok, _ := skippables[strings.ToLower(record[5])]; ok {
+			continue
+		} else if ok, _ := skippables[strings.ToLower(record[4])]; ok {
 			continue
 		}
 		var holding = parse(record)
@@ -76,22 +88,23 @@ func New(config Config) (Client, error) {
 			totalledPercentage += holding.PercentContained
 		}
 
-		if totalledPercentage > 0.5 && totalledPercentage <= 1.0 {
+		if totalledPercentage > 0.5 && totalledPercentage <= 1.1 {
 			var holdingsWithPercentage []models.LETFHolding
 			for _, holding := range holdings {
-				holding.PercentContained *= 100
+				holding.PercentContained = utils.RoundedPercentage(holding.PercentContained * 100)
 				holdingsWithPercentage = append(holdingsWithPercentage, holding)
 			}
 			mappedHoldings[ticker] = holdingsWithPercentage
-			continue
-		} else if totalledPercentage > 70 && totalledPercentage <= 101 {
-			mappedHoldings[ticker] = holdings
 			continue
 		}
 
 		var holdingsWithPercentage []models.LETFHolding
 		for _, holding := range holdings {
-			holding.PercentContained = utils.RoundedPercentage(float64(holding.MarketValue) / float64(totalMarketValue) * 100.00)
+			if totalledPercentage > 70 && totalledPercentage <= 101 {
+				holding.PercentContained = utils.RoundedPercentage(holding.PercentContained)
+			} else {
+				holding.PercentContained = utils.RoundedPercentage(float64(holding.MarketValue) / float64(totalMarketValue) * 100.00)
+			}
 			holdingsWithPercentage = append(holdingsWithPercentage, holding)
 		}
 		mappedHoldings[ticker] = holdingsWithPercentage
@@ -104,14 +117,14 @@ func New(config Config) (Client, error) {
 }
 
 func loadData(config Config) [][]string {
-	//const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
-	//records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
-	//fmt.Printf("From local file, number of records: %d\n", len(records))
+	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
+	records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
+	fmt.Printf("From local file, number of records: %d\n", len(records))
 
-	defer utils.Elapsed("Master Data Reports Loading")
-	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
-	records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
-	fmt.Printf("From remote file, number of records: %d\n", len(records))
+	//defer utils.Elapsed("Master Data Reports Loading")
+	//fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
+	//records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
+	//fmt.Printf("From remote file, number of records: %d\n", len(records))
 	utils.PanicErr(err)
 	return records
 }
@@ -133,11 +146,17 @@ func parse(record []string) models.LETFHolding {
 	if err != nil {
 		shares = 0
 	}
+	ticker := ""
+	if strings.TrimSpace(record[16]) != "" && strings.Count(record[16], ":") == 1 {
+		ticker = strings.Split(record[16], ":")[0]
+	} else {
+		ticker = record[3]
+	}
 	return models.LETFHolding{
 		TradeDate:         record[7],
 		LETFAccountTicker: utils.FetchAccountTicker(record[1]),
 		LETFDescription:   record[2],
-		StockTicker:       utils.FetchStockTicker(record[3]),
+		StockTicker:       utils.FetchStockTicker(ticker),
 		StockDescription:  record[4],
 		//TODO: Fill the following information from the csv
 		Shares:           int64(shares),
