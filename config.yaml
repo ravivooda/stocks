@@ -22,6 +22,8 @@ securities:
       - Shares/Contracts
       - Exposure Value (Notional + G/L)
       - Market Value
+  master_data_reports:
+    holdings_csv_url: "https://masterdatareports.com/Download-Files/ETFData42.csv"
 outputs:
   insights:
     min_threshold_percentage: 0

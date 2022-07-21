@@ -24,6 +24,7 @@ steps:
   # Running orchestrator
   - name: golang:1.17
     entrypoint: /bin/bash
+    id: running_orchestrator
     args:
       - -c
       - |
@@ -40,6 +41,8 @@ steps:
         du -sh .
         gsutil -m cp -r tmp/build/websites/* gs://letf_website/
     timeout: 60000s
+    waitFor:
+      - running_orchestrator
 
 timeout: 80000s
 

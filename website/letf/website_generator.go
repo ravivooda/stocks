@@ -15,10 +15,10 @@ type Config struct {
 }
 
 type Request struct {
-	AnalysisMap         map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
-	Letfs               map[models.LETFAccountTicker][]models.LETFHolding
-	StocksMap           map[models.StockTicker][]models.LETFHolding
-	MappedAnalysisArray map[string][]models.LETFOverlapAnalysis
+	//AnalysisMap map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	Letfs     map[models.LETFAccountTicker][]models.LETFHolding
+	StocksMap map[models.StockTicker][]models.LETFHolding
+	//MappedAnalysisArray map[string][]models.LETFOverlapAnalysis
 }
 
 type Generator interface {
@@ -30,6 +30,7 @@ type Generator interface {
 		letfs map[models.LETFAccountTicker][]models.LETFHolding,
 		stocksMap map[models.StockTicker][]models.LETFHolding,
 	) (bool, error)
+	GenerateStock(ctx context.Context, stockTicker models.StockTicker, letfHoldings []models.LETFHolding)
 }
 
 type generator struct {
@@ -54,19 +55,6 @@ func (g *generator) Generate(_ context.Context, request Request) (bool, error) {
 	b, err = g.logWelcomePageToHTML(welcomeTemplateLoc, fmt.Sprintf("%s/404.html", g.config.WebsiteDirectoryRoot), request)
 	if err != nil {
 		return b, err
-	}
-	var i = 0
-	for ticker, holdings := range request.StocksMap {
-		escapedTickerString := string(ticker)
-		stockSummaryFilePath := fmt.Sprintf("%s/%s.html", g.stockSummariesFileRoot, escapedTickerString)
-		_, err = g.logStockSummaryPageToHTML(stockSummaryTemplateLoc, stockSummaryFilePath, escapedTickerString, holdings)
-		if err != nil {
-			return false, err
-		}
-		if i%10000 == 0 {
-			fmt.Printf("logged stock summary page %d out of %d\n", i, len(request.StocksMap))
-		}
-		i += 1
 	}
 
 	return true, nil

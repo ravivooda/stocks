@@ -51,7 +51,7 @@ func (g *generator) GenerateETF(
 		return b, err
 	}
 
-	// Generate Overlap details
+	//Generate Overlap details
 	for _, analysisArray := range mappedAnalysisArray {
 		for _, analysis := range analysisArray {
 			if int(analysis.OverlapPercentage) < g.config.MinThreshold {
