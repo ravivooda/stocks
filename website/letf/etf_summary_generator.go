@@ -47,7 +47,7 @@ func (g *generator) GenerateETF(
 	}
 
 	// Generate Summary for the ticker
-	if b, err := g.logSummaryToHTML(letfSummaryTemplateLoc, summaryOutputFilePath, etf, letfs[etf], mappedAnalysisArray, letfs); err != nil {
+	if b, err := g.logSummaryToHTML(ETFSummaryTemplateLoc, summaryOutputFilePath, etf, letfs[etf], mappedAnalysisArray, letfs); err != nil {
 		return b, err
 	}
 

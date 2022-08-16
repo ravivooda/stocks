@@ -41,9 +41,10 @@ type generator struct {
 }
 
 type WebsitePaths struct {
-	LETFSummary  string
-	StockSummary string
-	Overlaps     string
+	LETFSummary      string
+	StockSummary     string
+	Overlaps         string
+	TemplatesRootDir string
 }
 
 func (g *generator) Generate(_ context.Context, request Request) (bool, error) {

@@ -8,28 +8,18 @@ import (
 	"stocks/utils"
 )
 
-type FileName string
-
-type Logger interface {
-	Log(analysis models.LETFOverlapAnalysis) (FileName, error)
-}
-
-type Config struct {
-	RootDir string
-}
-
 type logger struct {
 	c Config
 }
 
-func (l *logger) Log(analysis models.LETFOverlapAnalysis) (FileName, error) {
-	_, err := utils.MakeDirs([]string{l.c.RootDir})
+func (l *logger) LogOverlapAnalysis(analysis models.LETFOverlapAnalysis) (FileName, error) {
+	_, err := utils.MakeDirs([]string{l.c.OverlapsDirectory})
 	if err != nil {
 		return "", err
 	}
 
 	fileName := fmt.Sprintf("%s_%s.csv", analysis.LETFHolder, utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
-	fileAddr := fmt.Sprintf("%s/%s", l.c.RootDir, fileName)
+	fileAddr := fmt.Sprintf("%s/%s", l.c.OverlapsDirectory, fileName)
 	csvFile, err := os.Create(fileAddr)
 	defer func(csvFile *os.File) {
 		_ = csvFile.Close()
@@ -97,5 +87,7 @@ func floatToString(input float64) string {
 }
 
 func NewInsightsLogger(config Config) Logger {
+	_, err := utils.MakeDirs([]string{config.ETFHoldingsDirectory})
+	utils.PanicErr(err)
 	return &logger{c: config}
 }

@@ -16,6 +16,7 @@ import (
 	"stocks/securities/masterdatareports"
 	"stocks/utils"
 	"stocks/website/letf"
+	"time"
 )
 
 type orchestrateRequest struct {
@@ -79,16 +80,19 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 		minPercentageTotal = 100.0
 		maxPercentageTotal = 0.0
 	)
+	var mapsDidNotSumUp = map[string]float64{}
 	for seed, holdings := range holdingsWithAccountTickerMap {
 		sum := utils.SumHoldings(holdings)
 		if math.Abs(sum-100) > 30 {
-			filteredHoldings := utils.FilteredForPrinting(holdings)
-			return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
+			//filteredHoldings := utils.FilteredForPrinting(holdings)
+			//return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
+			mapsDidNotSumUp[string(seed)] = sum
 		}
 		minPercentageTotal = math.Min(sum, minPercentageTotal)
 		maxPercentageTotal = math.Max(sum, maxPercentageTotal)
 		totalHoldings = append(totalHoldings, holdings...)
 	}
+	fmt.Printf("did not add up for: %v\n", mapsDidNotSumUp)
 	fmt.Printf("Found minPercentageTotal: %f, maxPercentageTotal: %f\n", minPercentageTotal, maxPercentageTotal)
 
 	return totalHoldings, nil
@@ -107,10 +111,19 @@ func orchestrate(ctx context.Context, request orchestrateRequest, holdings []mod
 		utils.PanicErr(err)
 	}
 
+	logHoldings(ctx, request.insightsLogger, holdingsWithAccountTickerMap)
+
 	if request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		generateInsights(ctx, request, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+		//generateInsights(ctx, request, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
 	}
-	return
+}
+
+func logHoldings(ctx context.Context, logger insights.Logger, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {
+	for ticker, holdings := range holdingsWithAccountTickerMap {
+		fileName, err := logger.LogHoldings(ctx, ticker, holdings, nil)
+		utils.PanicErr(err)
+		fmt.Printf("wrote the holdings to %s\n", fileName)
+	}
 }
 
 func generateInsights(
@@ -136,48 +149,49 @@ func generateInsights(
 		utils.PanicErr(err)
 	}
 
+	time.Sleep(1212479)
+
 	fmt.Println("Generating ETF Pages")
 	for _, iGenerator := range request.insightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
 			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
 			for ticker, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
 				totalGatheredInsights += len(letfOverlapAnalyses)
-				for _, generator := range request.websiteGenerators {
-					mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
-					for _, analysis := range letfOverlapAnalyses {
-						holdee := request.etfsMaps[analysis.LETFHoldees[0]]
-						etfArray := mappedOverlapAnalysis[holdee.Leveraged]
-						if etfArray == nil {
-							etfArray = []models.LETFOverlapAnalysis{}
-						}
-						mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
+				//for _, generator := range request.websiteGenerators {
+				//
+				//	//for leverage, analyses := range mappedOverlapAnalysis {
+				//	//	//fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+				//	//	if leverage == "" {
+				//	//		for _, analysis := range analyses {
+				//	//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+				//	//		}
+				//	//	}
+				//	//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+				//	//	//fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+				//	//	analyses = append(analyses, mergedInsights[ticker]...)
+				//	//	mappedOverlapAnalysis[leverage] = analyses
+				//	//}
+				//	// TODO: Can we parallelize this stuff?
+				//	// Generate ETF summaries
+				//	_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+				//	if err != nil {
+				//		panic(err)
+				//	}
+				//}
+				fmt.Printf("for ticker: %s\n", ticker)
+				mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
+				for _, analysis := range letfOverlapAnalyses {
+					holdee := request.etfsMaps[analysis.LETFHoldees[0]]
+					etfArray := mappedOverlapAnalysis[holdee.Leveraged]
+					if etfArray == nil {
+						etfArray = []models.LETFOverlapAnalysis{}
 					}
-
-					//for leverage, analyses := range mappedOverlapAnalysis {
-					//	//fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
-					//	if leverage == "" {
-					//		for _, analysis := range analyses {
-					//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
-					//		}
-					//	}
-					//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
-					//	//fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
-					//	analyses = append(analyses, mergedInsights[ticker]...)
-					//	mappedOverlapAnalysis[leverage] = analyses
-					//}
-					// TODO: Can we parallelize this stuff?
-					// Generate ETF summaries
-					_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
-					if err != nil {
-						panic(err)
-					}
+					mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
 				}
 
 				for _, insight := range letfOverlapAnalyses {
-					_, err := request.insightsLogger.Log(insight)
-					if err != nil {
-						panic(err)
-					}
+					_, err := request.insightsLogger.LogOverlapAnalysis(insight)
+					utils.PanicErr(err)
 				}
 			}
 		})

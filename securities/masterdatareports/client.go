@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
+	"math"
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
@@ -31,6 +32,11 @@ func (c *client) Count() int {
 
 func (c *client) GetHoldings(_ context.Context, etf models.ETF) ([]models.LETFHolding, error) {
 	if holdings, ok := c.holdings[etf.Symbol]; ok {
+		for _, holding := range holdings {
+			if math.IsNaN(holding.PercentContained) {
+				utils.PanicErr(errors.New(fmt.Sprintf("Unexpected NaN for %v with holdings: %v", etf, holdings)))
+			}
+		}
 		return holdings, nil
 	}
 	return nil, errors.Errorf("unable to find mapping for holding: %s", etf.Symbol)
@@ -41,13 +47,24 @@ const (
 )
 
 var (
-	skippables = map[string]bool{
-		"r1sm2":     true,
-		"parent":    true,
-		"weight":    true,
-		"ticker":    true,
-		"rank":      true,
-		"weighting": true,
+	skippables = map[string]int{
+		"r1sm2":     1,
+		"parent":    1,
+		"weight":    1,
+		"ticker":    1,
+		"rank":      1,
+		"weighting": 1,
+	}
+	skippedOwners = map[string]int{
+		"overlay": 1,
+		"qraft":   1,
+	}
+	skippingTickers = map[string]int{
+		"EMAG": 1,
+		"PFUT": 1,
+		"PLDR": 1,
+		"RESD": 1,
+		"STLG": 1,
 	}
 )
 
@@ -64,10 +81,15 @@ func New(config Config) (Client, error) {
 
 	records = records[1:]
 	var parsedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
+	var differentOwners = map[string]bool{}
 	for _, record := range records {
-		if ok, _ := skippables[strings.ToLower(record[5])]; ok {
+		if _, ok := skippables[strings.ToLower(record[5])]; ok {
 			continue
-		} else if ok, _ := skippables[strings.ToLower(record[4])]; ok {
+		} else if _, ok := skippables[strings.ToLower(record[4])]; ok {
+			continue
+		} else if _, ok := skippedOwners[strings.ToLower(record[0])]; ok {
+			continue
+		} else if _, ok := skippingTickers[strings.ToUpper(record[1])]; ok {
 			continue
 		}
 		var holding = parse(record)
@@ -77,14 +99,27 @@ func New(config Config) (Client, error) {
 		}
 		holdings = append(holdings, holding)
 		parsedHoldings[holding.LETFAccountTicker] = holdings
+		if math.IsNaN(holding.PercentContained) {
+			utils.PanicErr(errors.New("Unexpected NaN"))
+		}
 	}
 
+	fmt.Printf("Found providers: %+v\n", differentOwners)
+
 	var mappedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
+	debuggingTicker := models.LETFAccountTicker("WBIF")
+	ShouldBeSkipped := map[models.LETFAccountTicker]bool{}
 	for ticker, holdings := range parsedHoldings {
 		totalMarketValue := int64(0)
 		totalledPercentage := float64(0)
+		if ticker == debuggingTicker {
+			fmt.Println("Asdasdasdasd")
+		}
 		for _, holding := range holdings {
 			totalMarketValue += holding.MarketValue
+			if holding.PercentContained < 0 && ticker == debuggingTicker {
+				fmt.Println("asdasdasdsd")
+			}
 			totalledPercentage += holding.PercentContained
 		}
 
@@ -100,15 +135,21 @@ func New(config Config) (Client, error) {
 
 		var holdingsWithPercentage []models.LETFHolding
 		for _, holding := range holdings {
-			if totalledPercentage > 70 && totalledPercentage <= 101 {
+			if totalledPercentage != 0 {
 				holding.PercentContained = utils.RoundedPercentage(holding.PercentContained)
 			} else {
+				if totalMarketValue == 0 {
+					//panic(errors.New(fmt.Sprintf("total market value is 0 for : %v", holdings)))
+					ShouldBeSkipped[ticker] = true
+				}
 				holding.PercentContained = utils.RoundedPercentage(float64(holding.MarketValue) / float64(totalMarketValue) * 100.00)
 			}
 			holdingsWithPercentage = append(holdingsWithPercentage, holding)
 		}
 		mappedHoldings[ticker] = holdingsWithPercentage
 	}
+
+	fmt.Printf("going to skip: %v\n", ShouldBeSkipped)
 
 	return &client{
 		config:   config,
@@ -132,7 +173,7 @@ func loadData(config Config) [][]string {
 func parse(record []string) models.LETFHolding {
 	percentContained, err := strconv.ParseFloat(record[5], 64)
 	if err != nil {
-		percentContained = -1
+		percentContained = 0
 	}
 	marketValue, err := strconv.ParseFloat(record[12], 64)
 	if err != nil {
@@ -151,6 +192,9 @@ func parse(record []string) models.LETFHolding {
 		ticker = strings.Split(record[16], ":")[0]
 	} else {
 		ticker = record[3]
+	}
+	if math.IsNaN(percentContained) {
+		utils.PanicErr(errors.New("Unexpected NaN"))
 	}
 	return models.LETFHolding{
 		TradeDate:         record[7],
