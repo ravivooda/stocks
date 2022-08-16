@@ -83,7 +83,7 @@ func (g *generator) logHTMLWithData(templateLoc string, outputFilePath string, d
 }
 
 func New(config Config) (Generator, error) {
-	letfSummariesFileRoot := getFilePath(config.WebsiteDirectoryRoot, letfSummariesPathFromRoot)
+	letfSummariesFileRoot := getFilePath(config.WebsiteDirectoryRoot, etfSummariesPathFromRoot)
 	overlapsFileRoot := getFilePath(config.WebsiteDirectoryRoot, overlapsPathFromRoot)
 	stockSummariesFileRoot := getFilePath(config.WebsiteDirectoryRoot, stockSummariesPathFromRoot)
 	_, err := utils.MakeDirs([]string{config.WebsiteDirectoryRoot, letfSummariesFileRoot, overlapsFileRoot, stockSummariesFileRoot})

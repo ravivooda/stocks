@@ -25,6 +25,60 @@ import (
 
 func main() {
 	defer utils.Elapsed("main")
+	ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, generator, logger, websitePaths := defaults()
+
+	totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
+		config: config,
+		etfs:   etfs,
+		seedGenerators: []database.DB{
+			db,
+			proSharesClient,
+		},
+		clients: map[models.Provider]securities.Client{
+			models.Direxion:    direxionClient,
+			models.MicroSector: microSectorClient,
+			models.ProShares:   proSharesClient,
+		},
+		backupClient: masterdatareportsClient,
+		etfsMaps:     utils.MappedLETFS(etfs),
+	})
+	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(totalHoldings)
+	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
+	utils.PanicErr(err)
+
+	shouldOrchestrate := false
+	if shouldOrchestrate {
+		orchestrate(ctx, orchestrateRequest{
+			config:            config,
+			parsers:           alertParsers,
+			notifier:          notifier,
+			insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
+			insightsLogger:    logger,
+			websiteGenerators: []letf.Generator{generator},
+			etfsMaps:          utils.MappedLETFS(etfs),
+		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
+	}
+
+	beginServing(ctx, insightsConfig, logger, websitePaths, holdingsWithAccountTickerMap)
+}
+
+func beginServing(
+	ctx context.Context,
+	insightsConfig insights.Config,
+	logger insights.Logger,
+	paths letf.WebsitePaths,
+	tickerMap map[models.LETFAccountTicker][]models.LETFHolding,
+) {
+	server := website.New(website.Config{
+		InsightsConfig: insightsConfig,
+		WebsitePaths:   paths,
+	}, logger, tickerMap)
+	fmt.Println("started serving!!")
+	utils.PanicErr(server.StartServing(ctx))
+	fmt.Println("done serving")
+}
+
+func defaults() (context.Context, database.DB, securities.Client, error, securities.Client, []models.ETF, Config, insights.Config, securities.SeedProvider, []alerts.AlertParser, notifications.Notifier, masterdatareports.Client, letf.Generator, insights.Logger, letf.WebsitePaths) {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
 	direxionClient, err := direxion.NewClient()
@@ -66,47 +120,6 @@ func main() {
 
 	logger := insights.NewInsightsLogger(insightsConfig)
 
-	shouldOrchestrate := false
-	if shouldOrchestrate {
-		totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
-			config: config,
-			etfs:   etfs,
-			seedGenerators: []database.DB{
-				db,
-				proSharesClient,
-			},
-			clients: map[models.Provider]securities.Client{
-				models.Direxion:    direxionClient,
-				models.MicroSector: microSectorClient,
-				models.ProShares:   proSharesClient,
-			},
-			backupClient: masterdatareportsClient,
-			etfsMaps:     utils.MappedLETFS(etfs),
-		})
-		utils.PanicErr(err)
-
-		orchestrate(ctx, orchestrateRequest{
-			config:            config,
-			parsers:           alertParsers,
-			notifier:          notifier,
-			insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
-			insightsLogger:    logger,
-			websiteGenerators: []letf.Generator{generator},
-			etfsMaps:          utils.MappedLETFS(etfs),
-		}, totalHoldings)
-	}
-
-	beginServing(ctx, insightsConfig, logger)
-}
-
-func beginServing(ctx context.Context, insightsConfig insights.Config, logger insights.Logger) {
-	server := website.New(website.Config{
-		InsightsConfig: insightsConfig,
-		WebsitePaths: letf.WebsitePaths{
-			TemplatesRootDir: letf.TemplatesDir,
-		},
-	}, logger)
-	fmt.Println("started serving!!")
-	utils.PanicErr(server.StartServing(ctx))
-	fmt.Println("done serving")
+	websitePaths := letf.DefaultWebsitePaths
+	return ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, generator, logger, websitePaths
 }

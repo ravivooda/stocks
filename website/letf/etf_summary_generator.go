@@ -27,7 +27,7 @@ func (g *generator) logSummaryToHTML(
 		Holdings:      letfHoldings,
 		Overlaps:      allAnalysis,
 		AccountsMap:   letfs,
-		WebsitePaths:  websitePaths,
+		WebsitePaths:  DefaultWebsitePaths,
 	}
 	return g.logHTMLWithData(summaryTemplateLoc, outputFilePath, data)
 }

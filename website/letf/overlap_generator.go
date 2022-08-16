@@ -33,7 +33,7 @@ func (g *generator) logOverlapToHTML(
 	}{
 		Analysis:     analysis,
 		StocksMap:    letfs,
-		WebsitePaths: websitePaths,
+		WebsitePaths: DefaultWebsitePaths,
 	}
 	return g.logHTMLWithData(overlapTemplateLoc, overlapOutputFilePath, data)
 }

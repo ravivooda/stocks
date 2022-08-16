@@ -38,7 +38,7 @@ func (g *generator) logWelcomePageToHTML(welcomePageTemplateLoc, outputFilePath 
 		TotalStockTickers: len(request.StocksMap),
 		Providers:         mapped,
 		Stocks:            groupedStocks,
-		WebsitePaths:      websitePaths,
+		WebsitePaths:      DefaultWebsitePaths,
 	}
 	return g.logHTMLWithData(welcomePageTemplateLoc, outputFilePath, data)
 }

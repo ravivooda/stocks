@@ -6,6 +6,28 @@ import (
 	"stocks/utils"
 )
 
+//for _, generator := range request.websiteGenerators {
+//
+//	//for leverage, analyses := range mappedOverlapAnalysis {
+//	//	//fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+//	//	if leverage == "" {
+//	//		for _, analysis := range analyses {
+//	//			panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+//	//		}
+//	//	}
+//	//	mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+//	//	//fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+//	//	analyses = append(analyses, mergedInsights[ticker]...)
+//	//	mappedOverlapAnalysis[leverage] = analyses
+//	//}
+//	// TODO: Can we parallelize this stuff?
+//	// Generate ETF summaries
+//	_, err := generator.GenerateETF(ctx, ticker, mappedOverlapAnalysis, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+//	if err != nil {
+//		panic(err)
+//	}
+//}
+
 func (g *generator) MergeInsights(
 	analysis map[models.LETFAccountTicker][]models.LETFOverlapAnalysis,
 	letfHoldingsMap map[models.LETFAccountTicker][]models.LETFHolding,

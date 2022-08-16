@@ -16,7 +16,7 @@ func (g *generator) logStockSummaryPageToHTML(stockTemplateLoc string, outputFil
 	}{
 		Ticker:       ticker,
 		Holdings:     holdings,
-		WebsitePaths: websitePaths,
+		WebsitePaths: DefaultWebsitePaths,
 	}
 	return g.logHTMLWithData(stockTemplateLoc, outputFilePath, data)
 }

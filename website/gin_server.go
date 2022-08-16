@@ -24,6 +24,9 @@ func (s *server) renderETF(c *gin.Context) {
 	etfHoldings, err := s.logger.FetchHoldings(etf)
 	utils.PanicErr(err)
 
+	overlaps, err := s.logger.FetchOverlaps(etf)
+	utils.PanicErr(err)
+
 	data := struct {
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding
@@ -33,8 +36,8 @@ func (s *server) renderETF(c *gin.Context) {
 	}{
 		AccountTicker: models.LETFAccountTicker(etf),
 		Holdings:      etfHoldings,
-		Overlaps:      map[string][]models.LETFOverlapAnalysis{},
-		AccountsMap:   map[models.LETFAccountTicker][]models.LETFHolding{},
+		Overlaps:      overlaps,
+		AccountsMap:   s.accountMap,
 		WebsitePaths:  s.config.WebsitePaths,
 	}
 	c.HTML(http.StatusOK, letf.ETFSummaryTemplate, data)
