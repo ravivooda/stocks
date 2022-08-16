@@ -96,8 +96,9 @@ func defaults() (context.Context, database.DB, securities.Client, error, securit
 	}
 	fmt.Printf("Found Morning Star Config: %+v\n", config)
 	insightsConfig := insights.Config{
-		OverlapsDirectory:    config.Directories.Artifacts + "/insights",
+		OverlapsDirectory:    config.Directories.Artifacts + "/overlaps",
 		ETFHoldingsDirectory: config.Directories.Artifacts + "/etf_holdings",
+		StocksDirectory:      config.Directories.Artifacts + "/stocks",
 	}
 
 	msapi := morning_star.New(config.MSAPI)

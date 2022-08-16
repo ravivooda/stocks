@@ -86,6 +86,7 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 			//filteredHoldings := utils.FilteredForPrinting(holdings)
 			//return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
 			mapsDidNotSumUp[string(seed)] = sum
+			delete(holdingsWithAccountTickerMap, seed)
 		}
 		minPercentageTotal = math.Min(sum, minPercentageTotal)
 		maxPercentageTotal = math.Max(sum, maxPercentageTotal)
@@ -113,9 +114,10 @@ func orchestrate(
 	}
 
 	logHoldings(ctx, request.insightsLogger, holdingsWithAccountTickerMap)
+	logStocks(ctx, request, holdingsWithStockTickerMap)
 
 	if request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		generateInsights(ctx, request, holdingsWithAccountTickerMap, holdingsWithStockTickerMap)
+		generateInsights(ctx, request, holdingsWithAccountTickerMap)
 	}
 }
 
@@ -127,19 +129,9 @@ func logHoldings(ctx context.Context, logger insights.Logger, holdingsWithAccoun
 	}
 }
 
-func generateInsights(
-	ctx context.Context,
-	request orchestrateRequest,
-	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
-	holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding,
-) {
+func generateInsights(_ context.Context, request orchestrateRequest, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {
 	var totalGatheredInsights = 0
-	//fmt.Printf("Generating %d stock summaries\n", len(holdingsWithStockTickerMap))
-	//for _, generator := range request.websiteGenerators {
-	//	for stockTicker, holdings := range holdingsWithStockTickerMap {
-	//		generator.GenerateStock(ctx, stockTicker, holdings)
-	//	}
-	//}
+
 	//
 	//fmt.Println("Generating welcome pages")
 	//for _, generator := range request.websiteGenerators {
@@ -176,6 +168,13 @@ func generateInsights(
 		})
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
+}
+
+func logStocks(ctx context.Context, request orchestrateRequest, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
+	fmt.Printf("Generating %d stock summaries\n", len(holdingsWithStockTickerMap))
+	fileNames, err := request.insightsLogger.LogStocks(ctx, holdingsWithStockTickerMap)
+	fmt.Printf("Generated files: %s\n", fileNames)
+	utils.PanicErr(err)
 }
 
 func gatherAlerts(
