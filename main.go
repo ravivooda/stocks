@@ -47,7 +47,7 @@ func main() {
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
 	utils.PanicErr(err)
 
-	shouldOrchestrate := false
+	shouldOrchestrate := true
 	if shouldOrchestrate {
 		orchestrate(ctx, orchestrateRequest{
 			config:            config,
@@ -60,7 +60,20 @@ func main() {
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
 	}
 
-	beginServing(ctx, insightsConfig, logger, websitePaths, holdingsWithAccountTickerMap, etfsMap)
+	stocksMap := map[models.StockTicker]models.StockMetadata{}
+	for stockTicker, holdings := range holdingsWithStockTickerMap {
+		stocksMap[stockTicker] = models.StockMetadata{
+			StockTicker:      stockTicker,
+			StockDescription: holdings[0].StockDescription,
+		}
+	}
+
+	metadata := website.Metadata{
+		AccountMap: holdingsWithAccountTickerMap,
+		EtfsMap:    etfsMap,
+		StocksMap:  stocksMap,
+	}
+	beginServing(ctx, insightsConfig, logger, websitePaths, metadata)
 }
 
 func beginServing(
@@ -68,13 +81,12 @@ func beginServing(
 	insightsConfig insights.Config,
 	logger insights.Logger,
 	paths letf.WebsitePaths,
-	tickerMap map[models.LETFAccountTicker][]models.LETFHolding,
-	etfsMap map[models.LETFAccountTicker]models.ETF,
+	metadata website.Metadata,
 ) {
 	server := website.New(website.Config{
 		InsightsConfig: insightsConfig,
 		WebsitePaths:   paths,
-	}, logger, tickerMap, etfsMap)
+	}, logger, metadata)
 	fmt.Println("started serving!!")
 	utils.PanicErr(server.StartServing(ctx))
 	fmt.Println("done serving")

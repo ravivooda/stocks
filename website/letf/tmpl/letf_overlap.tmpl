@@ -117,7 +117,7 @@
     {{ with .Analysis.DetailedOverlap }}
         {{ range . }}
             <tr>
-                <td><span class="rounded_border">{{ (index (index $.StocksMap .Ticker) 0).StockDescription }}</span>
+                <td><span class="rounded_border">{{ (index $.StocksMap .Ticker).StockDescription }}</span>
                 </td>
                 <td><span class="rounded_border etf_ticker"><a
                                 href="{{ $.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span>

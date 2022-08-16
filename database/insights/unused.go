@@ -14,7 +14,7 @@ func (l *logger) logOverlapAnalysisToCSV(analysis models.LETFOverlapAnalysis) (F
 		return "", err
 	}
 
-	fileName, fileAddr := l.overlapsFilePath(analysis.LETFHolder, analysis.LETFHoldees)
+	fileName, fileAddr := l.overlapsFilePath(string(analysis.LETFHolder), utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
 	csvFile, err := os.Create(fileAddr)
 	defer func(csvFile *os.File) {
 		_ = csvFile.Close()

@@ -16,23 +16,26 @@ type Config struct {
 	WebsitePaths   letf.WebsitePaths
 }
 
+type Metadata struct {
+	AccountMap map[models.LETFAccountTicker][]models.LETFHolding
+	EtfsMap    map[models.LETFAccountTicker]models.ETF
+	StocksMap  map[models.StockTicker]models.StockMetadata
+}
+
 type server struct {
-	config     Config
-	logger     insights.Logger
-	accountMap map[models.LETFAccountTicker][]models.LETFHolding
-	etfsMaps   map[models.LETFAccountTicker]models.ETF
+	config   Config
+	logger   insights.Logger
+	metadata Metadata
 }
 
 func New(
 	config Config,
 	logger insights.Logger,
-	accountMap map[models.LETFAccountTicker][]models.LETFHolding,
-	etfsMap map[models.LETFAccountTicker]models.ETF,
+	metadata Metadata,
 ) Server {
 	return &server{
-		config:     config,
-		logger:     logger,
-		accountMap: accountMap,
-		etfsMaps:   etfsMap,
+		config:   config,
+		logger:   logger,
+		metadata: metadata,
 	}
 }

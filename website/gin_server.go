@@ -10,6 +10,10 @@ func (s *server) StartServing(context.Context) error {
 	router := gin.Default()
 	router.LoadHTMLGlob(s.config.WebsitePaths.TemplatesRootDir + "/*")
 
+	router.GET(fmt.Sprintf("/etf-summary/overlap/:%s", overlapParam), func(c *gin.Context) {
+		s.renderOverlap(c)
+	})
+
 	router.GET("/etf-summary/:etf", func(c *gin.Context) {
 		s.renderETF(c)
 	})

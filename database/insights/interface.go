@@ -13,6 +13,7 @@ type Logger interface {
 	LogHoldings(context context.Context, etfName models.LETFAccountTicker, holdings []models.LETFHolding) (FileName, error)
 	FetchHoldings(etfName string) ([]models.LETFHolding, error)
 	FetchOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error)
+	FetchOverlap(holdee string, holders string) (models.LETFOverlapAnalysis, error)
 	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error)
 	FetchStock(stock string) ([]models.LETFHolding, error)
 }

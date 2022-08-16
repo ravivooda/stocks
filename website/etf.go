@@ -27,7 +27,7 @@ func (s *server) renderETF(c *gin.Context) {
 		AccountTicker: models.LETFAccountTicker(etf),
 		Holdings:      etfHoldings,
 		Overlaps:      overlaps,
-		AccountsMap:   s.accountMap,
+		AccountsMap:   s.metadata.AccountMap,
 		WebsitePaths:  s.config.WebsitePaths,
 	}
 	c.HTML(http.StatusOK, letf.ETFSummaryTemplate, data)
