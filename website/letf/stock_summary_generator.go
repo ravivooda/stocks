@@ -9,6 +9,7 @@ import (
 )
 
 func (g *generator) logStockSummaryPageToHTML(stockTemplateLoc string, outputFilePath string, ticker string, holdings []models.LETFHolding) (bool, error) {
+	// TODO: this will not work anymore as I modified the the template to take in mapped leverage holdings.
 	data := struct {
 		Ticker       string
 		Holdings     []models.LETFHolding

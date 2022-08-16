@@ -24,6 +24,12 @@
             margin-bottom: 12px
         }
 
+        h3 {
+            text-align: center;
+            padding: 12px;
+            margin-bottom: 12px
+        }
+
         td, th {
             border: 1px solid #ddd;
             padding: 8px;
@@ -100,26 +106,31 @@
     Summary for {{ .Ticker }}
 </h1>
 <h2>ETFs with exposure to {{ .Ticker }}</h2>
-<table>
-    <tr>
-        <th>Provider</th>
-        <th>ETF Ticker</th>
-        <th>Description</th>
-        <th>{{ .Ticker }} Percentage Exposure</th>
-    </tr>
-    {{ with .Holdings }}
-        {{ range . }}
+{{ with .MappedHoldings }}
+    {{ range $leverage, $overlaps := .}}
+        <h3>Leverage: {{ $leverage }}</h3>
+        <table>
             <tr>
-                <td><span class="rounded_border">{{ .Provider }}</span></td>
-                <td><span class="rounded_border etf_ticker"><a
-                                href="{{ $.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
-                </td>
-                <td><span class="rounded_border">{{ .LETFDescription }}</span></td>
-                <td>{{ .PercentContained }}</td>
+                <th>Provider</th>
+                <th>ETF Ticker</th>
+                <th>Description</th>
+                <th>{{ $.Ticker }} Percentage Exposure</th>
             </tr>
-        {{ end }}
+            {{ with $overlaps }}
+                {{ range . }}
+                    <tr>
+                        <td><span class="rounded_border">{{ .Provider }}</span></td>
+                        <td><span class="rounded_border etf_ticker"><a
+                                        href="{{ $.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
+                        </td>
+                        <td><span class="rounded_border">{{ .LETFDescription }}</span></td>
+                        <td>{{ .PercentContained }}</td>
+                    </tr>
+                {{ end }}
+            {{ end }}
+        </table>
     {{ end }}
-</table>
+{{ end }}
 <div id="bottom">
     <table id="bottom_table">
         <tr>

@@ -15,20 +15,39 @@ func (s *server) renderStock(c *gin.Context) {
 	holdings, err := s.logger.FetchStock(stock)
 	utils.PanicErr(err)
 
-	sort.Slice(holdings, func(i, j int) bool {
-		return holdings[i].PercentContained > holdings[j].PercentContained
-	})
+	mappedHoldings := s.mappedHoldings(holdings)
+
+	for leverage, letfHoldings := range mappedHoldings {
+		sort.Slice(letfHoldings, func(i, j int) bool {
+			return letfHoldings[i].PercentContained > letfHoldings[j].PercentContained
+		})
+		mappedHoldings[leverage] = letfHoldings
+	}
 
 	data := struct {
-		Ticker       string
-		Holdings     []models.LETFHolding
-		WebsitePaths letf.WebsitePaths
+		Ticker         string
+		MappedHoldings map[string][]models.LETFHolding
+		WebsitePaths   letf.WebsitePaths
 	}{
-		Ticker:       stock,
-		Holdings:     holdings,
-		WebsitePaths: s.config.WebsitePaths,
+		Ticker:         stock,
+		MappedHoldings: mappedHoldings,
+		WebsitePaths:   s.config.WebsitePaths,
 	}
 	c.HTML(http.StatusOK, letf.StockSummaryTemplate, data)
+}
+
+func (s *server) mappedHoldings(holdings []models.LETFHolding) map[string][]models.LETFHolding {
+	mappedHoldings := map[string][]models.LETFHolding{}
+	for _, holding := range holdings {
+		leverage := s.etfsMaps[holding.LETFAccountTicker].Leveraged
+		a := mappedHoldings[leverage]
+		if a == nil {
+			a = []models.LETFHolding{}
+		}
+		a = append(a, holding)
+		mappedHoldings[leverage] = a
+	}
+	return mappedHoldings
 }
 
 func (s *server) fetchStock(c *gin.Context) string {

@@ -27,6 +27,7 @@ func main() {
 	defer utils.Elapsed("main")
 	ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, generator, logger, websitePaths := defaults()
 
+	etfsMap := utils.MappedLETFS(etfs)
 	totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
 		config: config,
 		etfs:   etfs,
@@ -40,7 +41,7 @@ func main() {
 			models.ProShares:   proSharesClient,
 		},
 		backupClient: masterdatareportsClient,
-		etfsMaps:     utils.MappedLETFS(etfs),
+		etfsMaps:     etfsMap,
 	})
 	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(totalHoldings)
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
@@ -55,11 +56,11 @@ func main() {
 			insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
 			insightsLogger:    logger,
 			websiteGenerators: []letf.Generator{generator},
-			etfsMaps:          utils.MappedLETFS(etfs),
+			etfsMaps:          etfsMap,
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
 	}
 
-	beginServing(ctx, insightsConfig, logger, websitePaths, holdingsWithAccountTickerMap)
+	beginServing(ctx, insightsConfig, logger, websitePaths, holdingsWithAccountTickerMap, etfsMap)
 }
 
 func beginServing(
@@ -68,11 +69,12 @@ func beginServing(
 	logger insights.Logger,
 	paths letf.WebsitePaths,
 	tickerMap map[models.LETFAccountTicker][]models.LETFHolding,
+	etfsMap map[models.LETFAccountTicker]models.ETF,
 ) {
 	server := website.New(website.Config{
 		InsightsConfig: insightsConfig,
 		WebsitePaths:   paths,
-	}, logger, tickerMap)
+	}, logger, tickerMap, etfsMap)
 	fmt.Println("started serving!!")
 	utils.PanicErr(server.StartServing(ctx))
 	fmt.Println("done serving")
