@@ -89,7 +89,7 @@
             border: 1px solid #4f4f4f;
         }
 
-        .letf_ticker {
+        .etf_ticker {
             color: #166f9e;
             background-color: #bcbcbc;
         }
@@ -99,11 +99,11 @@
 <h1>
     Summary for {{ .Ticker }}
 </h1>
-<h2>LETFs with exposure to {{ .Ticker }}</h2>
+<h2>ETFs with exposure to {{ .Ticker }}</h2>
 <table>
     <tr>
         <th>Provider</th>
-        <th>LETF Ticker</th>
+        <th>ETF Ticker</th>
         <th>Description</th>
         <th>{{ .Ticker }} Percentage Exposure</th>
     </tr>
@@ -111,7 +111,7 @@
         {{ range . }}
             <tr>
                 <td><span class="rounded_border">{{ .Provider }}</span></td>
-                <td><span class="rounded_border letf_ticker"><a
+                <td><span class="rounded_border etf_ticker"><a
                                 href="{{ $.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
                 </td>
                 <td><span class="rounded_border">{{ .LETFDescription }}</span></td>
