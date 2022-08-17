@@ -7,7 +7,7 @@ const (
 )
 
 var (
-	ETFSummaryTemplate         = "letf_summary.tmpl"
+	ETFSummaryTemplate         = "etf_summary.tmpl"
 	TemplatesDir               = "website/letf/tmpl"
 	ETFSummaryTemplateLoc      = fmt.Sprintf("%s/%s", TemplatesDir, ETFSummaryTemplate)
 	etfSummariesPathFromRoot   = "/etf-summary"
@@ -17,7 +17,7 @@ var (
 	StockSummaryTemplate    = "stock_summary.tmpl"
 	stockSummaryTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, StockSummaryTemplate)
 
-	OverlapTemplate    = "letf_overlap.tmpl"
+	OverlapTemplate    = "etf_overlap.tmpl"
 	overlapTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, OverlapTemplate)
 
 	DefaultWebsitePaths = WebsitePaths{
