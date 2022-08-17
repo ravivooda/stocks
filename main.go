@@ -20,6 +20,7 @@ import (
 	"stocks/securities/proshares"
 	"stocks/utils"
 	"stocks/website"
+	"time"
 )
 
 func main() {
@@ -46,7 +47,7 @@ func main() {
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
 	utils.PanicErr(err)
 
-	shouldOrchestrate := false
+	shouldOrchestrate := true
 	if shouldOrchestrate {
 		orchestrate(ctx, orchestrateRequest{
 			config:            config,
@@ -80,7 +81,8 @@ func main() {
 		StocksMap:    stocksMap,
 		ProvidersMap: providersMap,
 	}
-	beginServing(ctx, insightsConfig, logger, websitePaths, metadata)
+	testDuration := time.Duration(int64(config.Secrets.TestConfig.MaxServerRunTime)) * time.Second
+	beginServing(ctx, insightsConfig, logger, websitePaths, metadata, testDuration)
 }
 
 func beginServing(
@@ -89,20 +91,20 @@ func beginServing(
 	logger insights.Logger,
 	paths website.Paths,
 	metadata website.Metadata,
+	testDuration time.Duration,
 ) {
 	server := website.New(website.Config{
 		InsightsConfig: insightsConfig,
 		WebsitePaths:   paths,
 	}, logger, metadata)
 	fmt.Println("started serving!!")
-	utils.PanicErr(server.StartServing(ctx))
+	utils.PanicErr(server.StartServing(ctx, testDuration))
 	fmt.Println("done serving")
 }
 
 func defaults() (context.Context, database.DB, securities.Client, error, securities.Client, []models.ETF, Config, insights.Config, securities.SeedProvider, []alerts.AlertParser, notifications.Notifier, masterdatareports.Client, insights.Logger, website.Paths) {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
-	direxionClient, err := direxion.NewClient()
 	microSectorClient, err := microsector.NewClient()
 	utils.PanicErr(err)
 
@@ -115,6 +117,7 @@ func defaults() (context.Context, database.DB, securities.Client, error, securit
 	if err != nil {
 		log.Fatalf("error occurred loading config: %+v \n", err)
 	}
+	direxionClient, err := direxion.NewClient(direxion.Config{TemporaryDir: config.Directories.Temporary})
 	fmt.Printf("Found Morning Star Config: %+v\n", config)
 	insightsConfig := insights.Config{
 		OverlapsDirectory:    config.Directories.Artifacts + "/overlaps",

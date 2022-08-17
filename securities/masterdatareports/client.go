@@ -10,6 +10,7 @@ import (
 	"stocks/utils"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Client interface {
@@ -55,9 +56,14 @@ var (
 		"rank":      1,
 		"weighting": 1,
 	}
+	// SkippedOwners should contain lowercase string
 	skippedOwners = map[string]int{
-		"overlay": 1,
-		"qraft":   1,
+		"overlay":   1,
+		"qraft":     1,
+		"oshares":   1,
+		"proshares": 1,
+		"hartford":  1,
+		"equbot":    1,
 	}
 	skippingTickers = map[string]int{
 		"EMAG": 1,
@@ -81,8 +87,14 @@ func New(config Config) (Client, error) {
 
 	records = records[1:]
 	var parsedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
-	var differentOwners = map[string]bool{}
+	var differentOwners = map[string]map[string]bool{}
 	for _, record := range records {
+		m := differentOwners[record[0]]
+		if m == nil {
+			m = map[string]bool{}
+		}
+		m[record[1]] = true
+		differentOwners[record[0]] = m
 		if _, ok := skippables[strings.ToLower(record[5])]; ok {
 			continue
 		} else if _, ok := skippables[strings.ToLower(record[4])]; ok {
@@ -104,7 +116,9 @@ func New(config Config) (Client, error) {
 		}
 	}
 
-	fmt.Printf("Found providers: %+v\n", differentOwners)
+	for s, m := range differentOwners {
+		fmt.Printf("Provider: %s (%d), %+v\n", s, len(m), m)
+	}
 
 	var mappedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
 	debuggingTicker := models.LETFAccountTicker("WBIF")
@@ -158,14 +172,31 @@ func New(config Config) (Client, error) {
 }
 
 func loadData(config Config) [][]string {
-	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
-	records, err := utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
-	fmt.Printf("From local file, number of records: %d\n", len(records))
+	local := false
+	if local {
+		return loadLocalCacheFile()
+	} else {
+		return loadRemoteData(config)
+	}
+}
 
-	//defer utils.Elapsed("Master Data Reports Loading")
-	//fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
-	//records, err := utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
-	//fmt.Printf("From remote file, number of records: %d\n", len(records))
+func loadLocalCacheFile() (records [][]string) {
+	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
+	records, err := utils.RetryFetching(func() ([][]string, error) {
+		return utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
+	}, 3, 0)
+	utils.PanicErr(err)
+	fmt.Printf("From local file, number of records: %d\n", len(records))
+	return records
+}
+
+func loadRemoteData(config Config) [][]string {
+	defer utils.Elapsed("Master Data Reports Loading")
+	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
+	records, err := utils.RetryFetching(func() ([][]string, error) {
+		return utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
+	}, 3, time.Second)
+	fmt.Printf("From remote file, number of records: %d\n", len(records))
 	utils.PanicErr(err)
 	return records
 }
@@ -208,6 +239,6 @@ func parse(record []string) models.LETFHolding {
 		MarketValue:      int64(marketValue),
 		NotionalValue:    notionalValue,
 		PercentContained: percentContained * 100.00, // The CSV reports weights summing up to 1
-		Provider:         "Master Data Reports",
+		Provider:         fmt.Sprintf("Master Data Reports: %s", record[0]),
 	}
 }

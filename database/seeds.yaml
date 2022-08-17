@@ -82,6 +82,8 @@ seeds:
           - Shares
           - Price
           - MarketValue
+          - Cusip
+          - HoldingsPercent
         skippable_lines: 4
         outstanding_shares:
           line_number: 2

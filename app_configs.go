@@ -18,6 +18,9 @@ type Secrets struct {
 	Uploads struct {
 		ShouldUploadInsightsOutputToGCP bool `mapstructure:"should_upload_insights_output_to_gcp"`
 	} `mapstructure:"uploads"`
+	TestConfig struct {
+		MaxServerRunTime int `mapstructure:"max_server_run_time"`
+	} `mapstructure:"test_config"`
 }
 
 type Config struct {

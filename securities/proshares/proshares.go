@@ -10,6 +10,7 @@ import (
 	"stocks/utils"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type client struct {
@@ -43,7 +44,9 @@ type Config struct {
 }
 
 func New(config Config) (securities.SeedProvider, error) {
-	csvFromUrl, err := utils.ReadCSVFromUrl(config.CSVURL, ',', -1)
+	csvFromUrl, err := utils.RetryFetching(func() ([][]string, error) {
+		return utils.ReadCSVFromUrl(config.CSVURL, ',', -1)
+	}, 3, 5*time.Second)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Found error when parsing csv from url %v", config.CSVURL)
 	}

@@ -4,10 +4,11 @@ import (
 	"context"
 	"stocks/database/insights"
 	"stocks/models"
+	"time"
 )
 
 type Server interface {
-	StartServing(ctx context.Context) error
+	StartServing(ctx context.Context, killIn time.Duration) error
 }
 
 type Config struct {
