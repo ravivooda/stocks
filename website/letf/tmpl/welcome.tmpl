@@ -99,7 +99,7 @@
 <body>
 <h1>Abstract</h1>
 <p>
-    The goal of this project is to simplify ETF exploration. Just a fun project in spare time.<br/>
+    The goal of this project is to simplify ETF exploration. Just a fun project in spare time. Please use this tool at your own risk! No guarantees.<br/>
     We found {{ .TotalProvider }} providers, {{ .TotalSeeds }} seeds, {{ .TotalStockTickers }} stocks
 </p>
 <table>
@@ -112,9 +112,9 @@
         {{ range $key, $value := . }}
             <tr>
                 <td>{{ $key }}</td>
-                <td>{{len $value }}</td>
+                <td>{{len $value.ETFTickers }}</td>
                 <td>
-                    {{ range $ticker, $value := . }}
+                    {{ range $ticker := $value.ETFTickers }}
                         <span class="etf_ticker rounded_border"><a
                                     href="{{ $.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
                     {{ end }}

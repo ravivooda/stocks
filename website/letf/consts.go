@@ -2,10 +2,6 @@ package letf
 
 import "fmt"
 
-const (
-	welcomeTemplateLoc = "website/letf/tmpl/letf_welcome.tmpl"
-)
-
 var (
 	ETFSummaryTemplate         = "etf_summary.tmpl"
 	TemplatesDir               = "website/letf/tmpl"
@@ -19,6 +15,9 @@ var (
 
 	OverlapTemplate    = "etf_overlap.tmpl"
 	overlapTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, OverlapTemplate)
+
+	WelcomeTemplate    = "welcome.tmpl"
+	welcomeTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, WelcomeTemplate)
 
 	DefaultWebsitePaths = WebsitePaths{
 		LETFSummary:      etfSummariesPathFromRoot,

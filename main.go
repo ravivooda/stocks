@@ -47,7 +47,7 @@ func main() {
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
 	utils.PanicErr(err)
 
-	shouldOrchestrate := true
+	shouldOrchestrate := false
 	if shouldOrchestrate {
 		orchestrate(ctx, orchestrateRequest{
 			config:            config,
@@ -68,10 +68,19 @@ func main() {
 		}
 	}
 
+	providersMap := map[models.Provider]models.ProviderMetadata{}
+	for ticker, holdings := range holdingsWithAccountTickerMap {
+		provider := models.Provider(holdings[0].Provider)
+		prev := providersMap[provider]
+		prev.ETFTickers = append(prev.ETFTickers, ticker)
+		providersMap[provider] = prev
+	}
+
 	metadata := website.Metadata{
-		AccountMap: holdingsWithAccountTickerMap,
-		EtfsMap:    etfsMap,
-		StocksMap:  stocksMap,
+		AccountMap:   holdingsWithAccountTickerMap,
+		EtfsMap:      etfsMap,
+		StocksMap:    stocksMap,
+		ProvidersMap: providersMap,
 	}
 	beginServing(ctx, insightsConfig, logger, websitePaths, metadata)
 }

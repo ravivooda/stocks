@@ -17,9 +17,10 @@ type Config struct {
 }
 
 type Metadata struct {
-	AccountMap map[models.LETFAccountTicker][]models.LETFHolding
-	EtfsMap    map[models.LETFAccountTicker]models.ETF
-	StocksMap  map[models.StockTicker]models.StockMetadata
+	AccountMap   map[models.LETFAccountTicker][]models.LETFHolding
+	EtfsMap      map[models.LETFAccountTicker]models.ETF
+	StocksMap    map[models.StockTicker]models.StockMetadata
+	ProvidersMap map[models.Provider]models.ProviderMetadata
 }
 
 type server struct {
