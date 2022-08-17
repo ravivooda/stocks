@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"stocks/models"
 	"stocks/utils"
-	"stocks/website/letf"
 	"strings"
 )
 
@@ -20,14 +19,14 @@ func (s *server) renderOverlap(c *gin.Context) {
 	data := struct {
 		Analysis     models.LETFOverlapAnalysis
 		StocksMap    map[models.StockTicker]models.StockMetadata
-		WebsitePaths letf.WebsitePaths
+		WebsitePaths Paths
 	}{
 		Analysis:     analysis,
 		StocksMap:    s.metadata.StocksMap,
 		WebsitePaths: s.config.WebsitePaths,
 	}
 
-	c.HTML(http.StatusOK, letf.OverlapTemplate, data)
+	c.HTML(http.StatusOK, OverlapTemplate, data)
 }
 
 func (s *server) fetchOverlapParam(c *gin.Context) (string, string) {

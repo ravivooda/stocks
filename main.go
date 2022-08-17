@@ -20,12 +20,11 @@ import (
 	"stocks/securities/proshares"
 	"stocks/utils"
 	"stocks/website"
-	"stocks/website/letf"
 )
 
 func main() {
 	defer utils.Elapsed("main")
-	ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, generator, logger, websitePaths := defaults()
+	ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, logger, websitePaths := defaults()
 
 	etfsMap := utils.MappedLETFS(etfs)
 	totalHoldings, err := getHoldings(ctx, clientHoldingsRequest{
@@ -55,7 +54,6 @@ func main() {
 			notifier:          notifier,
 			insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
 			insightsLogger:    logger,
-			websiteGenerators: []letf.Generator{generator},
 			etfsMaps:          etfsMap,
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
 	}
@@ -89,7 +87,7 @@ func beginServing(
 	ctx context.Context,
 	insightsConfig insights.Config,
 	logger insights.Logger,
-	paths letf.WebsitePaths,
+	paths website.Paths,
 	metadata website.Metadata,
 ) {
 	server := website.New(website.Config{
@@ -101,7 +99,7 @@ func beginServing(
 	fmt.Println("done serving")
 }
 
-func defaults() (context.Context, database.DB, securities.Client, error, securities.Client, []models.ETF, Config, insights.Config, securities.SeedProvider, []alerts.AlertParser, notifications.Notifier, masterdatareports.Client, letf.Generator, insights.Logger, letf.WebsitePaths) {
+func defaults() (context.Context, database.DB, securities.Client, error, securities.Client, []models.ETF, Config, insights.Config, securities.SeedProvider, []alerts.AlertParser, notifications.Notifier, masterdatareports.Client, insights.Logger, website.Paths) {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
 	direxionClient, err := direxion.NewClient()
@@ -139,11 +137,8 @@ func defaults() (context.Context, database.DB, securities.Client, error, securit
 	utils.PanicErr(err)
 	fmt.Printf("Loaded master data reports client, found %d number of etfs data\n", masterdatareportsClient.Count())
 
-	generator, err := letf.New(letf.Config{WebsiteDirectoryRoot: config.Directories.Websites, MinThreshold: config.Outputs.Websites.MinThresholdPercentage})
-	utils.PanicErr(err)
-
 	logger := insights.NewInsightsLogger(insightsConfig)
 
-	websitePaths := letf.DefaultWebsitePaths
-	return ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, generator, logger, websitePaths
+	websitePaths := website.DefaultWebsitePaths
+	return ctx, db, direxionClient, err, microSectorClient, etfs, config, insightsConfig, proSharesClient, alertParsers, notifier, masterdatareportsClient, logger, websitePaths
 }

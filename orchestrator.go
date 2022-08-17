@@ -15,7 +15,6 @@ import (
 	"stocks/securities"
 	"stocks/securities/masterdatareports"
 	"stocks/utils"
-	"stocks/website/letf"
 )
 
 type orchestrateRequest struct {
@@ -24,7 +23,6 @@ type orchestrateRequest struct {
 	notifier          notifications.Notifier
 	insightGenerators []overlap.Generator
 	insightsLogger    insights.Logger
-	websiteGenerators []letf.Generator
 	etfsMaps          map[models.LETFAccountTicker]models.ETF
 }
 

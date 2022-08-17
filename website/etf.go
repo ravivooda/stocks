@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"stocks/models"
 	"stocks/utils"
-	"stocks/website/letf"
 	"strings"
 )
 
@@ -22,7 +21,7 @@ func (s *server) renderETF(c *gin.Context) {
 		Holdings      []models.LETFHolding
 		Overlaps      map[string][]models.LETFOverlapAnalysis
 		AccountsMap   map[models.LETFAccountTicker][]models.LETFHolding
-		WebsitePaths  letf.WebsitePaths
+		WebsitePaths  Paths
 	}{
 		AccountTicker: models.LETFAccountTicker(etf),
 		Holdings:      etfHoldings,
@@ -30,7 +29,7 @@ func (s *server) renderETF(c *gin.Context) {
 		AccountsMap:   s.metadata.AccountMap,
 		WebsitePaths:  s.config.WebsitePaths,
 	}
-	c.HTML(http.StatusOK, letf.ETFSummaryTemplate, data)
+	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }
 
 func (s *server) fetchETF(c *gin.Context) string {

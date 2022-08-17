@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"stocks/models"
-	"stocks/website/letf"
 )
 
 func (s *server) renderIndex(c *gin.Context) {
@@ -14,7 +13,7 @@ func (s *server) renderIndex(c *gin.Context) {
 		TotalStockTickers int
 		Providers         map[models.Provider]models.ProviderMetadata
 		Stocks            map[string][]models.StockTicker
-		WebsitePaths      letf.WebsitePaths
+		WebsitePaths      Paths
 	}{
 		TotalProvider:     len(s.metadata.ProvidersMap),
 		TotalSeeds:        len(s.metadata.AccountMap),
@@ -24,7 +23,7 @@ func (s *server) renderIndex(c *gin.Context) {
 		WebsitePaths:      s.config.WebsitePaths,
 	}
 
-	c.HTML(http.StatusOK, letf.WelcomeTemplate, data)
+	c.HTML(http.StatusOK, WelcomeTemplate, data)
 }
 
 func (s *server) welcomeStocksRenderingMap() map[string][]models.StockTicker {

@@ -6,7 +6,6 @@ import (
 	"sort"
 	"stocks/models"
 	"stocks/utils"
-	"stocks/website/letf"
 	"strings"
 )
 
@@ -27,13 +26,13 @@ func (s *server) renderStock(c *gin.Context) {
 	data := struct {
 		Ticker         string
 		MappedHoldings map[string][]models.LETFHolding
-		WebsitePaths   letf.WebsitePaths
+		WebsitePaths   Paths
 	}{
 		Ticker:         stock,
 		MappedHoldings: mappedHoldings,
 		WebsitePaths:   s.config.WebsitePaths,
 	}
-	c.HTML(http.StatusOK, letf.StockSummaryTemplate, data)
+	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }
 
 func (s *server) mappedHoldings(holdings []models.LETFHolding) map[string][]models.LETFHolding {

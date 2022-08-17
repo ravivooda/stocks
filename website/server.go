@@ -4,7 +4,6 @@ import (
 	"context"
 	"stocks/database/insights"
 	"stocks/models"
-	"stocks/website/letf"
 )
 
 type Server interface {
@@ -13,7 +12,7 @@ type Server interface {
 
 type Config struct {
 	InsightsConfig insights.Config
-	WebsitePaths   letf.WebsitePaths
+	WebsitePaths   Paths
 }
 
 type Metadata struct {
@@ -39,4 +38,11 @@ func New(
 		logger:   logger,
 		metadata: metadata,
 	}
+}
+
+type Paths struct {
+	LETFSummary      string
+	StockSummary     string
+	Overlaps         string
+	TemplatesRootDir string
 }
