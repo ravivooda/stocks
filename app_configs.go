@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"stocks/alerts/movers/morning_star"
 	"stocks/insights/overlap"
+	"stocks/securities/masterdatareports"
 	"stocks/securities/proshares"
 )
 
@@ -17,6 +18,9 @@ type Secrets struct {
 	Uploads struct {
 		ShouldUploadInsightsOutputToGCP bool `mapstructure:"should_upload_insights_output_to_gcp"`
 	} `mapstructure:"uploads"`
+	TestConfig struct {
+		MaxServerRunTime int `mapstructure:"max_server_run_time"`
+	} `mapstructure:"test_config"`
 }
 
 type Config struct {
@@ -28,7 +32,8 @@ type Config struct {
 		Websites  string `mapstructure:"websites"`
 	} `mapstructure:"directories"`
 	Securities struct {
-		ProShares proshares.Config `mapstructure:"pro_shares"`
+		ProShares         proshares.Config         `mapstructure:"pro_shares"`
+		MasterDataReports masterdatareports.Config `mapstructure:"master_data_reports"`
 	} `mapstructure:"securities"`
 	Secrets Secrets
 	Outputs struct {

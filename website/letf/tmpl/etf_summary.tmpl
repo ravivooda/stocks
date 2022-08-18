@@ -95,7 +95,7 @@
             border: 1px solid #4f4f4f;
         }
 
-        .letf_ticker {
+        .etf_ticker {
             color: #166f9e;
             background-color: #bcbcbc;
         }
@@ -111,7 +111,7 @@
         <td>{{ (index $.Holdings 0).Provider }}</td>
     </tr>
     <tr>
-        <td>LETF Name</td>
+        <td>ETF Name</td>
         <td>{{ (index $.Holdings 0).LETFDescription }}</td>
     </tr>
 </table>
@@ -127,7 +127,7 @@
         {{ range . }}
             <tr>
                 <td><span class="rounded_border">{{ .StockDescription }}</span></td>
-                <td><span class="rounded_border letf_ticker"><a
+                <td><span class="rounded_border etf_ticker"><a
                                 href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
                 </td>
                 <td>N/A</td>
@@ -136,15 +136,15 @@
         {{ end }}
     {{ end }}
 </table>
-<h2>Most Similar other LETFs</h2>
+<h2>Most Similar other ETFs</h2>
 {{ with .Overlaps }}
     {{ range $leverage, $overlaps := . }}
         <h3>Leverage: {{ $leverage }}</h3>
         <table class="overlap_table">
             <tr>
-                <th>LETF Provider</th>
-                <th>LETF Name</th>
-                <th>LETF Ticker</th>
+                <th>ETF Provider</th>
+                <th>ETF Name</th>
+                <th>ETF Ticker</th>
                 <th>Percentage Overlap Today</th>
             </tr>
             {{ with $overlaps }}
@@ -163,7 +163,7 @@
                         </td>
                         <td>
                             {{ range .LETFHoldees }}
-                                <span class="rounded_border letf_ticker"><a
+                                <span class="rounded_border etf_ticker"><a
                                             href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
                             {{ end }}
                         </td>

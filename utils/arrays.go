@@ -59,8 +59,13 @@ func MergeHoldings(holdingsList ...[]models.LETFHolding) ([]models.LETFHolding, 
 		}
 	}
 	var mergedHoldings []models.LETFHolding
-	for _, holding := range mappedHoldings {
-		mergedHoldings = append(mergedHoldings, holding)
+	for stock, holding := range mappedHoldings {
+		if holding.PercentContained > 0 {
+			mergedHoldings = append(mergedHoldings, holding)
+		} else {
+			delete(mappedHoldings, stock)
+			delete(originalMapping, stock)
+		}
 	}
 	return mergedHoldings, originalMapping
 }
@@ -114,7 +119,7 @@ func Combinations(set []models.LETFOverlapAnalysis, r int) (rt [][]models.LETFOv
 func FilteredForPrinting(holdings []models.LETFHolding) [][]string {
 	var filteredHoldings [][]string
 	for _, holding := range holdings {
-		filteredHoldings = append(filteredHoldings, []string{string(holding.StockTicker), fmt.Sprintf("%f", holding.PercentContained)})
+		filteredHoldings = append(filteredHoldings, []string{string(holding.StockTicker), fmt.Sprintf("%f", holding.PercentContained), fmt.Sprintf("%d", holding.MarketValue)})
 	}
 	sort.Slice(filteredHoldings, func(i, j int) bool {
 		return filteredHoldings[i][1] > filteredHoldings[j][1]

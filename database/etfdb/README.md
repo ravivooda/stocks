@@ -1,0 +1,1 @@
+The file here is blatantly copied from [here](https://etfdb.com/export/etfs_details_type_fund_flow.csv)

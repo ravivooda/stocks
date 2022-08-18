@@ -12,10 +12,15 @@ import (
 )
 
 type client struct {
+	config Config
+}
+
+type Config struct {
+	TemporaryDir string
 }
 
 func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF) ([]models.LETFHolding, error) {
-	data, err := utils.ReadCSVFromUrl(seed.URL, ',', -1)
+	data, err := utils.ReadCSVFromUrlWithLocalMasks(seed.URL, d.config.TemporaryDir, ',', -1)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +68,10 @@ func parseInt(s string) int64 {
 	return ri
 }
 
-func NewClient() (securities.Client, error) {
-	return &client{}, nil
+func NewClient(config Config) (securities.Client, error) {
+	_, err := utils.MakeDirs([]string{config.TemporaryDir})
+	utils.PanicErr(err)
+	return &client{
+		config: config,
+	}, nil
 }

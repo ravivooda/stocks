@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"runtime"
+	"time"
 )
 
 func PrintMemUsage() {
@@ -17,4 +18,18 @@ func PrintMemUsage() {
 
 func bToMb(b uint64) uint64 {
 	return b / 1024 / 1024
+}
+
+func RetryFetching(original func() ([][]string, error), maxRetries int, sleep time.Duration) ([][]string, error) {
+	var records [][]string
+	var err error
+	for maxRetries > 0 {
+		records, err = original()
+		if err == nil {
+			break
+		}
+		fmt.Printf("retrying in %d\n", sleep)
+		maxRetries -= 1
+	}
+	return records, err
 }

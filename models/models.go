@@ -14,9 +14,10 @@ type Header struct {
 type Provider string
 
 const (
-	Direxion    Provider = "direxion"
-	MicroSector          = "microsector"
-	ProShares            = "proshares"
+	Direxion          Provider = "direxion"
+	MicroSector                = "microsector"
+	ProShares                  = "proshares"
+	MasterDataReports          = "masterdatareports"
 )
 
 type Seed struct {

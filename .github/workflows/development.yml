@@ -1,6 +1,7 @@
 name: Push CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
@@ -29,6 +30,8 @@ jobs:
       run: |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
+        echo "test_config:" >> secrets.yaml
+        echo "  max_server_run_time: 10" >> secrets.yaml
 
     - name: Run orchestrator
       run: |
