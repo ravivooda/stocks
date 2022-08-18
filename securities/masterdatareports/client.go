@@ -195,7 +195,7 @@ func loadRemoteData(config Config) [][]string {
 	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
 	records, err := utils.RetryFetching(func() ([][]string, error) {
 		return utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
-	}, 3, time.Second)
+	}, 3, 10*time.Second)
 	fmt.Printf("From remote file, number of records: %d\n", len(records))
 	utils.PanicErr(err)
 	return records
