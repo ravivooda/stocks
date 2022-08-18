@@ -28,7 +28,7 @@ func RetryFetching(original func() ([][]string, error), maxRetries int, sleep ti
 		if err == nil {
 			break
 		}
-		fmt.Printf("retrying in %d\n", sleep)
+		fmt.Printf("retrying in %v\n", sleep)
 		maxRetries -= 1
 	}
 	return records, err
