@@ -34,32 +34,12 @@ jobs:
         echo "  should_send_email: true" >> secrets.yaml
         echo "uploads:" >> secrets.yaml
         echo "  should_upload_insights_output_to_gcp: false" >> secrets.yaml
+        echo "test_config:" >> secrets.yaml
+        echo "  max_server_run_time: 10" >> secrets.yaml
 
     - name: Run orchestrator
       run: |
         go run .
-
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        workload_identity_provider: 'projects/659322829339/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
-        service_account: 'github-upload-manual-service-a@stocks-348021.iam.gserviceaccount.com'
-
-    - id: 'upload-artifacts'
-      uses: 'google-github-actions/upload-cloud-storage@v0'
-      with:
-        path: tmp/build/artifacts
-        destination: 'letf_overlaps/github_action'
-        parent: false
-        concurrency: 10
-
-    - id: 'upload-website'
-      uses: 'google-github-actions/upload-cloud-storage@v0'
-      with:
-        path: tmp/build/websites
-        destination: 'letf_website'
-        parent: false
-        concurrency: 10
 
     # TODO: Hardcoded for now, need to fix this in future
     # Need to support sending email to multiple people
