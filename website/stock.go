@@ -38,7 +38,7 @@ func (s *server) renderStock(c *gin.Context) {
 func (s *server) mappedHoldings(holdings []models.LETFHolding) map[string][]models.LETFHolding {
 	mappedHoldings := map[string][]models.LETFHolding{}
 	for _, holding := range holdings {
-		leverage := s.metadata.EtfsMap[holding.LETFAccountTicker].Leveraged
+		leverage := s.metadata.AccountMap[holding.LETFAccountTicker].Leveraged
 		a := mappedHoldings[leverage]
 		if a == nil {
 			a = []models.LETFHolding{}

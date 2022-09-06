@@ -60,3 +60,9 @@ type ETF struct {
 	SRIExclusionCriteria          float64
 	SustainableImpactSolutions    float64
 }
+
+type ETFMetadata struct {
+	Provider    Provider
+	Description string
+	Leveraged   string
+}

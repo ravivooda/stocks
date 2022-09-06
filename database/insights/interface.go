@@ -22,6 +22,7 @@ type Config struct {
 	OverlapsDirectory    string
 	ETFHoldingsDirectory string
 	StocksDirectory      string
+	RootDirectory        string
 }
 
 type logger struct {

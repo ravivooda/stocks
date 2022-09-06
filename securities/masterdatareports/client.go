@@ -191,7 +191,7 @@ func loadLocalCacheFile() (records [][]string) {
 }
 
 func loadRemoteData(config Config) [][]string {
-	defer utils.Elapsed("Master Data Reports Loading")
+	defer utils.Elapsed("Master Data Reports Loading")()
 	fmt.Printf("Fetching holdings from %s\n", config.HoldingsCSVURL)
 	records, err := utils.RetryFetching(func() ([][]string, error) {
 		return utils.ReadCSVFromUrl(config.HoldingsCSVURL, ',', -1)
