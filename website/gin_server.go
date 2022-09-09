@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	_ "github.com/braintree/manners"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

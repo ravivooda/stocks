@@ -114,9 +114,7 @@ func orchestrate(
 	logHoldings(ctx, request.insightsLogger, holdingsWithAccountTickerMap)
 	logStocks(ctx, request, holdingsWithStockTickerMap)
 
-	if request.config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		generateInsights(ctx, request, holdingsWithAccountTickerMap)
-	}
+	generateInsights(ctx, request, holdingsWithAccountTickerMap)
 }
 
 func logHoldings(ctx context.Context, logger insights.Logger, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {

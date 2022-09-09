@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/spf13/viper"
+	"io/ioutil"
 	"stocks/alerts/movers/morning_star"
 	"stocks/insights/overlap"
 	"stocks/securities/masterdatareports"
 	"stocks/securities/proshares"
+	"stocks/utils"
 )
 
 type Secrets struct {
@@ -46,24 +48,17 @@ type Config struct {
 
 func NewConfig() (Config, error) {
 	v, err := loadViperConfig("./config.yaml")
-	if err != nil {
-		return Config{}, err
-	}
+	content, _ := ioutil.ReadFile("config.yaml")
+	utils.PanicErrWithExtraMessage(err, string(content))
 	var c Config
-	err = v.Unmarshal(&c)
-	if err != nil {
-		return Config{}, err
-	}
+	utils.PanicErr(v.Unmarshal(&c))
 
 	s, err := loadViperConfig("./secrets.yaml")
-	if err != nil {
-		return Config{}, err
-	}
+	content, _ = ioutil.ReadFile("secrets.yaml")
+	utils.PanicErrWithExtraMessage(err, string(content))
+
 	var se Secrets
-	err = s.Unmarshal(&se)
-	if err != nil {
-		return Config{}, err
-	}
+	utils.PanicErr(s.Unmarshal(&se))
 
 	c.Secrets = se
 	c.MSAPI.Key = c.Secrets.MSAPI.Key

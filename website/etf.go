@@ -20,7 +20,7 @@ func (s *server) renderETF(c *gin.Context) {
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding
 		Overlaps      map[string][]models.LETFOverlapAnalysis
-		AccountsMap   map[models.LETFAccountTicker][]models.LETFHolding
+		AccountsMap   map[models.LETFAccountTicker]models.ETFMetadata
 		WebsitePaths  Paths
 	}{
 		AccountTicker: models.LETFAccountTicker(etf),

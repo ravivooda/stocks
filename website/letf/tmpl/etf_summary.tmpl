@@ -152,13 +152,13 @@
                     <tr>
                         <td>
                             {{ range .LETFHoldees }}
-                                <span class="rounded_border">{{ (index (index $.AccountsMap .) 0).Provider }}</span>
+                                <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
                             {{ end }}
                         </td>
                         <td>
                             {{ range .LETFHoldees }}
                                 <span class="rounded_border"><a
-                                            href="{{ . }}.html">{{ (index (index $.AccountsMap .) 0).LETFDescription }}</a></span>
+                                            href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
                             {{ end }}
                         </td>
                         <td>

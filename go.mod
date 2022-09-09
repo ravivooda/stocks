@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/DrGrimshaw/gohtml v0.0.0-20211105122738-1231c86d1d16
-	github.com/braintree/manners v0.0.0-20160418043613-82a8879fc5fd
 	github.com/gin-gonic/gin v1.8.1
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/viper v1.10.1

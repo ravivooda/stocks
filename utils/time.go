@@ -11,6 +11,7 @@ func TodayDate() string {
 
 func Elapsed(what string) func() {
 	start := time.Now()
+	fmt.Printf("%s began!\n", what)
 	return func() {
 		fmt.Printf("%s took %v\n", what, time.Since(start))
 	}
