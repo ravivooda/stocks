@@ -30,6 +30,8 @@ jobs:
       run: |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
+        echo "uploads:" >> secrets.yaml
+        echo "  should_upload_insights_output_to_gcp: true" >> secrets.yaml
         echo "test_config:" >> secrets.yaml
         echo "  max_server_run_time: 10" >> secrets.yaml
 
