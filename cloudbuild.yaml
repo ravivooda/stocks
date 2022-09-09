@@ -1,12 +1,12 @@
 steps:
-#  # Run tests
-#  - name: golang:1.17
-#    entrypoint: /bin/bash
-#    args:
-#      - -c
-#      - |
-#        go test -v ./...
-#        echo "successfully tested"
+  # Run tests
+  - name: golang:1.17
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        go test -v ./...
+        echo "successfully tested"
 
   # TODO: Need to refactor this code with simple secrets.yaml creation
   - name: golang:1.17
@@ -17,9 +17,7 @@ steps:
       - |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${_MS_API_KEY_SECRET}" >> secrets.yaml
-        
         cp secrets.yaml secrets_production.yaml
-        
         echo "notifications:" >> secrets.yaml
         echo "  should_send_email: true" >> secrets.yaml
         echo "test_config:" >> secrets.yaml
