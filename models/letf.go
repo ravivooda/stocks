@@ -5,28 +5,28 @@ type StockTicker string
 
 type LETFHolding struct {
 	//TODO: Rename this as Holding instead
-	TradeDate         string
-	LETFAccountTicker LETFAccountTicker
-	LETFDescription   string
-	StockTicker       StockTicker
-	StockDescription  string
-	Shares            int64
-	Price             int64
-	NotionalValue     float64
-	MarketValue       int64
-	PercentContained  float64
-	Provider          string
+	TradeDate         string            `json:"t,omitempty"`
+	LETFAccountTicker LETFAccountTicker `json:"lat,omitempty"`
+	LETFDescription   string            `json:"d,omitempty"`
+	StockTicker       StockTicker       `json:"st,omitempty"`
+	StockDescription  string            `json:"sd,omitempty"`
+	Shares            int64             `json:"s,omitempty"`
+	Price             int64             `json:"p,omitempty"`
+	NotionalValue     float64           `json:"nv,omitempty"`
+	MarketValue       int64             `json:"mv,omitempty"`
+	PercentContained  float64           `json:"pc,omitempty"`
+	Provider          string            `json:"pr,omitempty"`
 }
 
 type LETFOverlap struct {
-	Ticker                   StockTicker
-	Percentage               float64
-	IndividualPercentagesMap map[LETFAccountTicker]float64
+	Ticker                   StockTicker                   `json:"t"`
+	Percentage               float64                       `json:"p"`
+	IndividualPercentagesMap map[LETFAccountTicker]float64 `json:"i"`
 }
 
 type LETFOverlapAnalysis struct {
-	LETFHolder        LETFAccountTicker
-	LETFHoldees       []LETFAccountTicker
-	OverlapPercentage float64
-	DetailedOverlap   *[]LETFOverlap `json:"detailed_overlap"`
+	LETFHolder        LETFAccountTicker   `json:"lhr"`
+	LETFHoldees       []LETFAccountTicker `json:"lhs"`
+	OverlapPercentage float64             `json:"o"`
+	DetailedOverlap   *[]LETFOverlap      `json:"d"`
 }
