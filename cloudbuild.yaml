@@ -63,12 +63,12 @@ steps:
 
 timeout: 80000s
 
-# Save test logs to Google Cloud Storage
-artifacts:
-  objects:
-    location: gs://$_BUCKET_NAME/
-    paths:
-      - ${SHORT_SHA}_test_log.xml
+## Save test logs to Google Cloud Storage
+#artifacts:
+#  objects:
+#    location: gs://$_BUCKET_NAME/
+#    paths:
+#      - ${SHORT_SHA}_test_log.xml
 # Store images in Google Artifact Registry
 images:
   - us-west1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/stocks:$SHORT_SHA
