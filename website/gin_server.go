@@ -33,6 +33,15 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router.GET(fmt.Sprintf("/stock-summary/:%s", stockParamKey), func(c *gin.Context) {
 		s.renderStock(c)
 	})
+
+	router.GET("/use_cases.html", func(c *gin.Context) {
+		s.renderUseCases(c)
+	})
+
+	router.GET("/disclaimer.html", func(c *gin.Context) {
+		s.renderDisclaimer(c)
+	})
+
 	if kill > time.Second {
 		fmt.Printf("Configured to be killed in %v\n", kill)
 		s.setupToKill(ctx, kill, router)
