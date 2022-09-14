@@ -120,7 +120,6 @@
     <tr>
         <th>Holding Stock Name</th>
         <th>Ticker</th>
-        <th>Percentage Change Today</th>
         <th>Percentage Exposure in {{ .AccountTicker }}</th>
     </tr>
     {{ with .Holdings }}
@@ -130,7 +129,6 @@
                 <td><span class="rounded_border etf_ticker"><a
                                 href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
                 </td>
-                <td>N/A</td>
                 <td>{{ .PercentContained }}</td>
             </tr>
         {{ end }}
