@@ -13,6 +13,7 @@ type Generator interface {
 		analysis map[models.LETFAccountTicker][]models.LETFOverlapAnalysis,
 		letfHoldingsMap map[models.LETFAccountTicker][]models.LETFHolding,
 	) map[models.LETFAccountTicker][]models.LETFOverlapAnalysis
+	Compare(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) (float64, []models.LETFOverlap)
 }
 
 type generator struct {
@@ -42,7 +43,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 					skipped += 1
 					continue
 				}
-				totalOverlapPercentage, details := g.compare(lLETFHoldingsMap, rLETFHoldingsMap)
+				totalOverlapPercentage, details := g.Compare(lLETFHoldingsMap, rLETFHoldingsMap)
 				if int(totalOverlapPercentage) > g.c.MinThreshold {
 					outputs = append(outputs,
 						models.LETFOverlapAnalysis{
@@ -63,7 +64,7 @@ func (g *generator) Generate(holdingsWithAccountTickerMap map[models.LETFAccount
 	}
 }
 
-func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) (float64, []models.LETFOverlap) {
+func (g *generator) Compare(l map[models.StockTicker][]models.LETFHolding, r map[models.StockTicker][]models.LETFHolding) (float64, []models.LETFOverlap) {
 	var totalOverlapPercentage float64 = 0
 	var details []models.LETFOverlap
 	var filledStocks = map[models.StockTicker]bool{}
@@ -83,7 +84,7 @@ func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map
 			})
 			filledStocks[stockTicker] = true
 		}
-		// Hiding 0 overlap holdings
+		// By commenting the following code, we are hiding 0 overlap holdings
 		//else {
 		//	details = append(details, models.LETFOverlap{
 		//		Ticker:     stockTicker,
@@ -95,7 +96,7 @@ func (g *generator) compare(l map[models.StockTicker][]models.LETFHolding, r map
 		//}
 	}
 
-	// Hiding 0 overlap holdings
+	// By commenting the following code, we are hiding 0 overlap holdings
 	//for ticker, rHoldings := range r {
 	//	if filledStocks[ticker] {
 	//		continue

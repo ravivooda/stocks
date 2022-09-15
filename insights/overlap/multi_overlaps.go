@@ -55,7 +55,7 @@ func (g *generator) MergeInsights(
 			}
 			// TODO: Fix the merge insights logic with the new merge logic
 			holdings, mappedPercentageHoldings := utils.MergeHoldings(combinedPercentageMatrices...)
-			totalOverlapPercentage, overlapAnalysis := g.compare(utils.MapLETFHoldingsWithStockTicker(targetedPercentageMatrix), utils.MapLETFHoldingsWithStockTicker(holdings))
+			totalOverlapPercentage, overlapAnalysis := g.Compare(utils.MapLETFHoldingsWithStockTicker(targetedPercentageMatrix), utils.MapLETFHoldingsWithStockTicker(holdings))
 			if z := int(totalOverlapPercentage); z >= g.c.MergedThreshold && z-int(maxPercentage) >= g.c.MinimumIncrementThreshold {
 				var computedOverlaps []models.LETFOverlap
 				for _, overlap := range overlapAnalysis {

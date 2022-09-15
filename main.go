@@ -27,19 +27,21 @@ import (
 )
 
 func main() {
-	ctx, _, _, config, insightsConfig, _, _, logger, websitePaths := defaults()
+	ctx, _, _, config, insightsConfig, _, _, websitePaths := defaults()
 	fileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "metadata")
+	generators, logger := logicProviders(config, insightsConfig)
 	if config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
 		setup(ctx, true, fileAddr, config)
 	} else {
-		serve(config, ctx, insightsConfig, logger, websitePaths, fileAddr)
+		// TODO: Hardcoded 0 index lookup on generators[0] in the line below
+		serve(config, ctx, insightsConfig, generators[0], logger, websitePaths, fileAddr)
 	}
 }
 
 func setup(context context.Context, shouldOrchestrate bool, fileAddr string, config Config) {
 	defer utils.Elapsed("setup")()
 	microSectorClient, direxionClient, proSharesClient, masterdatareportsClient := createSecurityClients(config)
-	_, db, etfs, _, _, alertParsers, notifier, logger, _ := defaults()
+	_, db, etfs, _, insightsConfig, alertParsers, notifier, _ := defaults()
 
 	etfsMap := utils.MappedLETFS(etfs)
 	totalHoldings, err := getHoldings(context, clientHoldingsRequest{
@@ -61,12 +63,14 @@ func setup(context context.Context, shouldOrchestrate bool, fileAddr string, con
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
 	utils.PanicErr(err)
 
+	generators, logger := logicProviders(config, insightsConfig)
+
 	if shouldOrchestrate {
 		orchestrate(context, orchestrateRequest{
 			config:            config,
 			parsers:           alertParsers,
 			notifier:          notifier,
-			insightGenerators: []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)},
+			insightGenerators: generators,
 			insightsLogger:    logger,
 			etfsMaps:          etfsMap,
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
@@ -85,10 +89,15 @@ func setup(context context.Context, shouldOrchestrate bool, fileAddr string, con
 	utils.PanicErr(ioutil.WriteFile(fileAddr, b, fs.ModePerm))
 }
 
+func logicProviders(config Config, insightsConfig insights.Config) ([]overlap.Generator, insights.Logger) {
+	return []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)}, insights.NewInsightsLogger(insightsConfig)
+}
+
 func serve(
 	config Config,
 	ctx context.Context,
 	insightsConfig insights.Config,
+	generator overlap.Generator,
 	logger insights.Logger,
 	websitePaths website.Paths,
 	fileAddr string,
@@ -100,7 +109,7 @@ func serve(
 
 	utils.PanicErr(json.Unmarshal(file, &metadata))
 	testDuration := time.Duration(int64(config.Secrets.TestConfig.MaxServerRunTime)) * time.Second
-	beginServing(ctx, insightsConfig, logger, websitePaths, metadata, testDuration)
+	beginServing(ctx, insightsConfig, logger, generator, websitePaths, metadata, testDuration)
 }
 
 func createMaps(
@@ -143,6 +152,7 @@ func beginServing(
 	ctx context.Context,
 	insightsConfig insights.Config,
 	logger insights.Logger,
+	generator overlap.Generator,
 	paths website.Paths,
 	metadata website.Metadata,
 	testDuration time.Duration,
@@ -150,13 +160,16 @@ func beginServing(
 	server := website.New(website.Config{
 		InsightsConfig: insightsConfig,
 		WebsitePaths:   paths,
-	}, logger, metadata)
+	}, website.Dependencies{
+		Logger:    logger,
+		Generator: generator,
+	}, metadata)
 	fmt.Println("started serving!!")
 	utils.PanicErr(server.StartServing(ctx, testDuration))
 	fmt.Println("done serving")
 }
 
-func defaults() (context.Context, database.DB, []models.ETF, Config, insights.Config, []alerts.AlertParser, notifications.Notifier, insights.Logger, website.Paths) {
+func defaults() (context.Context, database.DB, []models.ETF, Config, insights.Config, []alerts.AlertParser, notifications.Notifier, website.Paths) {
 	ctx := context.Background()
 	db := database.NewDumbDatabase()
 
@@ -185,10 +198,8 @@ func defaults() (context.Context, database.DB, []models.ETF, Config, insights.Co
 
 	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 
-	logger := insights.NewInsightsLogger(insightsConfig)
-
 	websitePaths := website.DefaultWebsitePaths
-	return ctx, db, etfs, config, insightsConfig, alertParsers, notifier, logger, websitePaths
+	return ctx, db, etfs, config, insightsConfig, alertParsers, notifier, websitePaths
 }
 
 func createSecurityClients(config Config) (securities.Client, securities.Client, securities.SeedProvider, masterdatareports.Client) {

@@ -31,6 +31,7 @@ var (
 	WelcomeTemplate    = "welcome.tmpl"
 	welcomeTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, WelcomeTemplate)
 
-	useCasesTemplate   = "use_cases.tmpl"
-	disclaimerTemplate = "disclaimer.tmpl"
+	useCasesTemplate          = "use_cases.tmpl"
+	disclaimerTemplate        = "disclaimer.tmpl"
+	findOverlapsInputTemplate = "find_overlaps_input.tmpl"
 )

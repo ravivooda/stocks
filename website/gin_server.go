@@ -42,6 +42,14 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderDisclaimer(c)
 	})
 
+	router.GET("/find_overlaps.html", func(c *gin.Context) {
+		s.renderFindOverlapsInputHTML(c)
+	})
+
+	router.POST("/find_overlaps.html", func(c *gin.Context) {
+		s.findOverlapsForCustomHoldings(c)
+	})
+
 	if kill > time.Second {
 		fmt.Printf("Configured to be killed in %v\n", kill)
 		s.setupToKill(ctx, kill, router)

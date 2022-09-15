@@ -13,7 +13,7 @@ const sep = "_"
 
 func (s *server) renderOverlap(c *gin.Context) {
 	holder, holdees := s.fetchOverlapParam(c)
-	analysis, err := s.logger.FetchOverlap(holder, holdees)
+	analysis, err := s.dependencies.Logger.FetchOverlap(holder, holdees)
 	utils.PanicErr(err)
 
 	data := struct {

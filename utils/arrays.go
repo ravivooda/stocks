@@ -136,3 +136,14 @@ func HasIntersection(l map[models.StockTicker][]models.LETFHolding, r map[models
 
 	return false
 }
+
+func SortOverlapsWithinLeverage(parsedOverlaps map[string][]models.LETFOverlapAnalysis) map[string][]models.LETFOverlapAnalysis {
+	var sortedOverlaps = map[string][]models.LETFOverlapAnalysis{}
+	for s, analyses := range parsedOverlaps {
+		sort.Slice(analyses, func(i, j int) bool {
+			return analyses[i].OverlapPercentage > analyses[j].OverlapPercentage
+		})
+		sortedOverlaps[s] = analyses
+	}
+	return sortedOverlaps
+}

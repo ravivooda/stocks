@@ -12,12 +12,16 @@ import (
 )
 
 type holdingsWrapper struct {
+	Leverage string
 	Holdings []models.LETFHolding
 }
 
-func (l *logger) LogHoldings(_ context.Context, etfName models.LETFAccountTicker, holdings []models.LETFHolding) (FileName, error) {
+func (l *logger) LogHoldings(_ context.Context, etfName models.LETFAccountTicker, holdings []models.LETFHolding, leverage string) (FileName, error) {
 	fileName, fileAddr := l.holdingsFilePaths(string(etfName))
-	b, err := json.Marshal(holdingsWrapper{Holdings: holdings})
+	b, err := json.Marshal(holdingsWrapper{
+		Leverage: leverage,
+		Holdings: holdings,
+	})
 	bytes.Replace(b, []byte(":NaN"), []byte(":null"), -1)
 	utils.PanicErr(err)
 
@@ -31,7 +35,7 @@ func (l *logger) holdingsFilePaths(etfName string) (string, string) {
 	return fileName, fileAddr
 }
 
-func (l *logger) FetchHoldings(etfName string) ([]models.LETFHolding, error) {
+func (l *logger) FetchHoldings(etfName string) ([]models.LETFHolding, string, error) {
 	_, fileAddr := l.holdingsFilePaths(etfName)
 	file, err := ioutil.ReadFile(fileAddr)
 	utils.PanicErr(err)
@@ -39,5 +43,5 @@ func (l *logger) FetchHoldings(etfName string) ([]models.LETFHolding, error) {
 	data := holdingsWrapper{}
 
 	utils.PanicErr(json.Unmarshal(file, &data))
-	return data.Holdings, nil
+	return data.Holdings, data.Leverage, nil
 }

@@ -10,12 +10,16 @@ import (
 
 func (s *server) renderETF(c *gin.Context) {
 	etf := s.fetchETF(c)
-	etfHoldings, err := s.logger.FetchHoldings(etf)
+	etfHoldings, _, err := s.dependencies.Logger.FetchHoldings(etf)
 	utils.PanicErr(err)
 
-	overlaps, err := s.logger.FetchOverlaps(etf)
+	overlaps, err := s.dependencies.Logger.FetchOverlaps(etf)
 	utils.PanicErr(err)
 
+	s._renderETF(c, etf, etfHoldings, overlaps)
+}
+
+func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LETFHolding, overlaps map[string][]models.LETFOverlapAnalysis) {
 	data := struct {
 		AccountTicker models.LETFAccountTicker
 		Holdings      []models.LETFHolding

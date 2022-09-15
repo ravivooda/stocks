@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to ETFs Data Validator</title>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 16px;
+            margin-bottom: 16px
+        }
+
+        h2 {
+            text-align: center;
+            padding: 12px;
+            margin-bottom: 12px
+        }
+
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        #bottom {
+            background-color: #04AA6D;
+            padding: 50px;
+            margin-top: 200px;
+        }
+
+        #bottom_table {
+            color: white;
+        }
+
+        #bottom_table > tr:hover {
+            background-color: #04AA6D;
+        }
+
+        a:link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:visited {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:active {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .rounded_border {
+            padding: 2px 2px;
+            margin: 2px 5px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            border-radius: 3px;
+            /*display: block;*/
+            border: 1px solid #4f4f4f;
+        }
+
+        .etf_ticker {
+            color: #166f9e;
+            background-color: #bcbcbc;
+            line-height: 30px
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addnew').click(function () {
+                addnewrow();
+            });
+            $('body').delegate('#del_row', 'click', function () {
+                $(this).parent().parent().remove();
+            });
+        });
+
+        function addnewrow() {
+            var n = ($('#tbl_body tr').length - 0) + 1;
+            var row = '<tr>' +
+                '<td>' + n + '</td>' +
+                '<td><input type = "text" name="stocks["' + n + '"]" placeholder = "AAPL"/></td>' +
+                '<td><input type = "number" name="stocks["' + n + '"]" placeholder = "10,000"/></td>' +
+                '<td><input type = "button" value = "-" id = "del_row" title = "Click to Delete this Row"></td>' +
+                '</tr>';
+            $('#tbl_body').append(row);
+        }
+
+    </script>
+</head>
+<body>
+<h1>Input your stock holdings to find an appropriate ETF(s) to replace them with</h1>
+<p>
+    Input one row for each of the stock holding;
+    - First text box: Stock Name
+    - Second text box: Market Value of your holding (number of shares you own * today's market price of the stock)
+
+    With that information, we will look for potential ETFs for you to replace, or consolidate your holdings into.
+
+    FAQs:
+    - Do we record your data? Answer: No
+    - Do we send your data across the wire? Answer: Yes, but only to our backend servers for processing. But you don't
+    need to just take our word! We've open sourced our backend <a href="">here</a>. So please feel free to verify!
+</p>
+
+<form action="/find_overlaps.html" method="post" id="frm_data">
+    <table>
+        <thead>
+        <th>Sl.</th>
+        <th>Stock Name</th>
+        <th>Market Value in USD</th>
+        <th><input type="button" value="+" id="addnew" title="Click to Add New Row"/></th>
+        </thead>
+        <tbody id="tbl_body">
+        <tr>
+            <td>1</td>
+            <td><input type="text" name="stocks[1]" placeholder="AAPL"/></td>
+            <td><input type="number" name="market_values[1]" placeholder="10,000"/></td>
+            <td title="This Row Can't be Deleted"></td>
+        </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="Submit" id="sub_button" title="Save the Record"/>
+</form>
+
+<div id="bottom">
+    <table id="bottom_table">
+        <tr>
+            <td>
+                Powered by GitHub
+            </td>
+            <td>
+                Powered by GCP
+            </td>
+            <td>
+                Please file issues, features <a href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

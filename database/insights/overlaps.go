@@ -57,16 +57,7 @@ func (l *logger) FetchOverlaps(etfName string) (map[string][]models.LETFOverlapA
 		analyses = append(analyses, data.Analysis)
 		parsedOverlaps[data.Leverage] = analyses
 	}
-
-	var sortedOverlaps = map[string][]models.LETFOverlapAnalysis{}
-	for s, analyses := range parsedOverlaps {
-		sort.Slice(analyses, func(i, j int) bool {
-			return analyses[i].OverlapPercentage > analyses[j].OverlapPercentage
-		})
-		sortedOverlaps[s] = analyses
-	}
-
-	return sortedOverlaps, nil
+	return utils.SortOverlapsWithinLeverage(parsedOverlaps), nil
 }
 
 func (l *logger) fetchOverlap(fileAddr string) overlapWrapper {

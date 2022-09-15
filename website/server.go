@@ -3,12 +3,18 @@ package website
 import (
 	"context"
 	"stocks/database/insights"
+	"stocks/insights/overlap"
 	"stocks/models"
 	"time"
 )
 
 type Server interface {
 	StartServing(ctx context.Context, killIn time.Duration) error
+}
+
+type Dependencies struct {
+	Logger    insights.Logger
+	Generator overlap.Generator
 }
 
 type Config struct {
@@ -23,20 +29,20 @@ type Metadata struct {
 }
 
 type server struct {
-	config   Config
-	logger   insights.Logger
-	metadata Metadata
+	config       Config
+	dependencies Dependencies
+	metadata     Metadata
 }
 
 func New(
 	config Config,
-	logger insights.Logger,
+	dependencies Dependencies,
 	metadata Metadata,
 ) Server {
 	return &server{
-		config:   config,
-		logger:   logger,
-		metadata: metadata,
+		config:       config,
+		dependencies: dependencies,
+		metadata:     metadata,
 	}
 }
 

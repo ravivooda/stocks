@@ -11,7 +11,7 @@ import (
 
 func (s *server) renderStock(c *gin.Context) {
 	stock := s.fetchStock(c)
-	holdings, err := s.logger.FetchStock(stock)
+	holdings, err := s.dependencies.Logger.FetchStock(stock)
 	utils.PanicErr(err)
 
 	mappedHoldings := s.mappedHoldings(holdings)
