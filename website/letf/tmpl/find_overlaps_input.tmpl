@@ -110,8 +110,8 @@
             var n = ($('#tbl_body tr').length - 0) + 1;
             var row = '<tr>' +
                 '<td>' + n + '</td>' +
-                '<td><input type = "text" name="stocks["' + n + '"]" placeholder = "AAPL"/></td>' +
-                '<td><input type = "number" name="stocks["' + n + '"]" placeholder = "10,000"/></td>' +
+                '<td><input type = "text" name="stocks[' + n + ']" placeholder = "AAPL"/></td>' +
+                '<td><input type = "number" name="market_values[' + n + ']" placeholder = "10,000"/></td>' +
                 '<td><input type = "button" value = "-" id = "del_row" title = "Click to Delete this Row"></td>' +
                 '</tr>';
             $('#tbl_body').append(row);

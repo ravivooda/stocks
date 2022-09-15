@@ -1,6 +1,7 @@
 package website
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -18,9 +19,10 @@ func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {
 	marketValuesMapStrings := c.PostFormMap("market_values")
 	marketValuesMapFloats := map[string]float64{}
 	totalMarketValue := float64(0)
+	debugMessage := fmt.Sprintf("StocksMap = %v, MarketValuesMapStrings = %v, MarketValuesMapFloats = %v", stocksMap, marketValuesMapStrings, marketValuesMapFloats)
 	for index, value := range marketValuesMapStrings {
 		float, err := strconv.ParseFloat(value, 64)
-		utils.PanicErr(err)
+		utils.PanicErrWithExtraMessage(err, fmt.Sprintf(";%s", debugMessage))
 		marketValuesMapFloats[index] = float
 		totalMarketValue += float
 	}
@@ -41,13 +43,13 @@ func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {
 				Price:             0,
 				NotionalValue:     0,
 				MarketValue:       int64(value),
-				PercentContained:  value / totalMarketValue * 100,
+				PercentContained:  utils.RoundedPercentage(value / totalMarketValue * 100),
 				Provider:          "Customer",
 			}
 			m[stockTicker] = []models.LETFHolding{etfHolding}
 			etfHoldings = append(etfHoldings, etfHolding)
 		} else {
-			log.Panicf("did not find index: %s in the stocksMap; StocksMap = %v, MarketValuesMapStrings = %v, MarketValuesMapFloats = %v", index, stocksMap, marketValuesMapStrings, marketValuesMapFloats)
+			log.Panicf("did not find index: %s in the stocksMap; %s", index, debugMessage)
 		}
 	}
 
