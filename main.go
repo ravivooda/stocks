@@ -140,9 +140,10 @@ func createMaps(
 	var accountMap = map[models.LETFAccountTicker]models.ETFMetadata{}
 	for ticker, holdings := range holdingsWithAccountTickerMap {
 		accountMap[ticker] = models.ETFMetadata{
-			Provider:    models.Provider(holdings[0].Provider),
-			Description: holdings[0].LETFDescription,
-			Leveraged:   etfsMap[ticker].Leveraged,
+			Provider:      models.Provider(holdings[0].Provider),
+			Description:   holdings[0].LETFDescription,
+			Leveraged:     etfsMap[ticker].Leveraged,
+			HoldingsCount: len(holdings),
 		}
 	}
 	return stocksMap, providersMap, accountMap
