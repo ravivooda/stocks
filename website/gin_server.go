@@ -27,11 +27,11 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router.LoadHTMLGlob(s.config.WebsitePaths.TemplatesRootDir + "/*")
 
 	router.GET("/", func(c *gin.Context) {
-		s.renderIndex(c)
+		s.renderAllETFs(c)
 	})
 
 	router.GET("/index", func(c *gin.Context) {
-		s.renderIndex(c)
+		s.renderAllETFs(c)
 	})
 
 	router.GET(fmt.Sprintf("/etf-summary/overlap/:%s", overlapParam), func(c *gin.Context) {
@@ -60,6 +60,14 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 
 	router.POST("/find_overlaps.html", func(c *gin.Context) {
 		s.findOverlapsForCustomHoldings(c)
+	})
+
+	router.GET("/list_all_etfs.html", func(c *gin.Context) {
+		s.renderAllETFs(c)
+	})
+
+	router.GET("/list_all_stocks.html", func(c *gin.Context) {
+		s.renderAllStocks(c)
 	})
 
 	if kill > time.Second {

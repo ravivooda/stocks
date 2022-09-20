@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to ETFs Data Validator</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/lib/helper.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+<section id="list-all-metadata">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-title">
+                    <h2>Abstract!</h2>
+                </div>
+                <div class="card-body">
+                    The goal of this project is to simplify ETF exploration. Just a fun project in spare time. Please
+                    use this tool at your own risk! No guarantees.<br/>
+                    We found <b>{{ .TotalProvider }} </b> providers, <b>{{ .TotalSeeds }}</b> seeds,
+                    <b>{{ .TotalStockTickers }}</b> stocks
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{ with .Providers }}
+    {{ range $key, $value := . }}
+        <section id="list-all-etfs-provider-{{ $key }}">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-title">
+                            <h4><small>Provider: </small>{{ $key }}</h4>
+                            <h5>{{len $value.ETFTickers }}<small> ETFs</small></h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-inline">
+                                {{ range $ticker := $value.ETFTickers }}
+                                    <li class="list-inline-item"><a
+                                                href="{{ $.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
+                                    </li>
+                                {{ end }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {{ end }}
+{{ end }}
+
+<div id="bottom">
+    <table id="bottom_table">
+        <tr>
+            <td>
+                Powered by GitHub
+            </td>
+            <td>
+                Powered by GCP
+            </td>
+            <td>
+                Please file issues, features <a href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

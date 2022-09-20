@@ -28,6 +28,9 @@ var (
 	OverlapTemplate    = "etf_overlap.tmpl"
 	overlapTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, OverlapTemplate)
 
+	listAllETFsTemplate   = "list_all_etfs.tmpl"
+	listAllStocksTemplate = "list_all_stocks.tmpl"
+
 	welcomeTemplate    = "index.tmpl"
 	welcomeTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, welcomeTemplate)
 
