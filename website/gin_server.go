@@ -5,13 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"stocks/utils"
 	"time"
 )
 
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router := gin.Default()
+
+	dirname := "./website/letf/static/"
+	infos, err := ioutil.ReadDir(dirname)
+	utils.PanicErr(err)
+
+	for _, info := range infos {
+		if info.IsDir() {
+			router.Static(fmt.Sprintf("/%s", info.Name()), fmt.Sprintf("%s/%s", dirname, info.Name()))
+		}
+	}
 	router.LoadHTMLGlob(s.config.WebsitePaths.TemplatesRootDir + "/*")
 
 	router.GET("/", func(c *gin.Context) {

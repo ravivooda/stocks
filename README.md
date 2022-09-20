@@ -51,5 +51,10 @@ go run orchestrator.go
 ```
 
 --
+# Credits
+
+Using open sourced theme [focus](https://github.com/themefisher/focus).
+
+--
 
 [![Run Prod](https://github.com/ravivooda/stocks/actions/workflows/production.yml/badge.svg)](https://github.com/ravivooda/stocks/actions/workflows/production.yml)

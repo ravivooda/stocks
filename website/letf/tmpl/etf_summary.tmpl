@@ -1,195 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ .AccountTicker }} Summary</title>
-    <style>
-        * {
-            font-family: Arial, Helvetica, sans-serif;
-        }
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        table {
-            margin-left: auto;
-            margin-right: auto;
-        }
+    <title>{{ .AccountTicker }} Holdings, Overlaps</title>
 
-        h1 {
-            text-align: center;
-            padding: 16px;
-            margin-bottom: 16px
-        }
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
 
-        h2 {
-            text-align: center;
-            padding: 12px;
-            margin-bottom: 12px
-        }
-
-        h3 {
-            text-align: center;
-            padding: 12px;
-            margin-bottom: 12px
-        }
-
-        td, th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #ddd;
-        }
-
-        th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #04AA6D;
-            color: white;
-        }
-
-        #bottom {
-            background-color: #04AA6D;
-            padding: 50px;
-            margin-top: 200px;
-        }
-
-        #bottom_table {
-            color: white;
-        }
-
-        #bottom_table > tr:hover {
-            background-color: #04AA6D;
-        }
-
-        a:link {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        a:visited {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        a:hover {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        a:active {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .rounded_border {
-            padding: 2px 2px;
-            margin: 2px 5px;
-            background-repeat: no-repeat;
-            background-position: 10px center;
-            border-radius: 3px;
-            /*display: block;*/
-            border: 1px solid #4f4f4f;
-        }
-
-        .etf_ticker {
-            color: #166f9e;
-            background-color: #bcbcbc;
-        }
-    </style>
+    <!-- Styles -->
+    <link href="/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/lib/helper.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-<h1>
-    Summary for {{ .AccountTicker }}
-</h1>
-<table>
-    <tr>
-        <td>Provider</td>
-        <td>{{ (index $.Holdings 0).Provider }}</td>
-    </tr>
-    <tr>
-        <td>ETF Name</td>
-        <td>{{ (index $.Holdings 0).LETFDescription }}</td>
-    </tr>
-</table>
-<h2>Holdings for {{ .AccountTicker }}</h2>
-<table>
-    <tr>
-        <th>Holding Stock Name</th>
-        <th>Ticker</th>
-        <th>Percentage Exposure in {{ .AccountTicker }}</th>
-    </tr>
-    {{ with .Holdings }}
-        {{ range . }}
-            <tr>
-                <td><span class="rounded_border">{{ .StockDescription }}</span></td>
-                <td><span class="rounded_border etf_ticker"><a
-                                href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
-                </td>
-                <td>{{ .PercentContained }}</td>
-            </tr>
-        {{ end }}
-    {{ end }}
-</table>
-<h2>Most Similar other ETFs</h2>
-{{ with .Overlaps }}
-    {{ range $leverage, $overlaps := . }}
-        <h3>Leverage: {{ $leverage }}</h3>
-        <table class="overlap_table">
-            <tr>
-                <th>ETF Provider</th>
-                <th>ETF Name</th>
-                <th>ETF Ticker</th>
-                <th>Percentage Overlap Today</th>
-            </tr>
-            {{ with $overlaps }}
-                {{ range .}}
-                    <tr>
-                        <td>
-                            {{ range .LETFHoldees }}
-                                <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
-                            {{ end }}
-                        </td>
-                        <td>
-                            {{ range .LETFHoldees }}
-                                <span class="rounded_border"><a
-                                            href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
-                            {{ end }}
-                        </td>
-                        <td>
-                            {{ range .LETFHoldees }}
-                                <span class="rounded_border etf_ticker"><a
-                                            href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
-                            {{ end }}
-                        </td>
-                        <td>
-                            <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
-                                .OverlapPercentage }}<span>&#8594;</span></a>
-                        </td>
-                    </tr>
+<div>
+    <h3>
+        Summary for {{ .AccountTicker }}
+    </h3>
+    <section id="metadata">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-title">
+                        <h3>Description: <b>{{ .AccountTicker }}</b></h3>
+                    </div>
+                    <table class="display table table-striped table-info">
+                        <tr>
+                            <td><h5>Provider</h5></td>
+                            <td>{{ (index $.Holdings 0).Provider }}</td>
+                        </tr>
+                        <tr>
+                            <td><h5>ETF Name</h5></td>
+                            <td>{{ (index $.Holdings 0).LETFDescription }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="holdings-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-title">
+                        <h3>Holdings for <b>{{ .AccountTicker }}</b></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="bootstrap-data-table-panel">
+                            <div>
+                                <table id="row-select-holdings"
+                                       class="display table table-bordered table-hover dataTable"
+                                       role="grid"
+                                       aria-describedby="row-select_info">
+                                    <thead>
+                                    <tr>
+                                        <th>Holding Stock Name</th>
+                                        <th>Ticker</th>
+                                        <th>Percentage Exposure in {{ .AccountTicker }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{ with .Holdings }}
+                                        {{ range . }}
+                                            <tr>
+                                                <td><span class="rounded_border">{{ .StockDescription }}</span></td>
+                                                <td><span class="rounded_border etf_ticker"><a
+                                                                href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+                                                </td>
+                                                <td>{{ .PercentContained }}</td>
+                                            </tr>
+                                        {{ end }}
+                                    {{ end }}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /# card -->
+            </div>
+            <!-- /# column -->
+        </div>
+    </section>
+    <h2>Most Similar other ETFs</h2>
+    <section id="main-content">
+        {{ with .Overlaps }}
+            {{ range $leverage, $overlaps := . }}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <h3>Leverage: <b>{{ $leverage }}</b></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="bootstrap-data-table-panel">
+                                    <table id="row-select-leverage-{{ $leverage }}"
+                                           class="display table table-bordered table-hover dataTable" role="grid"
+                                           aria-describedby="row-select_info">
+                                        <thead>
+                                        <tr>
+                                            <th>ETF Provider</th>
+                                            <th>ETF Name</th>
+                                            <th>ETF Ticker</th>
+                                            <th>Percentage Overlap Today</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{ with $overlaps }}
+                                            {{ range .}}
+                                                <tr>
+                                                    <td>
+                                                        {{ range .LETFHoldees }}
+                                                            <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
+                                                        {{ end }}
+                                                    </td>
+                                                    <td>
+                                                        {{ range .LETFHoldees }}
+                                                            <span class="rounded_border"><a
+                                                                        href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
+                                                        {{ end }}
+                                                    </td>
+                                                    <td>
+                                                        {{ range .LETFHoldees }}
+                                                            <span class="rounded_border etf_ticker"><a
+                                                                        href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
+                                                        {{ end }}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+                                                            .OverlapPercentage }}<span>&#8594;</span></a>
+                                                    </td>
+                                                </tr>
 
-                {{ end }}
+                                            {{ end }}
+                                        {{ end }}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {{ end }}
-        </table>
-    {{ end }}
-{{ end }}
-<div id="bottom">
-    <table id="bottom_table">
-        <tr>
-            <td>
-                Powered by GitHub
-            </td>
-            <td>
-                Powered by GCP
-            </td>
-            <td>
-                Please file issues, features <a href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
-            </td>
-        </tr>
-    </table>
+        {{ end }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer">
+                    <table id="bottom_table">
+                        <tr>
+                            <td>
+                                Powered by GitHub
+                            </td>
+                            <td>
+                                Powered by GCP
+                            </td>
+                            <td>
+                                Please file issues, features <a
+                                        href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- jquery vendor -->
+    <script src="/js/lib/jquery.min.js"></script>
+    <script src="/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    <script src="/js/lib/menubar/sidebar.js"></script>
+    <script src="/js/lib/preloader/pace.min.js"></script>
+    <!-- sidebar -->
+
+    <!-- bootstrap -->
+
+    <script src="/js/lib/bootstrap.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <!-- scripit init-->
+    <script src="/js/lib/data-table/datatables.min.js"></script>
+    <script src="/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="/js/lib/data-table/buttons.flash.min.js"></script>
+    <script src="/js/lib/data-table/jszip.min.js"></script>
+    <script src="/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="/js/lib/data-table/datatables-init.js"></script>
 </div>
 </body>
 </html>

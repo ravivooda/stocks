@@ -23,7 +23,7 @@ func (s *server) renderIndex(c *gin.Context) {
 		WebsitePaths:      s.config.WebsitePaths,
 	}
 
-	c.HTML(http.StatusOK, WelcomeTemplate, data)
+	c.HTML(http.StatusOK, welcomeTemplate, data)
 }
 
 func (s *server) welcomeStocksRenderingMap() map[string][]models.StockTicker {
