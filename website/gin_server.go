@@ -15,7 +15,7 @@ import (
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router := gin.Default()
 
-	dirname := "./website/letf/static/"
+	dirname := "./website/letf/static/focus/theme"
 	infos, err := ioutil.ReadDir(dirname)
 	utils.PanicErr(err)
 
