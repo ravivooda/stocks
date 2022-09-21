@@ -29,156 +29,152 @@
 </head>
 <body>
 <div>
-    <h3>
-        Summary for {{ .AccountTicker }}
-    </h3>
-    <section id="metadata">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-title">
-                        <h3>Description: <b>{{ .AccountTicker }}</b></h3>
-                    </div>
-                    <table class="display table table-striped table-info">
-                        <tr>
-                            <td><h5>Provider</h5></td>
-                            <td>{{ (index $.Holdings 0).Provider }}</td>
-                        </tr>
-                        <tr>
-                            <td><h5>ETF Name</h5></td>
-                            <td>{{ (index $.Holdings 0).LETFDescription }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section id="holdings-content">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-title">
-                        <h3>Holdings for <b>{{ .AccountTicker }}</b></h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="bootstrap-data-table-panel">
-                            <div>
-                                <table id="row-select-holdings"
-                                       class="display table table-bordered table-hover dataTable"
-                                       role="grid"
-                                       aria-describedby="row-select_info">
-                                    <thead>
+    {{/* Side bar */}}
+    {{ template "sidebar" }}
+    {{/* Header */}}
+    {{ template "header" }}
+    {{/* Main Content */}}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <h3>
+                    Summary for {{ .AccountTicker }}
+                </h3>
+                <section id="metadata">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h3>Description: <b>{{ .AccountTicker }}</b></h3>
+                                </div>
+                                <table class="display table table-striped table-info">
                                     <tr>
-                                        <th>Holding Stock Name</th>
-                                        <th>Ticker</th>
-                                        <th>Percentage Exposure in {{ .AccountTicker }}</th>
+                                        <td><h5>Provider</h5></td>
+                                        <td>{{ (index $.Holdings 0).Provider }}</td>
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{ with .Holdings }}
-                                        {{ range . }}
-                                            <tr>
-                                                <td><span class="rounded_border">{{ .StockDescription }}</span></td>
-                                                <td><span class="rounded_border etf_ticker"><a
-                                                                href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
-                                                </td>
-                                                <td>{{ .PercentContained }}</td>
-                                            </tr>
-                                        {{ end }}
-                                    {{ end }}
-                                    </tbody>
+                                    <tr>
+                                        <td><h5>ETF Name</h5></td>
+                                        <td>{{ (index $.Holdings 0).LETFDescription }}</td>
+                                    </tr>
                                 </table>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- /# card -->
-            </div>
-            <!-- /# column -->
-        </div>
-    </section>
-    <h2>Most Similar other ETFs</h2>
-    <section id="main-content">
-        {{ with .Overlaps }}
-            {{ range $leverage, $overlaps := . }}
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-title">
-                                <h3>Leverage: <b>{{ $leverage }}</b></h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="bootstrap-data-table-panel">
-                                    <table id="row-select-leverage-{{ $leverage }}"
-                                           class="display table table-bordered table-hover dataTable" role="grid"
-                                           aria-describedby="row-select_info">
-                                        <thead>
-                                        <tr>
-                                            <th>ETF Provider</th>
-                                            <th>ETF Name</th>
-                                            <th>ETF Ticker</th>
-                                            <th>Percentage Overlap Today</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {{ with $overlaps }}
-                                            {{ range .}}
+                </section>
+                <section id="holdings-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h3>Holdings for <b>{{ .AccountTicker }}</b></h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="bootstrap-data-table-panel">
+                                        <div>
+                                            <table id="row-select-holdings"
+                                                   class="display table table-bordered table-hover dataTable"
+                                                   role="grid"
+                                                   aria-describedby="row-select_info">
+                                                <thead>
                                                 <tr>
-                                                    <td>
-                                                        {{ range .LETFHoldees }}
-                                                            <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
-                                                        {{ end }}
-                                                    </td>
-                                                    <td>
-                                                        {{ range .LETFHoldees }}
-                                                            <span class="rounded_border"><a
-                                                                        href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
-                                                        {{ end }}
-                                                    </td>
-                                                    <td>
-                                                        {{ range .LETFHoldees }}
-                                                            <span class="rounded_border etf_ticker"><a
-                                                                        href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
-                                                        {{ end }}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
-                                                            .OverlapPercentage }}<span>&#8594;</span></a>
-                                                    </td>
+                                                    <th>Holding Stock Name</th>
+                                                    <th>Ticker</th>
+                                                    <th>Percentage Exposure in {{ .AccountTicker }}</th>
                                                 </tr>
-
-                                            {{ end }}
-                                        {{ end }}
-                                        </tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody>
+                                                {{ with .Holdings }}
+                                                    {{ range . }}
+                                                        <tr>
+                                                            <td>
+                                                                <span class="rounded_border">{{ .StockDescription }}</span>
+                                                            </td>
+                                                            <td><span class="rounded_border etf_ticker"><a
+                                                                            href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+                                                            </td>
+                                                            <td>{{ .PercentContained }}</td>
+                                                        </tr>
+                                                    {{ end }}
+                                                {{ end }}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <!-- /# card -->
                         </div>
+                        <!-- /# column -->
                     </div>
-                </div>
-            {{ end }}
-        {{ end }}
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="footer">
-                    <table id="bottom_table">
-                        <tr>
-                            <td>
-                                Powered by GitHub
-                            </td>
-                            <td>
-                                Powered by GCP
-                            </td>
-                            <td>
-                                Please file issues, features <a
-                                        href="https://github.com/ravivooda/stocks/issues/new/choose">here</a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                </section>
+                <h2>Most Similar other ETFs</h2>
+                <section id="main-content">
+                    {{ with .Overlaps }}
+                        {{ range $leverage, $overlaps := . }}
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-title">
+                                            <h3>Leverage: <b>{{ $leverage }}</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="bootstrap-data-table-panel">
+                                                <table id="row-select-leverage-{{ $leverage }}"
+                                                       class="display table table-bordered table-hover dataTable"
+                                                       role="grid"
+                                                       aria-describedby="row-select_info">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>ETF Provider</th>
+                                                        <th>ETF Name</th>
+                                                        <th>ETF Ticker</th>
+                                                        <th>Percentage Overlap Today</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{ with $overlaps }}
+                                                        {{ range .}}
+                                                            <tr>
+                                                                <td>
+                                                                    {{ range .LETFHoldees }}
+                                                                        <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
+                                                                    {{ end }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ range .LETFHoldees }}
+                                                                        <span class="rounded_border"><a
+                                                                                    href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
+                                                                    {{ end }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ range .LETFHoldees }}
+                                                                        <span class="rounded_border etf_ticker"><a
+                                                                                    href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
+                                                                    {{ end }}
+                                                                </td>
+                                                                <td>
+                                                                    <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+                                                                        .OverlapPercentage }}<span>&#8594;</span></a>
+                                                                </td>
+                                                            </tr>
+
+                                                        {{ end }}
+                                                    {{ end }}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{ end }}
+                    {{ end }}
+                    {{ template "footer" }}
+                </section>
             </div>
         </div>
-    </section>
+    </div>
+
     <!-- jquery vendor -->
     <script src="/js/lib/jquery.min.js"></script>
     <script src="/js/lib/jquery.nanoscroller.min.js"></script>
