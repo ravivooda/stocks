@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to Tax Loss Harvesting Tool</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    {{/* Side bar */}}
+    {{ template "sidebar" }}
+    {{/* Header */}}
+    {{ template "header" }}
+    {{/* Main Content */}}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <section id="list-all-metadata">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h2>Abstract!</h2>
+                                </div>
+                                <div class="card-body">
+                                    The goal of this project is to simplify ETF exploration. Just a fun project in spare
+                                    time. Please
+                                    use this tool at your own risk! No guarantees.<br/>
+                                    We found <b>{{ .TotalProvider }} </b> providers, <b>{{ .TotalSeeds }}</b> seeds,
+                                    <b>{{ .TotalStockTickers }}</b> stocks
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {{ with .Stocks }}
+                    {{ range $group, $value := . }}
+
+                        <section id="list-all-stocks-metadata-{{$group}}">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="card">
+                                        <div class="card-title">
+                                            <h4>{{$group}}</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-inline">
+                                                {{ range $ticker := $value }}
+                                                    <li class="list-inline-item"><a
+                                                                href="{{ $.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
+                                                    </li>
+                                                {{ end }}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    {{ end }}
+                {{ end }}
+
+                <section id="all_stocks_footer">
+                    {{ template "footer" }}
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

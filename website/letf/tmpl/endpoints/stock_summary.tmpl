@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ .Ticker }} Summary, Exposure to ETFs</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    {{/* Side bar */}}
+    {{ template "sidebar" }}
+    {{/* Header */}}
+    {{ template "header" }}
+    {{/* Main Content */}}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <h3>
+                    Summary for <b>{{ .Ticker }}</b>
+                </h3>
+                <h4>ETFs with exposure to <b>{{ .Ticker }}</b></h4>
+                {{ with .MappedHoldings }}
+                    {{ range $leverage, $overlaps := .}}
+                        <section id="stock-leverage-{{ $leverage }}">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-title">
+                                            <h3>Leverage: {{ $leverage }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="bootstrap-data-table-panel">
+                                                <table id="row-select-holdings"
+                                                       class="display table table-bordered table-hover dataTable"
+                                                       role="grid"
+                                                       aria-describedby="row-select_info">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Provider</th>
+                                                        <th>ETF Ticker</th>
+                                                        <th>Description</th>
+                                                        <th>{{ $.Ticker }} Percentage Exposure</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{ with $overlaps }}
+                                                        {{ range . }}
+                                                            <tr>
+                                                                <td><span class="rounded_border">{{ .Provider }}</span>
+                                                                </td>
+                                                                <td><span class="rounded_border etf_ticker"><a
+                                                                                href="{{ $.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="rounded_border">{{ .LETFDescription }}</span>
+                                                                </td>
+                                                                <td>{{ .PercentContained }}</td>
+                                                            </tr>
+                                                        {{ end }}
+                                                    {{ end }}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    {{ end }}
+                {{ end }}
+                <section id="stock_summary_footer">
+                    {{ template "footer" }}
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
