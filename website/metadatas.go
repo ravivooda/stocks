@@ -6,9 +6,9 @@ import (
 )
 
 func (s *server) renderUseCases(c *gin.Context) {
-	c.HTML(http.StatusOK, useCasesTemplate, s.config.TemplateCustomMetadata)
+	c.HTML(http.StatusOK, useCasesTemplate, s.metadata.TemplateCustomMetadata)
 }
 
 func (s *server) renderDisclaimer(c *gin.Context) {
-	c.HTML(http.StatusOK, disclaimerTemplate, s.config.TemplateCustomMetadata)
+	c.HTML(http.StatusOK, disclaimerTemplate, s.metadata.TemplateCustomMetadata)
 }

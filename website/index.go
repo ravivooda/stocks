@@ -33,7 +33,7 @@ func (s *server) allRenderingData() allData {
 		TotalStockTickers:      len(s.metadata.StocksMap),
 		Providers:              s.metadata.ProvidersMap,
 		Stocks:                 s.stocksRenderingMap(),
-		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 	return data
 }

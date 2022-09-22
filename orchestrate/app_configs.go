@@ -1,4 +1,4 @@
-package main
+package orchestrate
 
 import (
 	"github.com/spf13/viper"

@@ -1,4 +1,4 @@
-package main
+package orchestrate
 
 import (
 	"context"
@@ -17,27 +17,27 @@ import (
 	"stocks/utils"
 )
 
-type orchestrateRequest struct {
-	config            Config
-	parsers           []alerts.AlertParser
-	notifier          notifications.Notifier
-	insightGenerators []overlap.Generator
-	insightsLogger    insights.Logger
-	etfsMaps          map[models.LETFAccountTicker]models.ETF
+type Request struct {
+	Config            Config
+	Parsers           []alerts.AlertParser
+	Notifier          notifications.Notifier
+	InsightGenerators []overlap.Generator
+	InsightsLogger    insights.Logger
+	EtfsMaps          map[models.LETFAccountTicker]models.ETF
 }
 
-type clientHoldingsRequest struct {
-	config         Config
-	etfs           []models.ETF
-	seedGenerators []database.DB
-	clients        map[models.Provider]securities.Client
-	backupClient   masterdatareports.Client
-	etfsMaps       map[models.LETFAccountTicker]models.ETF
+type ClientHoldingsRequest struct {
+	Config         Config
+	ETFs           []models.ETF
+	SeedGenerators []database.DB
+	Clients        map[models.Provider]securities.Client
+	BackupClient   masterdatareports.Client
+	EtfsMaps       map[models.LETFAccountTicker]models.ETF
 }
 
-func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]models.LETFHolding, error) {
+func GetHoldings(ctx context.Context, holdingsRequest ClientHoldingsRequest) ([]models.LETFHolding, error) {
 	var seeds []models.Seed
-	for _, generator := range holdingsRequest.seedGenerators {
+	for _, generator := range holdingsRequest.SeedGenerators {
 		_seeds, err := generator.ListSeeds(ctx)
 		if err != nil {
 			return nil, err
@@ -46,7 +46,7 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 	}
 	fmt.Printf("found %d seeds", len(seeds))
 
-	clientHoldings, err := fetchHoldings(ctx, seeds, holdingsRequest.clients, holdingsRequest.etfsMaps)
+	clientHoldings, err := fetchHoldings(ctx, seeds, holdingsRequest.Clients, holdingsRequest.EtfsMaps)
 	if err != nil {
 		return nil, err
 	}
@@ -55,12 +55,12 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 
 	var noMatchETFs []string
 	fmt.Println("Loading master data reports client")
-	for _, etf := range holdingsRequest.etfs {
+	for _, etf := range holdingsRequest.ETFs {
 		// first, try the normal client
 		if _, ok := holdingsWithAccountTickerMap[etf.Symbol]; ok {
 			continue
 		}
-		holdings, err := holdingsRequest.backupClient.GetHoldings(ctx, etf)
+		holdings, err := holdingsRequest.BackupClient.GetHoldings(ctx, etf)
 		sort.Slice(holdings, func(i, j int) bool {
 			return holdings[i].PercentContained > holdings[j].PercentContained
 		})
@@ -96,22 +96,22 @@ func getHoldings(ctx context.Context, holdingsRequest clientHoldingsRequest) ([]
 	return totalHoldings, nil
 }
 
-func orchestrate(
+func Orchestrate(
 	ctx context.Context,
-	request orchestrateRequest,
+	request Request,
 	holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding,
 	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
 ) {
-	gatheredAlerts, err := gatherAlerts(ctx, request.parsers, holdingsWithStockTickerMap)
+	gatheredAlerts, err := gatherAlerts(ctx, request.Parsers, holdingsWithStockTickerMap)
 	utils.PanicErr(err)
 	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
 
-	if request.config.Secrets.Notifications.ShouldSendEmails {
-		_, err := request.notifier.SendAll(ctx, gatheredAlerts)
+	if request.Config.Secrets.Notifications.ShouldSendEmails {
+		_, err := request.Notifier.SendAll(ctx, gatheredAlerts)
 		utils.PanicErr(err)
 	}
 
-	logHoldings(ctx, request.insightsLogger, holdingsWithAccountTickerMap, request.etfsMaps)
+	logHoldings(ctx, request.InsightsLogger, holdingsWithAccountTickerMap, request.EtfsMaps)
 	logStocks(ctx, request, holdingsWithStockTickerMap)
 
 	generateInsights(ctx, request, holdingsWithAccountTickerMap)
@@ -130,7 +130,7 @@ func logHoldings(
 	}
 }
 
-func generateInsights(_ context.Context, request orchestrateRequest, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {
+func generateInsights(_ context.Context, request Request, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {
 	var totalGatheredInsights = 0
 
 	//
@@ -144,14 +144,14 @@ func generateInsights(_ context.Context, request orchestrateRequest, holdingsWit
 	//}
 
 	fmt.Println("Generating ETF Pages")
-	for _, iGenerator := range request.insightGenerators {
+	for _, iGenerator := range request.InsightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
 			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
 			for _, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
 				totalGatheredInsights += len(letfOverlapAnalyses)
 				mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
 				for _, analysis := range letfOverlapAnalyses {
-					holdee := request.etfsMaps[analysis.LETFHoldees[0]]
+					holdee := request.EtfsMaps[analysis.LETFHoldees[0]]
 					etfArray := mappedOverlapAnalysis[holdee.Leveraged]
 					if etfArray == nil {
 						etfArray = []models.LETFOverlapAnalysis{}
@@ -161,7 +161,7 @@ func generateInsights(_ context.Context, request orchestrateRequest, holdingsWit
 
 				for leverage, overlapAnalyses := range mappedOverlapAnalysis {
 					for _, analysis := range overlapAnalyses {
-						_, err := request.insightsLogger.LogOverlapAnalysis(leverage, analysis)
+						_, err := request.InsightsLogger.LogOverlapAnalysis(leverage, analysis)
 						utils.PanicErr(err)
 					}
 				}
@@ -171,9 +171,9 @@ func generateInsights(_ context.Context, request orchestrateRequest, holdingsWit
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
 }
 
-func logStocks(ctx context.Context, request orchestrateRequest, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
+func logStocks(ctx context.Context, request Request, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
 	fmt.Printf("Generating %d stock summaries\n", len(holdingsWithStockTickerMap))
-	fileNames, err := request.insightsLogger.LogStocks(ctx, holdingsWithStockTickerMap)
+	fileNames, err := request.InsightsLogger.LogStocks(ctx, holdingsWithStockTickerMap)
 	fmt.Printf("Generated files: %s\n", fileNames)
 	utils.PanicErr(err)
 }

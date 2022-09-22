@@ -18,14 +18,14 @@ type Dependencies struct {
 }
 
 type Config struct {
-	InsightsConfig         insights.Config
-	TemplateCustomMetadata TemplateCustomMetadata
+	InsightsConfig insights.Config
 }
 
 type Metadata struct {
-	AccountMap   map[models.LETFAccountTicker]models.ETFMetadata
-	StocksMap    map[models.StockTicker]models.StockMetadata
-	ProvidersMap map[models.Provider]models.ProviderMetadata
+	AccountMap             map[models.LETFAccountTicker]models.ETFMetadata
+	StocksMap              map[models.StockTicker]models.StockMetadata
+	ProvidersMap           map[models.Provider]models.ProviderMetadata
+	TemplateCustomMetadata TemplateCustomMetadata
 }
 
 type server struct {

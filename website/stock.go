@@ -30,7 +30,7 @@ func (s *server) renderStock(c *gin.Context) {
 	}{
 		Ticker:                 stock,
 		MappedHoldings:         mappedHoldings,
-		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }

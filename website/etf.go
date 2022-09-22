@@ -31,7 +31,7 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		Holdings:               etfHoldings,
 		Overlaps:               overlaps,
 		AccountsMap:            s.metadata.AccountMap,
-		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }

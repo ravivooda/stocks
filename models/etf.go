@@ -62,6 +62,7 @@ type ETF struct {
 }
 
 type ETFMetadata struct {
+	Ticker        LETFAccountTicker
 	Provider      Provider
 	Description   string
 	Leveraged     string

@@ -25,7 +25,7 @@ func (s *server) renderOverlap(c *gin.Context) {
 		Analysis:               analysis,
 		StocksMap:              s.metadata.StocksMap,
 		ETFsMap:                s.metadata.AccountMap,
-		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 
 	c.HTML(http.StatusOK, OverlapTemplate, data)
