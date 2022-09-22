@@ -18,8 +18,8 @@ type Dependencies struct {
 }
 
 type Config struct {
-	InsightsConfig insights.Config
-	WebsitePaths   Paths
+	InsightsConfig         insights.Config
+	TemplateCustomMetadata TemplateCustomMetadata
 }
 
 type Metadata struct {

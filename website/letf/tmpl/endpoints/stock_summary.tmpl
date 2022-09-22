@@ -7,7 +7,7 @@
 <body>
 <div>
     {{/* Side bar */}}
-    {{ template "sidebar" }}
+    {{ template "sidebar" $.TemplateCustomMetadata }}
     {{/* Header */}}
     {{ template "header" }}
     {{/* Main Content */}}
@@ -48,7 +48,7 @@
                                                                 <td><span class="rounded_border">{{ .Provider }}</span>
                                                                 </td>
                                                                 <td><span class="rounded_border etf_ticker"><a
-                                                                                href="{{ $.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
+                                                                                href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
                                                                 </td>
                                                                 <td>
                                                                     <span class="rounded_border">{{ .LETFDescription }}</span>

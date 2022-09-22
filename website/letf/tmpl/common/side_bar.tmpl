@@ -18,22 +18,18 @@
                     <li><a href="/use_cases.html"><i class="ti-view-list-alt"></i> Use Cases </a></li>
 
                     <li class="label">ETFs</li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> Top 10 <span
+                    <li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i>
+                            Top {{len .SideBarMetadata.TopETFs }} <span
                                     class="sidebar-collapse-icon ti-angle-down"></span></a>
                         <ul>
-                            <li><a href="chart-flot.html">Flot</a></li>
-                            <li><a href="chart-morris.html">Morris</a></li>
-                            <li><a href="chartjs.html">Chartjs</a></li>
-                            <li><a href="chartist.html">Chartist</a></li>
-                            <li><a href="chart-peity.html">Peity</a></li>
-                            <li><a href="chart-sparkline.html">Sparkle</a></li>
-                            <li><a href="chart-knob.html">Knob</a></li>
+                            {{ with .SideBarMetadata.TopETFs }}
+                                {{ range . }}
+                                    <li><a href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></li>
+                                {{ end }}
+                            {{ end }}
                         </ul>
                     </li>
                     <li><a href="/list_all_etfs.html"><i class="ti-check-box"></i> All </a></li>
-                    <li><a href="app-email.html"><i class="ti-email"></i> Email</a></li>
-                    <li><a href="app-profile.html"><i class="ti-user"></i> Profile</a></li>
-                    <li><a href="app-widget-card.html"><i class="ti-layout-grid2-alt"></i> Widget</a></li>
                     <li class="label">Features</li>
                     <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> UI Elements <span
                                     class="sidebar-collapse-icon ti-angle-down"></span></a>
@@ -52,62 +48,22 @@
                         </ul>
                     </li>
                     <li class="label">Stocks</li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> Top 10 <span
+                    <li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i>
+                            Top {{len .SideBarMetadata.TopStocks }} <span
                                     class="sidebar-collapse-icon ti-angle-down"></span></a>
                         <ul>
-                            <li><a href="chart-flot.html">Flot</a></li>
-                            <li><a href="chart-morris.html">Morris</a></li>
-                            <li><a href="chartjs.html">Chartjs</a></li>
-                            <li><a href="chartist.html">Chartist</a></li>
-                            <li><a href="chart-peity.html">Peity</a></li>
-                            <li><a href="chart-sparkline.html">Sparkle</a></li>
-                            <li><a href="chart-knob.html">Knob</a></li>
+                            {{ with .SideBarMetadata.TopStocks }}
+                                {{ range . }}
+                                    <li><a href="{{ $.WebsitePaths.StockSummary }}/{{ . }}.html">{{ . }}</a></li>
+                                {{ end }}
+                            {{ end }}
                         </ul>
                     </li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-panel"></i> Components <span
-                                    class="sidebar-collapse-icon ti-angle-down"></span></a>
-                        <ul>
-                            <li><a href="uc-calendar.html">Calendar</a></li>
-                            <li><a href="uc-carousel.html">Carousel</a></li>
-                            <li><a href="uc-weather.html">Weather</a></li>
-                            <li><a href="uc-datamap.html">Datamap</a></li>
-                            <li><a href="uc-todo-list.html">To do</a></li>
-                            <li><a href="uc-scrollable.html">Scrollable</a></li>
-                            <li><a href="uc-sweetalert.html">Sweet Alert</a></li>
-                            <li><a href="uc-toastr.html">Toastr</a></li>
-                            <li><a href="uc-range-slider-basic.html">Basic Range Slider</a></li>
-                            <li><a href="uc-range-slider-advance.html">Advance Range Slider</a></li>
-                            <li><a href="uc-nestable.html">Nestable</a></li>
-
-                            <li><a href="uc-rating-bar-rating.html">Bar Rating</a></li>
-                            <li><a href="uc-rating-jRate.html">jRate</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-layout-grid4-alt"></i> Table <span
-                                    class="sidebar-collapse-icon ti-angle-down"></span></a>
-                        <ul>
-                            <li><a href="table-basic.html">Basic</a></li>
-
-                            <li><a href="table-export.html">Datatable Export</a></li>
-                            <li><a href="table-row-select.html">Datatable Row Select</a></li>
-                            <li><a href="table-jsgrid.html">Editable </a></li>
-                        </ul>
-                    </li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-heart"></i> Icons <span
-                                    class="sidebar-collapse-icon ti-angle-down"></span></a>
-                        <ul>
-                            <li><a href="font-themify.html">Themify</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-map"></i> Maps <span
-                                    class="sidebar-collapse-icon ti-angle-down"></span></a>
-                        <ul>
-                            <li><a href="gmaps.html">Basic</a></li>
-                            <li><a href="vector-map.html">Vector Map</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="/list_all_stocks.html"><i class="ti-gallery"></i> All </a></li>
                     <li class="label">Optimizers</li>
                     <li><a href="/find_overlaps.html"><i class="ti-search"></i> Find Opportunities </a></li>
+
+
                     <li class="label">Extra</li>
                     <li><a class="sidebar-sub-toggle"><i class="ti-files"></i> Invoice <span
                                     class="sidebar-collapse-icon ti-angle-down"></span></a>
@@ -124,7 +80,6 @@
                             <li><a href="page-reset-password.html">Forgot password</a></li>
                         </ul>
                     </li>
-                    <li><a href="../documentation/index.html"><i class="ti-file"></i> Documentation</a></li>
                     <li><a href="/disclaimer.html"><i class="ti-info"></i> Disclaimers</a></li>
                 </ul>
             </div>

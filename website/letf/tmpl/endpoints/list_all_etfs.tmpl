@@ -7,7 +7,7 @@
 <body>
 <div>
     {{/* Side bar */}}
-    {{ template "sidebar" }}
+    {{ template "sidebar" $.TemplateCustomMetadata }}
     {{/* Header */}}
     {{ template "header" }}
     {{/* Main Content */}}
@@ -46,7 +46,7 @@
                                             <ul class="list-inline">
                                                 {{ range $ticker := $value.ETFTickers }}
                                                     <li class="list-inline-item"><a
-                                                                href="{{ $.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
+                                                                href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
                                                     </li>
                                                 {{ end }}
                                             </ul>

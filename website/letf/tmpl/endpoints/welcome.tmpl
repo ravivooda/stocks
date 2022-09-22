@@ -117,7 +117,7 @@
                 <td>
                     {{ range $ticker := $value.ETFTickers }}
                         <span class="etf_ticker rounded_border"><a
-                                    href="{{ $.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
+                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
                     {{ end }}
                 </td>
             </tr>
@@ -136,7 +136,7 @@
                 <td>
                     {{ range $ticker := $value }}
                         <span class="rounded_border etf_ticker"><a
-                                    href="{{ $.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
+                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a></span>
                     {{ end }}
                 </td>
             </tr>

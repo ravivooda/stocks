@@ -24,13 +24,13 @@ func (s *server) renderStock(c *gin.Context) {
 	}
 
 	data := struct {
-		Ticker         string
-		MappedHoldings map[string][]models.LETFHolding
-		WebsitePaths   Paths
+		Ticker                 string
+		MappedHoldings         map[string][]models.LETFHolding
+		TemplateCustomMetadata TemplateCustomMetadata
 	}{
-		Ticker:         stock,
-		MappedHoldings: mappedHoldings,
-		WebsitePaths:   s.config.WebsitePaths,
+		Ticker:                 stock,
+		MappedHoldings:         mappedHoldings,
+		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }

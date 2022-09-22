@@ -7,7 +7,7 @@
 <body>
 <div>
     {{/* Side bar */}}
-    {{ template "sidebar" }}
+    {{ template "sidebar" $.TemplateCustomMetadata }}
     {{/* Header */}}
     {{ template "header" }}
     {{/* Main Content */}}
@@ -47,7 +47,7 @@
                                             <ul class="list-inline">
                                                 {{ range $ticker := $value }}
                                                     <li class="list-inline-item"><a
-                                                                href="{{ $.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
+                                                                href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
                                                     </li>
                                                 {{ end }}
                                             </ul>

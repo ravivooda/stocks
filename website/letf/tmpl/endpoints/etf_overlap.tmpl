@@ -8,7 +8,7 @@
 <body>
 <div>
     {{/* Side bar */}}
-    {{ template "sidebar" }}
+    {{ template "sidebar" $.TemplateCustomMetadata }}
     {{/* Header */}}
     {{ template "header" }}
     {{/* Main Content */}}
@@ -96,7 +96,7 @@
                                                                 <span class="rounded_border">{{ (index $.StocksMap .Ticker).StockDescription }}</span>
                                                             </td>
                                                             <td><span class="rounded_border etf_ticker"><a
-                                                                            href="{{ $.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span>
+                                                                            href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span>
                                                             </td>
                                                             <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
                                                             {{ $individualPercentagesMap := .IndividualPercentagesMap }}

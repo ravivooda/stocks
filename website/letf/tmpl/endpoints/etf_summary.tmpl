@@ -7,7 +7,7 @@
 <body>
 <div>
     {{/* Side bar */}}
-    {{ template "sidebar" }}
+    {{ template "sidebar" $.TemplateCustomMetadata}}
     {{/* Header */}}
     {{ template "header" }}
     {{/* Main Content */}}
@@ -67,7 +67,7 @@
                                                                 <span class="rounded_border">{{ .StockDescription }}</span>
                                                             </td>
                                                             <td><span class="rounded_border etf_ticker"><a
-                                                                            href="{{ $.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+                                                                            href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
                                                             </td>
                                                             <td>{{ .PercentContained }}</td>
                                                         </tr>
@@ -126,11 +126,11 @@
                                                                 <td>
                                                                     {{ range .LETFHoldees }}
                                                                         <span class="rounded_border etf_ticker"><a
-                                                                                    href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
+                                                                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
                                                                     {{ end }}
                                                                 </td>
                                                                 <td>
-                                                                    <a href="{{ $.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
+                                                                    <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
                                                                         .OverlapPercentage }}<span>&#8594;</span></a>
                                                                 </td>
                                                             </tr>

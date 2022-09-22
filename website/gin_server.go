@@ -24,7 +24,7 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 			router.Static(fmt.Sprintf("/%s", info.Name()), fmt.Sprintf("%s/%s", dirname, info.Name()))
 		}
 	}
-	router.LoadHTMLGlob(s.config.WebsitePaths.TemplatesRootDir + "/**/*")
+	router.LoadHTMLGlob(s.config.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 
 	router.GET("/", func(c *gin.Context) {
 		s.renderAllETFs(c)

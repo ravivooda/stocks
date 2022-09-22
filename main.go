@@ -160,7 +160,20 @@ func beginServing(
 ) {
 	server := website.New(website.Config{
 		InsightsConfig: insightsConfig,
-		WebsitePaths:   paths,
+		TemplateCustomMetadata: website.TemplateCustomMetadata{
+			SideBarMetadata: website.SideBarMetadata{
+				TopETFs: []models.LETFAccountTicker{
+					"SPY",
+					"TECL",
+				},
+				TopStocks: []models.StockTicker{
+					"AAPL",
+					"MSFT",
+					"PYPL",
+				},
+			},
+			WebsitePaths: paths,
+		},
 	}, website.Dependencies{
 		Logger:    logger,
 		Generator: generator,

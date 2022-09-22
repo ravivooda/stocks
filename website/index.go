@@ -18,22 +18,22 @@ func (s *server) renderAllStocks(c *gin.Context) {
 }
 
 type allData struct {
-	TotalProvider     int
-	TotalSeeds        int
-	TotalStockTickers int
-	Providers         map[models.Provider]models.ProviderMetadata
-	Stocks            map[string][]models.StockTicker
-	WebsitePaths      Paths
+	TotalProvider          int
+	TotalSeeds             int
+	TotalStockTickers      int
+	Providers              map[models.Provider]models.ProviderMetadata
+	Stocks                 map[string][]models.StockTicker
+	TemplateCustomMetadata TemplateCustomMetadata
 }
 
 func (s *server) allRenderingData() allData {
 	var data = allData{
-		TotalProvider:     len(s.metadata.ProvidersMap),
-		TotalSeeds:        len(s.metadata.AccountMap),
-		TotalStockTickers: len(s.metadata.StocksMap),
-		Providers:         s.metadata.ProvidersMap,
-		Stocks:            s.stocksRenderingMap(),
-		WebsitePaths:      s.config.WebsitePaths,
+		TotalProvider:          len(s.metadata.ProvidersMap),
+		TotalSeeds:             len(s.metadata.AccountMap),
+		TotalStockTickers:      len(s.metadata.StocksMap),
+		Providers:              s.metadata.ProvidersMap,
+		Stocks:                 s.stocksRenderingMap(),
+		TemplateCustomMetadata: s.config.TemplateCustomMetadata,
 	}
 	return data
 }
