@@ -72,19 +72,21 @@ func GetHoldings(ctx context.Context, holdingsRequest ClientHoldingsRequest) ([]
 	}
 	fmt.Printf("did not find matching holdings for %+v (len: %d)\n", noMatchETFs, len(noMatchETFs))
 
+	dagSortedHoldingsWithAccountTickerMap := dagSortHoldings(holdingsWithAccountTickerMap)
+
 	var totalHoldings []models.LETFHolding
 	var (
 		minPercentageTotal = 100.0
 		maxPercentageTotal = 0.0
 	)
 	var mapsDidNotSumUp = map[string]float64{}
-	for seed, holdings := range holdingsWithAccountTickerMap {
+	for seed, holdings := range dagSortedHoldingsWithAccountTickerMap {
 		sum := utils.SumHoldings(holdings)
 		if math.Abs(sum-100) > 30 {
 			//filteredHoldings := utils.FilteredForPrinting(holdings)
 			//return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
 			mapsDidNotSumUp[string(seed)] = sum
-			delete(holdingsWithAccountTickerMap, seed)
+			delete(dagSortedHoldingsWithAccountTickerMap, seed)
 		}
 		minPercentageTotal = math.Min(sum, minPercentageTotal)
 		maxPercentageTotal = math.Max(sum, maxPercentageTotal)
@@ -94,6 +96,63 @@ func GetHoldings(ctx context.Context, holdingsRequest ClientHoldingsRequest) ([]
 	fmt.Printf("Found minPercentageTotal: %f, maxPercentageTotal: %f\n", minPercentageTotal, maxPercentageTotal)
 
 	return totalHoldings, nil
+}
+
+func dagSortHoldings(holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) map[models.LETFAccountTicker][]models.LETFHolding {
+	var dagSortedHoldingsWithAccountTickerMap = map[models.LETFAccountTicker][]models.LETFHolding{}
+
+	var accountTickers = map[models.LETFAccountTicker]bool{}
+	for _, holdings := range holdingsWithAccountTickerMap {
+		for _, holding := range holdings {
+			accountTickers[holding.LETFAccountTicker] = true
+		}
+	}
+
+	var currentStack = map[models.LETFAccountTicker]bool{}
+	var alreadySolvedAccountTickers = map[models.LETFAccountTicker]bool{}
+
+	for ticker := range holdingsWithAccountTickerMap {
+		recursiveDAGSort(&dagSortedHoldingsWithAccountTickerMap, holdingsWithAccountTickerMap, accountTickers, &alreadySolvedAccountTickers, currentStack, ticker)
+	}
+
+	return dagSortedHoldingsWithAccountTickerMap
+}
+
+func recursiveDAGSort(
+	m *map[models.LETFAccountTicker][]models.LETFHolding,
+	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
+	accountTickers map[models.LETFAccountTicker]bool,
+	alreadySolvedAccountTickers *map[models.LETFAccountTicker]bool,
+	currentStack map[models.LETFAccountTicker]bool,
+	ticker models.LETFAccountTicker,
+) {
+	if currentStack[ticker] {
+		//panic("found a loop in DAG")
+		fmt.Printf("WOuld have Panicked DAG: %s\n", ticker)
+		return
+	}
+
+	if (*alreadySolvedAccountTickers)[ticker] {
+		return
+	}
+	(*alreadySolvedAccountTickers)[ticker] = true
+
+	currentStack[ticker] = true
+	var updatedHoldings []models.LETFHolding
+	for _, holding := range holdingsWithAccountTickerMap[ticker] {
+		accountTicker := utils.FetchAccountTicker(string(holding.StockTicker))
+		if accountTickers[accountTicker] && accountTicker != ticker {
+			recursiveDAGSort(m, holdingsWithAccountTickerMap, accountTickers, alreadySolvedAccountTickers, currentStack, accountTicker)
+			for _, letfHolding := range (*m)[accountTicker] {
+				letfHolding.PercentContained *= holding.PercentContained / 100
+				updatedHoldings = append(updatedHoldings, letfHolding)
+			}
+		} else {
+			updatedHoldings = append(updatedHoldings, holding)
+		}
+	}
+	(*m)[ticker] = updatedHoldings
+	delete(currentStack, ticker)
 }
 
 func Orchestrate(
