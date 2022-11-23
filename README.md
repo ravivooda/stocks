@@ -53,7 +53,7 @@ go run orchestrator.go
 --
 # Credits
 
-Using open sourced theme [focus](https://github.com/themefisher/focus).
+Using open sourced theme [quixlab](https://themefisher.com/products/quixlab).
 
 --
 
