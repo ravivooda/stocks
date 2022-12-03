@@ -39,13 +39,9 @@
                                             <div class="card-body">
                                                 <h4><small>Provider: </small>{{ $key }}</h4>
                                                 <h5>{{len $value.ETFTickers }}<small> ETFs</small></h5>
-                                                <ul class="list-inline">
-                                                    {{ range $ticker := $value.ETFTickers }}
-                                                        <li class="list-inline-item"><a
-                                                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
-                                                        </li>
-                                                    {{ end }}
-                                                </ul>
+                                                {{ range $ticker := $value.ETFTickers }}
+                                                    <button type="button" class="btn mb-1 btn-outline-primary" onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
+                                                {{ end }}
                                             </div>
                                         </div>
                                     </div>
