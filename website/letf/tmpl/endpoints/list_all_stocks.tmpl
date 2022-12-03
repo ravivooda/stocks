@@ -7,14 +7,8 @@
 <body>
 <div>
     <div id="main-wrapper">
-        {{/* Nav Header */}}
-        {{ template "nav_header" $.TemplateCustomMetadata }}
-
-        {{/* Side bar */}}
-        {{ template "sidebar" $.TemplateCustomMetadata }}
-
-        {{/* Header */}}
-        {{ template "header" }}
+        {{/* Wrapper */}}
+        {{ template "wrapper" $.TemplateCustomMetadata }}
 
         {{/* Main Content */}}
         <div class="content-body">
@@ -22,12 +16,10 @@
                 <div class="container-fluid">
                     <section id="list-all-metadata">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-12">
                                 <div class="card">
-                                    <div class="card-title">
-                                        <h2>Abstract!</h2>
-                                    </div>
                                     <div class="card-body">
+                                        <h2 class="card-title">Abstract!</h2>
                                         The goal of this project is to simplify ETF exploration. Just a fun project in
                                         spare
                                         time. Please
@@ -45,16 +37,15 @@
 
                             <section id="list-all-stocks-metadata-{{$group}}">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-12">
                                         <div class="card">
-                                            <div class="card-title">
-                                                <h4>{{$group}}</h4>
-                                            </div>
+                                            <div class="card-header">Count: {{ len $value }}</div>
                                             <div class="card-body">
+                                                <h4 class="card-title">{{$group}}</h4>
                                                 <ul class="list-inline">
                                                     {{ range $ticker := $value }}
-                                                        <li class="list-inline-item"><a
-                                                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
+                                                        <li class="list-inline-item">
+                                                            <a href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
                                                         </li>
                                                     {{ end }}
                                                 </ul>
