@@ -22,7 +22,8 @@
                                         <h2>Abstract!</h2>
                                     </div>
                                     <div class="card-body">
-                                        The goal of this project is to simplify ETF exploration. Just a fun project in spare time. Please use this tool at your own risk! No guarantees.<br/>
+                                        The goal of this project is to simplify ETF exploration. Just a fun project in
+                                        spare time. Please use this tool at your own risk! No guarantees.<br/>
                                         We found <b>{{ .TotalProvider }} </b> providers, <b>{{ .TotalSeeds }}</b> seeds,
                                         <b>{{ .TotalStockTickers }}</b> stocks
                                     </div>
@@ -30,25 +31,26 @@
                             </div>
                         </div>
                     </section>
-                    {{ with .Providers }}
-                        {{ range $key, $value := . }}
-                            <section id="list-all-etfs-provider-{{ $key }}">
+                            <section id="list-all-etfs-provider-row">
                                 <div class="row">
-                                    <div class="col-12">
+                                    {{ with .Providers }}
+                                    {{ range $key, $value := . }}
+                                    <div class="col-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <h4><small>Provider: </small>{{ $key }}</h4>
                                                 <h5>{{len $value.ETFTickers }}<small> ETFs</small></h5>
                                                 {{ range $ticker := $value.ETFTickers }}
-                                                    <button type="button" class="btn mb-1 btn-outline-primary" onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
+                                                    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
                                                 {{ end }}
                                             </div>
                                         </div>
                                     </div>
+                                    {{ end }}
+                                    {{ end }}
                                 </div>
                             </section>
-                        {{ end }}
-                    {{ end }}
                 </div>
             </div>
         </div>

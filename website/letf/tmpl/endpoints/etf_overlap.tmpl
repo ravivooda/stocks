@@ -95,8 +95,8 @@
                                                                 <td>
                                                                     <span class="rounded_border">{{ (index $.StocksMap .Ticker).StockDescription }}</span>
                                                                 </td>
-                                                                <td><span class="rounded_border etf_ticker"><a
-                                                                                href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span>
+                                                                <td><button type="button" class="btn mb-1 btn-outline-success btn-sm"
+                                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .Ticker }}.html'">{{ .Ticker }}</button>
                                                                 </td>
                                                                 <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
                                                                 {{ $individualPercentagesMap := .IndividualPercentagesMap }}

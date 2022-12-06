@@ -65,8 +65,9 @@
                                                             <td>
                                                                 <span class="rounded_border">{{ .StockDescription }}</span>
                                                             </td>
-                                                            <td><span class="rounded_border etf_ticker"><a
-                                                                            href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html">{{ .StockTicker }}</a></span>
+                                                            <td><button type="button"
+                                                                        class="btn mb-1 btn-outline-success btn-sm"
+                                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html'">{{ .StockTicker }}</button>
                                                             </td>
                                                             <td>{{ .PercentContained }}</td>
                                                         </tr>
@@ -117,19 +118,19 @@
                                                                 <tr>
                                                                     <td>
                                                                         {{ range .LETFHoldees }}
-                                                                            <span class="rounded_border">{{ (index $.AccountsMap .).Provider }}</span>
+                                                                            {{ (index $.AccountsMap .).Provider }}
                                                                         {{ end }}
                                                                     </td>
                                                                     <td>
                                                                         {{ range .LETFHoldees }}
-                                                                            <span class="rounded_border"><a
-                                                                                        href="{{ . }}.html">{{ (index $.AccountsMap .).Description }}</a></span>
+                                                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                                                    onclick="location.href='{{ . }}.html'">{{ (index $.AccountsMap .).Description }}</button>
                                                                         {{ end }}
                                                                     </td>
                                                                     <td>
                                                                         {{ range .LETFHoldees }}
-                                                                            <span class="rounded_border etf_ticker"><a
-                                                                                        href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></span>
+                                                                        <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                                                onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ . }}.html'">{{ . }}</button>
                                                                         {{ end }}
                                                                     </td>
                                                                     <td>

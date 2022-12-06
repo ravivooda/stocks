@@ -47,8 +47,8 @@
                                                                     <td>
                                                                         <span class="rounded_border">{{ .Provider }}</span>
                                                                     </td>
-                                                                    <td><span class="rounded_border etf_ticker"><a
-                                                                                    href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html">{{ .LETFAccountTicker }}</a></span>
+                                                                    <td><button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                                                onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html'">{{ .LETFAccountTicker }}</button>
                                                                     </td>
                                                                     <td>
                                                                         <span class="rounded_border">{{ .LETFDescription }}</span>
