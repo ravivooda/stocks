@@ -5,21 +5,33 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"stocks/utils"
 	"time"
 )
 
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router := gin.Default()
-	router.LoadHTMLGlob(s.config.WebsitePaths.TemplatesRootDir + "/*")
+
+	dirname := "./website/letf/static/quixlab/theme"
+	infos, err := ioutil.ReadDir(dirname)
+	utils.PanicErr(err)
+
+	for _, info := range infos {
+		if info.IsDir() {
+			router.Static(fmt.Sprintf("/%s", info.Name()), fmt.Sprintf("%s/%s", dirname, info.Name()))
+		}
+	}
+	router.LoadHTMLGlob(s.metadata.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 
 	router.GET("/", func(c *gin.Context) {
-		s.renderIndex(c)
+		s.renderAllETFs(c)
 	})
 
 	router.GET("/index", func(c *gin.Context) {
-		s.renderIndex(c)
+		s.renderAllETFs(c)
 	})
 
 	router.GET(fmt.Sprintf("/etf-summary/overlap/:%s", overlapParam), func(c *gin.Context) {
@@ -48,6 +60,14 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 
 	router.POST("/find_overlaps.html", func(c *gin.Context) {
 		s.findOverlapsForCustomHoldings(c)
+	})
+
+	router.GET("/list_all_etfs.html", func(c *gin.Context) {
+		s.renderAllETFs(c)
+	})
+
+	router.GET("/list_all_stocks.html", func(c *gin.Context) {
+		s.renderAllStocks(c)
 	})
 
 	if kill > time.Second {

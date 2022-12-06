@@ -21,17 +21,17 @@ func (s *server) renderETF(c *gin.Context) {
 
 func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LETFHolding, overlaps map[string][]models.LETFOverlapAnalysis) {
 	data := struct {
-		AccountTicker models.LETFAccountTicker
-		Holdings      []models.LETFHolding
-		Overlaps      map[string][]models.LETFOverlapAnalysis
-		AccountsMap   map[models.LETFAccountTicker]models.ETFMetadata
-		WebsitePaths  Paths
+		AccountTicker          models.LETFAccountTicker
+		Holdings               []models.LETFHolding
+		Overlaps               map[string][]models.LETFOverlapAnalysis
+		AccountsMap            map[models.LETFAccountTicker]models.ETFMetadata
+		TemplateCustomMetadata TemplateCustomMetadata
 	}{
-		AccountTicker: models.LETFAccountTicker(etf),
-		Holdings:      etfHoldings,
-		Overlaps:      overlaps,
-		AccountsMap:   s.metadata.AccountMap,
-		WebsitePaths:  s.config.WebsitePaths,
+		AccountTicker:          models.LETFAccountTicker(etf),
+		Holdings:               etfHoldings,
+		Overlaps:               overlaps,
+		AccountsMap:            s.metadata.AccountMap,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }

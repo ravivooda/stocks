@@ -17,13 +17,15 @@ func (s *server) renderOverlap(c *gin.Context) {
 	utils.PanicErr(err)
 
 	data := struct {
-		Analysis     models.LETFOverlapAnalysis
-		StocksMap    map[models.StockTicker]models.StockMetadata
-		WebsitePaths Paths
+		Analysis               models.LETFOverlapAnalysis
+		StocksMap              map[models.StockTicker]models.StockMetadata
+		ETFsMap                map[models.LETFAccountTicker]models.ETFMetadata
+		TemplateCustomMetadata TemplateCustomMetadata
 	}{
-		Analysis:     analysis,
-		StocksMap:    s.metadata.StocksMap,
-		WebsitePaths: s.config.WebsitePaths,
+		Analysis:               analysis,
+		StocksMap:              s.metadata.StocksMap,
+		ETFsMap:                s.metadata.AccountMap,
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 	}
 
 	c.HTML(http.StatusOK, OverlapTemplate, data)

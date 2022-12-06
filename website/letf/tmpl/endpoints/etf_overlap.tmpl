@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ .Analysis.LETFHolder }} overlap with {{$equipment := .Analysis.LETFHoldees}}{{ range $index, $element :=
+        .Analysis.LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    <div id="main-wrapper">
+        {{/* Wrapper */}}
+        {{ template "wrapper" $.TemplateCustomMetadata }}
+
+        {{/* Main Content */}}
+        <div class="content-body">
+            <div class="main">
+                <div class="container-fluid">
+                    <h1>
+                        <small>Overlap between </small>{{ .Analysis.LETFHolder }} <small>overlap with </small>
+                        [{{ range $index,$element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
+                    </h1>
+                    <h2>
+                        <small>Total Overlap Percentage: </small> {{ .Analysis.OverlapPercentage }}
+                    </h2>
+                    <section id="holdings-content">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-crown color-success border-success"></i>
+                                        </div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Total holdings in <b>{{ .Analysis.LETFHolder }}</b>
+                                            </div>
+                                            <div class="stat-digit">{{ (index $.ETFsMap .Analysis.LETFHolder).HoldingsCount }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ range .Analysis.LETFHoldees }}
+                                <div class="col-lg-3">
+                                    <div class="card">
+                                        <div class="stat-widget-one">
+                                            <div class="stat-icon dib"><i
+                                                        class="ti-control-backward color-primary border-primary"></i>
+                                            </div>
+                                            <div class="stat-content dib">
+                                                <div class="stat-text">Total holdings in <b>{{ . }}</b></div>
+                                                <div class="stat-digit">{{ (index $.ETFsMap .).HoldingsCount }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ end }}
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i
+                                                    class="ti-target color-primary border-success"></i>
+                                        </div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Intersection holdings</div>
+                                            <div class="stat-digit">{{ (len $.Analysis.DetailedOverlap ) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3><small>Overlap breakdown for </small><b>{{ .Analysis.LETFHolder }}</b></h3>
+                                        <div class="table-responsive">
+                                            <div>
+                                                <table id="row-select-holdings"
+                                                       class="table table-striped table-bordered overlap-ordering"
+                                                       role="grid"
+                                                       aria-describedby="row-select_info">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Holding Stock Name</th>
+                                                        <th>Ticker</th>
+                                                        <th>Percentage Exposure in {{ .Analysis.LETFHolder }}</th>
+                                                        {{ range .Analysis.LETFHoldees }}
+                                                            <th>Percentage Exposure in {{ . }}</th>
+                                                        {{ end }}
+                                                        <th>Minimum Percentage Overlap</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{ with .Analysis.DetailedOverlap }}
+                                                        {{ range . }}
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="rounded_border">{{ (index $.StocksMap .Ticker).StockDescription }}</span>
+                                                                </td>
+                                                                <td><span class="rounded_border etf_ticker"><a
+                                                                                href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .Ticker }}.html">{{ .Ticker }}</a></span>
+                                                                </td>
+                                                                <td>{{index .IndividualPercentagesMap $.Analysis.LETFHolder}}</td>
+                                                                {{ $individualPercentagesMap := .IndividualPercentagesMap }}
+                                                                {{ range $.Analysis.LETFHoldees }}
+                                                                    <td>{{index $individualPercentagesMap .}}</td>
+                                                                {{ end }}
+                                                                <td>{{ .Percentage }}</td>
+                                                            </tr>
+                                                        {{ end }}
+                                                    {{ end }}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        {{ template "footer" }}
+    </div>
+</div>
+</body>
+</html>

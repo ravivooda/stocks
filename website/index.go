@@ -6,27 +6,39 @@ import (
 	"stocks/models"
 )
 
-func (s *server) renderIndex(c *gin.Context) {
-	var data = struct {
-		TotalProvider     int
-		TotalSeeds        int
-		TotalStockTickers int
-		Providers         map[models.Provider]models.ProviderMetadata
-		Stocks            map[string][]models.StockTicker
-		WebsitePaths      Paths
-	}{
-		TotalProvider:     len(s.metadata.ProvidersMap),
-		TotalSeeds:        len(s.metadata.AccountMap),
-		TotalStockTickers: len(s.metadata.StocksMap),
-		Providers:         s.metadata.ProvidersMap,
-		Stocks:            s.welcomeStocksRenderingMap(),
-		WebsitePaths:      s.config.WebsitePaths,
-	}
-
-	c.HTML(http.StatusOK, WelcomeTemplate, data)
+func (s *server) renderAllETFs(c *gin.Context) {
+	data := s.allRenderingData()
+	c.HTML(http.StatusOK, listAllETFsTemplate, data)
 }
 
-func (s *server) welcomeStocksRenderingMap() map[string][]models.StockTicker {
+func (s *server) renderAllStocks(c *gin.Context) {
+	data := s.allRenderingData()
+
+	c.HTML(http.StatusOK, listAllStocksTemplate, data)
+}
+
+type allData struct {
+	TotalProvider          int
+	TotalSeeds             int
+	TotalStockTickers      int
+	Providers              map[models.Provider]models.ProviderMetadata
+	Stocks                 map[string][]models.StockTicker
+	TemplateCustomMetadata TemplateCustomMetadata
+}
+
+func (s *server) allRenderingData() allData {
+	var data = allData{
+		TotalProvider:          len(s.metadata.ProvidersMap),
+		TotalSeeds:             len(s.metadata.AccountMap),
+		TotalStockTickers:      len(s.metadata.StocksMap),
+		Providers:              s.metadata.ProvidersMap,
+		Stocks:                 s.stocksRenderingMap(),
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
+	}
+	return data
+}
+
+func (s *server) stocksRenderingMap() map[string][]models.StockTicker {
 	var groupedStocks = map[string][]models.StockTicker{}
 	for ticker := range s.metadata.StocksMap {
 		s := "unknown"

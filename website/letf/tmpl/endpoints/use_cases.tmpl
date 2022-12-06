@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to LETFs Data Validator</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    <div id="main-wrapper">
+        {{/* Nav Header */}}
+        {{ template "nav_header" $.TemplateCustomMetadata }}
+
+        {{/* Side bar */}}
+        {{ template "sidebar" $.TemplateCustomMetadata }}
+
+        {{/* Header */}}
+        {{ template "header" }}
+
+        {{/* Main Content */}}
+        <div class="content-body">
+            <div class="main">
+                <div class="container-fluid">
+                    <h1 id="use-cases">Use Cases</h1>
+                    <section>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h2 id="tax-loss-harvesting">Tax Loss Harvesting</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Can I harvest my current losses in TECL, without losing exposure and
+                                            triggering
+                                            wash sales? Yes, you can! </p>
+                                        <p>1 <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/TECL.html">TECL</a></span> = 1 <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/UPRO.html">UPRO</a></span>
+                                            + 1 <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/TQQQ.html">TQQQ</a></span> (<a
+                                                    href="/letf-summary/overlaps/TECL_UPRO_TQQQ.html">72.53%
+                                                combined overlap</a>)! </p>
+                                        <h4 id="solve-how-many-shares-you-need-to-swap-with">Solve how many shares you
+                                            need
+                                            to swap with</h4>
+                                        <p>(Number of shares of TECL owned) * (Price of TECL share) = X * (Price of UPRO
+                                            share) + X * (Price of TQQQ
+                                            share).</p>
+                                        <p>Solve for X!</p>
+                                        <p>On July 27th, 2020,</p>
+                                        <ul>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/TECL.html">TECL</a></span>
+                                                is at $36.40
+                                            </li>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/UPRO.html">UPRO</a></span>
+                                                is at $41.39
+                                            </li>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/TQQQ.html">TQQQ</a></span>
+                                                is at $30.74
+                                            </li>
+                                            <li>I own 1385 shares, whose average purchase price is $50.00</li>
+                                        </ul>
+                                        <p>Substituting we get </p>
+                                        <p>36.40 * 1385 / (41.39 + 30.74) ~= 699 = X!</p>
+                                        <h5 id="harvested-loss">Harvested Loss</h5>
+                                        <p>While keeping approximately 73% of the same exposure, you&#39;ve captured
+                                            approximately 18,836$ worth of tax losses
+                                            which are not eligible for Wash Sale (assuming no more transactions on
+                                            TECL)</p>
+                                        <h3 id="example-2">Example 2</h3>
+                                        <p>Sold 800 <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/FNGU.html">FNGU</a></span> at $9.45,</p>
+                                        <p><span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/BULZ.html">BULZ</a></span> is at $5.31 and
+                                            <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/UPRO.html">TQQQ</a></span>
+                                            is at $30.74</p>
+                                        <p>800 * 9.45 / (5.31 + 30.74) ~= 210</p>
+                                        <p>So buy 210 <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/BULZ.html">BULZ</a></span> and 210 <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/TQQQ.html">TQQQ</a></span>
+                                            shares
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h2 id="consolidation-themefication">Consolidation/Themefication</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Example: I own <span class="rounded_border letf_ticker"><a
+                                                        href="/stock-summary/SNDL.html">SNDL</a></span>, <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/stock-summary/TLRY.html">TLRY</a></span>,
+                                            <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/stock-summary/CRON.html">CRON</a></span>. Can I replace
+                                            the
+                                            three holdings with an ETF? Yes.
+                                            <span class="rounded_border letf_ticker"><a
+                                                        href="/stock-summary/POTX.html">POTX</a></span> has ~ 30%
+                                            exposure
+                                            to these stocks + other weed stocks
+                                            :)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h2 id="increase-leverage-">Increase Leverage!</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>I own 100 shares of <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/SPY.html">SPY</a></span>, and I
+                                            believe that <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/SPY.html">SPY</a></span> is going to
+                                            increase. Let me dial up the leverage to 2x by adopting
+                                            <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/QLD.html">QLD</a></span> and <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/SSO.html">SSO</a></span>.</p>
+                                        <p>On July 26th, 2022: </p>
+                                        <ul>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/SPY.html">SPY</a></span>
+                                                is at $390.90
+                                            </li>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/QLD.html">QLD</a></span>
+                                                is at $45.39
+                                            </li>
+                                            <li><span class="rounded_border letf_ticker"><a
+                                                            href="/letf-summary/SSO.html">SSO</a></span>
+                                                is at $48.
+                                            </li>
+                                        </ul>
+                                        <p>100 * 390 = X * 45.39 + X * 48</p>
+                                        <p>X ~= 417. So you buy 417 shares of <span
+                                                    class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/QLD.html">QLD</a></span>
+                                            and 417 shares of <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/SSO.html">SSO</a></span>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h2 id="decrease-leverage-">Decrease Leverage!</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Reduce leverage from <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/SOXL.html">SOXL</a></span> to
+                                            <span class="rounded_border letf_ticker"><a
+                                                        href="/letf-summary/USD.html">USD</a></span> but still
+                                            maintain exposure to <a href="/letf-summary/overlap/SOXL_USD.html">75%</a>
+                                            of
+                                            underlying stocks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        {{ template "footer" }}
+    </div>
+</div>
+</body>
+</html>

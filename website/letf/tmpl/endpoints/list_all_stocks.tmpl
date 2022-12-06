@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to Tax Loss Harvesting Tool</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    <div id="main-wrapper">
+        {{/* Wrapper */}}
+        {{ template "wrapper" $.TemplateCustomMetadata }}
+
+        {{/* Main Content */}}
+        <div class="content-body">
+            <div class="main">
+                <div class="container-fluid">
+                    <section id="list-all-metadata">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h2 class="card-title">Abstract!</h2>
+                                        The goal of this project is to simplify ETF exploration. Just a fun project in
+                                        spare
+                                        time. Please
+                                        use this tool at your own risk! No guarantees.<br/>
+                                        We found <b>{{ .TotalProvider }} </b> providers, <b>{{ .TotalSeeds }}</b> seeds,
+                                        <b>{{ .TotalStockTickers }}</b> stocks
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{ with .Stocks }}
+                        {{ range $group, $value := . }}
+
+                            <section id="list-all-stocks-metadata-{{$group}}">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">Count: {{ len $value }}</div>
+                                            <div class="card-body">
+                                                <h4 class="card-title">{{$group}}</h4>
+                                                <ul class="list-inline">
+                                                    {{ range $ticker := $value }}
+                                                        <button type="button" class="btn mb-1 btn-outline-primary" onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
+                                                    {{ end }}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+        {{ template "footer" }}
+    </div>
+</div>
+</body>
+</html>

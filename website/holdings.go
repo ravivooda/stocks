@@ -11,7 +11,7 @@ import (
 )
 
 func (s *server) renderFindOverlapsInputHTML(c *gin.Context) {
-	c.HTML(http.StatusOK, findOverlapsInputTemplate, nil)
+	c.HTML(http.StatusOK, findOverlapsInputTemplate, s.commonStruct())
 }
 
 func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {

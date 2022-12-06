@@ -51,5 +51,10 @@ go run orchestrator.go
 ```
 
 --
+# Credits
+
+Using open sourced theme [quixlab](https://themefisher.com/products/quixlab).
+
+--
 
 [![Run Prod](https://github.com/ravivooda/stocks/actions/workflows/production.yml/badge.svg)](https://github.com/ravivooda/stocks/actions/workflows/production.yml)
