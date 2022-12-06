@@ -35,7 +35,7 @@ func (c *client) GetHoldings(_ context.Context, etf models.ETF) ([]models.LETFHo
 	if holdings, ok := c.holdings[etf.Symbol]; ok {
 		for _, holding := range holdings {
 			if math.IsNaN(holding.PercentContained) {
-				utils.PanicErr(errors.New(fmt.Sprintf("Unexpected NaN for %v with holdings: %v", etf, holdings)))
+				utils.PanicErr(errors.New(fmt.Sprintf("Unexpected NaN for %v with holdings: %+v", etf, holdings)))
 			}
 		}
 		return holdings, nil
@@ -121,7 +121,7 @@ func New(config Config) (Client, error) {
 	}
 
 	var mappedHoldings = map[models.LETFAccountTicker][]models.LETFHolding{}
-	debuggingTicker := models.LETFAccountTicker("WBIF")
+	debuggingTicker := models.LETFAccountTicker("RESP")
 	ShouldBeSkipped := map[models.LETFAccountTicker]bool{}
 	for ticker, holdings := range parsedHoldings {
 		totalMarketValue := int64(0)
@@ -160,7 +160,9 @@ func New(config Config) (Client, error) {
 			}
 			holdingsWithPercentage = append(holdingsWithPercentage, holding)
 		}
-		mappedHoldings[ticker] = holdingsWithPercentage
+		if !ShouldBeSkipped[ticker] {
+			mappedHoldings[ticker] = holdingsWithPercentage
+		}
 	}
 
 	fmt.Printf("going to skip: %v\n", ShouldBeSkipped)
