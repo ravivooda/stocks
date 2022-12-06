@@ -172,7 +172,7 @@ func New(config Config) (Client, error) {
 }
 
 func loadData(config Config) [][]string {
-	local := true
+	local := false
 	if local {
 		return loadLocalCacheFile()
 	} else {
