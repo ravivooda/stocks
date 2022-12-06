@@ -18,58 +18,58 @@
                     <h1 id="use-cases">Use Cases</h1>
                     <section>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
                                         <h2 class="card-title">Tax Loss Harvesting</h2>
                                         <p class="card-text">Can I harvest my current losses in
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TECL.html'">
                                                 TECL
                                             </button>
                                             without losing exposure and triggering wash sales? Yes, you can!
                                         </p>
                                         <p class="card-text">1
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TECL.html'">
                                                 TECL
                                             </button>
                                             = 1
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/UPRO.html'">
                                                 UPRO
                                             </button>
                                             + 1
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
                                                 TQQQ
                                             </button>
-                                            (<a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/TECL_UPRO_TQQQ.html">72.53%
+                                            (<a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/TECL_UPRO_TQQQ.html"><code class="font-weight-bold">72.53%</code>
                                                 combined overlap</a>)!
                                         </p>
                                         <h4 id="solve-how-many-shares-you-need-to-swap-with">Solve how many shares you
                                             need to swap with</h4>
-                                        <p class="card-text">(Number of shares of TECL owned) * (Price of TECL share) =
-                                            X * (Price of UPRO share) + X * (Price of TQQQ share).</p>
-                                        <p class="card-text">Solve for X!</p>
+                                        <p class="card-text"><button type="button" class="btn mb-1 btn-outline-warning btn-sm">Number of shares of TECL owned</button> * <button type="button" class="btn mb-1 btn-outline-primary btn-sm">Price of TECL share</button> =
+                                            <button type="button" class="btn mb-1 btn-danger btn-sm">X</button> * <button type="button" class="btn mb-1 btn-outline-primary btn-sm">Price of UPRO share</button> + <button type="button" class="btn mb-1 btn-danger btn-sm">X</button> * <button type="button" class="btn mb-1 btn-outline-primary btn-sm">Price of TQQQ share</button>.</p>
+                                        <p class="card-text">Solve for <button type="button" class="btn mb-1 btn-danger btn-sm">X</button>!</p>
                                         <p class="card-text">On July 27th, 2020,</p>
                                         <ul>
                                             <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                         onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TECL.html'">
                                                     TECL
                                                 </button>
                                                 is at $36.40
                                             </li>
                                             <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                         onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/UPRO.html'">
                                                     UPRO
                                                 </button>
                                                 is at $41.39
                                             </li>
                                             <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                         onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
                                                     TQQQ
                                                 </button>
@@ -78,13 +78,13 @@
                                             <li>I own 1385 shares, whose average purchase price is $50.00</li>
                                         </ul>
                                         <p class="card-text">Substituting we get </p>
-                                        <p class="card-text">36.40 * 1385 / (41.39 + 30.74) ~= 699 = X!</p>
+                                        <p class="card-text"><button type="button" class="btn mb-1 btn-outline-primary btn-sm">36.40 * 1385 / (41.39 + 30.74) </button> ~= 699 = <button type="button" class="btn mb-1 btn-danger btn-sm">X</button>!</p>
                                         <h5 id="harvested-loss">Harvested Loss</h5>
                                         <p class="card-text">While keeping approximately 73% of the same exposure, you&#39;ve
                                             captured
-                                            approximately 18,836$ worth of tax losses
+                                            approximately <button type="button" class="btn mb-1 btn-success btn-sm">18,836$</button> worth of tax losses
                                             which are not eligible for Wash Sale (assuming no more transactions on
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TECL.html'">
                                                 TECL
                                             </button>
@@ -93,38 +93,38 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
                                         <h2 class="card-title">Tax Loss Harvesting</h2>
                                         <h3 id="example-2">Example 2</h3>
                                         <p class="card-text">Sold 800
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/FNGU.html'">
                                                 FNGU
                                             </button>
                                             at $9.45,
                                         </p>
                                         <p class="card-text">
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/BULZ.html'">
                                                 BULZ
                                             </button>
                                             is at $5.31 and
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
                                                 TQQQ
                                             </button>
                                             is at $30.74
                                         </p>
-                                        <p class="card-text">800 * 9.45 / (5.31 + 30.74) ~= 210</p>
+                                        <p class="card-text"><button type="button" class="btn mb-1 btn-outline-primary btn-sm">800 * 9.45 / (5.31 + 30.74)</button> ~= 210</p>
                                         <p class="card-text">So buy 210
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/BULZ.html'">
                                                 BULZ
                                             </button>
                                             and 210
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
                                                 TQQQ
                                             </button>
@@ -133,27 +133,27 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
                                         <h1 class="card-title">Consolidation/Themefication</h1>
                                         <p class="card-text">Example: I own
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/SNDL.html'">
                                                 SNDL
                                             </button>
                                             ,
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/TLRY.html'">
                                                 TLRY
                                             </button>
                                             ,
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/CRON.html'">
                                                 CRON
                                             </button>
                                             . Can I replace the three holdings with an ETF? Yes.
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/POTX.html'">
                                                 POTX
                                             </button>
@@ -162,101 +162,145 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h2 class="card-title">Increase Leverage!</h2>
-                                        <p class="card-text">I own 100 shares of
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
-                                                SPY
+                                        <h1 class="card-title">Consolidation/Themefication</h1>
+                                        <p class="card-text">Example: I own
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/SNDL.html'">
+                                                SNDL
                                             </button>
-                                            , and I
-                                            believe that
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
-                                                SPY
+                                            ,
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/TLRY.html'">
+                                                TLRY
                                             </button>
-                                            is going to
-                                            increase. Let me dial up the leverage to 2x by adopting
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
-                                                QLD
+                                            ,
+                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/CRON.html'">
+                                                CRON
                                             </button>
-                                            and
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
-                                                SSO
+                                            . Can I replace the three holdings with an ETF? Yes.
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/POTX.html'">
+                                                POTX
                                             </button>
-                                            .
-                                        </p>
-                                        <p class="card-text">On July 26th, 2022: </p>
-                                        <ul>
-                                            <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
-                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
-                                                    SPY
-                                                </button>
-                                                is at $390.90
-                                            </li>
-                                            <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
-                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
-                                                    QLD
-                                                </button>
-                                                is at $45.39
-                                            </li>
-                                            <li>
-                                                <button type="button" class="btn mb-1 btn-outline-primary"
-                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
-                                                    SSO
-                                                </button>
-                                                is at $48.
-                                            </li>
-                                        </ul>
-                                        <p class="card-text">100 * 390 = X * 45.39 + X * 48</p>
-                                        <p class="card-text">X ~= 417. So you buy 417 shares of
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
-                                                QLD
-                                            </button>
-                                            and 417 shares of
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
-                                                SSO
-                                            </button>
-                                            .
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Decrease Leverage!</h2>
-                                        <p class="card-text">Reduce leverage from
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SOXL.html'">
-                                                SOXL
-                                            </button>
-                                            to
-                                            <button type="button" class="btn mb-1 btn-outline-primary"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/USD.html'">
-                                                USD
-                                            </button>
-                                            but still
-                                            maintain exposure to <a href="/{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/SOXL_USD.html">75%</a>
-                                            of
-                                            underlying stocks
+                                            has ~ 30% exposure to these stocks + other weed stocks :)
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
+
+                    <div class="row">
+                        <div class="col-12 m-b-30">
+                            <h4 class="d-inline">Play with Leverage</h4>
+                            <p>Increase your returns!</p>
+
+
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="card">
+                                        <img class="img-fluid" src="static/images/leverage_up.jpg"
+                                             style="max-height: 700px" alt="">
+                                        <div class="card-body">
+                                            <h2 class="card-title">Increase Leverage!</h2>
+                                            <p class="card-text">I own 100 shares of
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
+                                                    SPY
+                                                </button>
+                                                , and I
+                                                believe that
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
+                                                    SPY
+                                                </button>
+                                                is going to
+                                                increase. Let me dial up the leverage to 2x by adopting
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
+                                                    QLD
+                                                </button>
+                                                and
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
+                                                    SSO
+                                                </button>
+                                                .
+                                            </p>
+                                            <p class="card-text">On July 26th, 2022: </p>
+                                            <ul>
+                                                <li>
+                                                    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
+                                                        SPY
+                                                    </button>
+                                                    is at $390.90
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
+                                                        QLD
+                                                    </button>
+                                                    is at $45.39
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
+                                                        SSO
+                                                    </button>
+                                                    is at $48.
+                                                </li>
+                                            </ul>
+                                            <p class="card-text">100 * 390 = X * 45.39 + X * 48</p>
+                                            <p class="card-text">X ~= 417. So you buy 417 shares of
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/QLD.html'">
+                                                    QLD
+                                                </button>
+                                                and 417 shares of
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SSO.html'">
+                                                    SSO
+                                                </button>
+                                                .
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2 class="card-title">Decrease Leverage!</h2>
+                                            <p class="card-text">Reduce leverage from
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SOXL.html'">
+                                                    SOXL
+                                                </button>
+                                                to
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/USD.html'">
+                                                    USD
+                                                </button>
+                                                but still
+                                                maintain exposure to <a
+                                                        href="/{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/SOXL_USD.html">75%</a>
+                                                of
+                                                underlying stocks
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
         {{ template "footer" }}
     </div>
 </div>

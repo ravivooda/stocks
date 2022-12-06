@@ -4,84 +4,89 @@
     ***********************************-->
     <div class="nk-sidebar">
         <div class="nk-nav-scroll">
-                <ul class="metismenu" id="menu">
-                    <li class="nav-label">Main</li>
-                    <li>
-                        <a class="sidebar-sub-toggle"><i class="ti-home"></i> Dashboard
-                            <span class="badge badge-primary">2</span>
-                            <span class="sidebar-collapse-icon ti-angle-down"></span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li><a href="index.html">Dashboard 1</a></li>
-                            <li><a href="index.html">Dashboard 2</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="/use_cases.html"><i class="ti-view-list-alt"></i><span class="nav-text"> Use Cases </span></a>
-                    </li>
+            <ul class="metismenu" id="menu">
+                <li class="nav-label">Main</li>
+                <li>
+                    <a class="sidebar-sub-toggle"><i class="ti-home"></i> Dashboard
+                        <span class="badge badge-primary">2</span>
+                        <span class="sidebar-collapse-icon ti-angle-down"></span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="index.html">Dashboard 1</a></li>
+                        <li><a href="index.html">Dashboard 2</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/use_cases.html"><i class="ti-view-list-alt"></i><span class="nav-text"> Use Cases </span></a>
+                </li>
 
-                    <li class="nav-label">ETFs</li>
-                    <li><a class="has-arrow" aria-expanded="false"><i class="ti-bar-chart-alt"></i>
-                            <span class="nav-text">Top {{len .SideBarMetadata.TopETFs }}</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            {{ with .SideBarMetadata.TopETFs }}
-                                {{ range . }}
-                                    <li><a href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></li>
-                                {{ end }}
+                <li class="nav-label">ETFs</li>
+                <li><a class="has-arrow" aria-expanded="false"><i class="ti-bar-chart-alt"></i>
+                        <span class="nav-text">Top {{len .SideBarMetadata.TopETFs }}</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        {{ with .SideBarMetadata.TopETFs }}
+                            {{ range . }}
+                                <li><a href="{{ $.WebsitePaths.LETFSummary }}/{{ . }}.html">{{ . }}</a></li>
                             {{ end }}
-                        </ul>
-                    </li>
-                    <li><a href="/list_all_etfs.html"><i class="ti-check-box"></i> <span class="nav-text"> All </span></a></li>
-                    <li class="nav-label">Features</li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i><span class="nav-text"> UI Elements </span></a>
-                        <ul aria-expanded="false">
-                            <li><a href="ui-typography.html">Typography</a></li>
-                            <li><a href="ui-alerts.html">Alerts</a></li>
+                        {{ end }}
+                    </ul>
+                </li>
+                <li><a href="/list_all_etfs.html"><i class="ti-check-box"></i> <span class="nav-text"> All </span></a>
+                </li>
+                <li class="nav-label">Features</li>
+                <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i><span
+                                class="nav-text"> UI Elements </span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="ui-typography.html">Typography</a></li>
+                        <li><a href="ui-alerts.html">Alerts</a></li>
 
-                            <li><a href="ui-button.html">Button</a></li>
-                            <li><a href="ui-dropdown.html">Dropdown</a></li>
+                        <li><a href="ui-button.html">Button</a></li>
+                        <li><a href="ui-dropdown.html">Dropdown</a></li>
 
-                            <li><a href="ui-list-group.html">List Group</a></li>
+                        <li><a href="ui-list-group.html">List Group</a></li>
 
-                            <li><a href="ui-progressbar.html">Progressbar</a></li>
-                            <li><a href="ui-tab.html">Tab</a></li>
+                        <li><a href="ui-progressbar.html">Progressbar</a></li>
+                        <li><a href="ui-tab.html">Tab</a></li>
 
-                        </ul>
-                    </li>
-                    <li class="nav-label">Stocks</li>
-                    <li><a class="has-arrow" aria-expanded="false"><i class="ti-bar-chart-alt"></i>
-                            <span class="nav-text">Top {{len .SideBarMetadata.TopStocks }} </span>
-                        </a>
-                        <ul aria-expanded="false">
-                            {{ with .SideBarMetadata.TopStocks }}
-                                {{ range . }}
-                                    <li><a href="{{ $.WebsitePaths.StockSummary }}/{{ . }}.html">{{ . }}</a></li>
-                                {{ end }}
+                    </ul>
+                </li>
+                <li class="nav-label">Stocks</li>
+                <li><a class="has-arrow" aria-expanded="false"><i class="ti-bar-chart-alt"></i>
+                        <span class="nav-text">Top {{len .SideBarMetadata.TopStocks }} </span>
+                    </a>
+                    <ul aria-expanded="false">
+                        {{ with .SideBarMetadata.TopStocks }}
+                            {{ range . }}
+                                <li><a href="{{ $.WebsitePaths.StockSummary }}/{{ . }}.html">{{ . }}</a></li>
                             {{ end }}
-                        </ul>
-                    </li>
-                    <li><a href="/list_all_stocks.html"><i class="ti-gallery"></i><span class="nav-text"> All </span></a></li>
-                    <li class="nav-label">Optimizers</li>
-                    <li><a href="/find_overlaps.html"><i class="ti-search"></i><span class="nav-text"> Find Opportunities </span></a></li>
+                        {{ end }}
+                    </ul>
+                </li>
+                <li><a href="/list_all_stocks.html"><i class="ti-gallery"></i><span class="nav-text"> All </span></a>
+                </li>
+                <li class="nav-label">Optimizers</li>
+                <li><a href="/find_overlaps.html"><i class="ti-search"></i><span
+                                class="nav-text"> Find Opportunities </span></a></li>
 
 
-                    <li class="nav-label">Extra</li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-files"></i> <span class="nav-text"> Invoice </span></a>
-                        <ul aria-expanded="false">
-                            <li><a href="invoice.html">Basic</a></li>
-                            <li><a href="invoice-editable.html">Editable</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="sidebar-sub-toggle"><i class="ti-target"></i> <span class="nav-text"> Pages </span></a>
-                        <ul aria-expanded="false">
-                            <li><a href="page-login.html">Login</a></li>
-                            <li><a href="page-register.html">Register</a></li>
-                            <li><a href="page-reset-password.html">Forgot password</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="/disclaimer.html"><i class="ti-info"></i><span class="nav-text"> Disclaimers</span></a></li>
-                </ul>
-            </div>
+                <li class="nav-label">Extra</li>
+                <li><a class="sidebar-sub-toggle"><i class="ti-files"></i> <span class="nav-text"> Invoice </span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="invoice.html">Basic</a></li>
+                        <li><a href="invoice-editable.html">Editable</a></li>
+                    </ul>
+                </li>
+                <li><a class="sidebar-sub-toggle"><i class="ti-target"></i> <span class="nav-text"> Pages </span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="page-login.html">Login</a></li>
+                        <li><a href="page-register.html">Register</a></li>
+                        <li><a href="page-reset-password.html">Forgot password</a></li>
+                    </ul>
+                </li>
+                <li><a href="/disclaimer.html"><i class="ti-info"></i><span class="nav-text"> Disclaimers</span></a>
+                </li>
+            </ul>
+        </div>
     </div>
 {{ end }}
