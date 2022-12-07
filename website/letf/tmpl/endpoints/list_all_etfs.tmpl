@@ -31,11 +31,11 @@
                             </div>
                         </div>
                     </section>
-                            <section id="list-all-etfs-provider-row">
-                                <div class="row">
-                                    {{ with .Providers }}
-                                    {{ range $key, $value := . }}
-                                    <div class="col-6">
+                    <section id="list-all-etfs-provider-row">
+                        <div class="row">
+                            {{ with .Providers }}
+                                {{ range $key, $value := . }}
+                                    <div class="col-lg-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <h4><small>Provider: </small>{{ $key }}</h4>
@@ -47,10 +47,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{ end }}
-                                    {{ end }}
-                                </div>
-                            </section>
+                                {{ end }}
+                            {{ end }}
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
