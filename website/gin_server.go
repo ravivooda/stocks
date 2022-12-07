@@ -71,6 +71,10 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderAllStocks(c)
 	})
 
+	router.GET("/faq.html", func(c *gin.Context) {
+		s.renderFAQs(c)
+	})
+
 	if kill > time.Second {
 		fmt.Printf("Configured to be killed in %v\n", kill)
 		s.setupToKill(ctx, kill, router)

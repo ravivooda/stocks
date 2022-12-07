@@ -13,6 +13,10 @@ func (s *server) renderDisclaimer(c *gin.Context) {
 	c.HTML(http.StatusOK, disclaimerTemplate, s.commonStruct())
 }
 
+func (s *server) renderFAQs(c *gin.Context) {
+	c.HTML(http.StatusOK, faqsTemplate, s.commonStruct())
+}
+
 func (s *server) commonStruct() struct{ TemplateCustomMetadata TemplateCustomMetadata } {
 	return struct {
 		TemplateCustomMetadata TemplateCustomMetadata
