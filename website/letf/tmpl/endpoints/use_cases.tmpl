@@ -197,16 +197,17 @@
                     <div class="row">
                         <div class="col-12 m-b-30">
                             <h4 class="d-inline">Play with Leverage</h4>
-                            <p>Increase your returns!</p>
+                            <p>There is no reward without risk</p>
 
 
                             <div class="row">
-                                <div class="col-md-6 col-lg-6">
+                                <div class="col-md-6 col-lg-3">
                                     <div class="card">
                                         <img class="img-fluid" src="static/images/leverage_up.jpg"
                                              style="max-height: 700px" alt="">
                                         <div class="card-body">
                                             <h2 class="card-title">Increase Leverage!</h2>
+                                            <p class="card-text">Leveraging up is a strategy that can be used by investors who are confident in the market and want to generate more wealth.</p>
                                             <p class="card-text">I own 100 shares of
                                                 <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                         onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SPY.html'">
@@ -269,9 +270,36 @@
                                                 .
                                             </p>
                                         </div>
+                                        <div class="card-footer text-center text-muted">
+                                            Leveraged ETFs can lead to significant losses that exceed the underlying index. Please talk with your financial advisor before enforcing strategy.
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-lg-6">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2 class="card-title">Reverse Leverage!</h2>
+                                            TO BE FILLED IN
+                                            <p class="card-text">Reduce leverage from
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/SOXL.html'">
+                                                    SOXL
+                                                </button>
+                                                to
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/USD.html'">
+                                                    USD
+                                                </button>
+                                                but still
+                                                maintain exposure to <a
+                                                        href="/{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/SOXL_USD.html">75%</a>
+                                                of
+                                                underlying stocks
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <h2 class="card-title">Decrease Leverage!</h2>

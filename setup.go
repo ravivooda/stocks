@@ -89,7 +89,20 @@ func createMetadata(
 
 	topStocks := filterTopStocks(stocksMap, topStocksCount)
 
-	topETFs := filterTopETFs(accountMap, topETFsCount)
+	// TODO: Bring back hardcoded top ETFS; Today it's hardcoded as top etfs by volume trading from: https://etfdb.com/compare/volume/
+	//topETFs := filterTopETFs(accountMap, topETFsCount)
+	topETFs := []models.LETFAccountTicker{
+		"TQQQ",
+		"XLU",
+		"SOXL",
+		"SPY",
+		"LABU",
+		"VXUS",
+		"EEM",
+		"XLF",
+		"FXI",
+		"UPRO",
+	}
 
 	metadata := website.Metadata{
 		AccountMap:   accountMap,
