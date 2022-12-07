@@ -13,7 +13,12 @@ import (
 )
 
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
-	router := gin.Default()
+	router := gin.New()
+
+	router.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
+		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+		//c.AbortWithStatus(http.StatusInternalServerError)
+	}))
 
 	dirname := "./website/letf/static/quixlab/theme"
 	infos, err := ioutil.ReadDir(dirname)
