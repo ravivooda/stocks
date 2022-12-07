@@ -37,4 +37,5 @@ var (
 	useCasesTemplate          = "use_cases.tmpl"
 	disclaimerTemplate        = "disclaimer.tmpl"
 	findOverlapsInputTemplate = "find_overlaps_input.tmpl"
+	faqsTemplate              = "faq.tmpl"
 )

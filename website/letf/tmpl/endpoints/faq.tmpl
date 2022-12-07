@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>FAQs</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    <div id="main-wrapper">
+        {{/* Wrapper */}}
+        {{ template "wrapper" $.TemplateCustomMetadata }}
+
+        {{/* Main Content */}}
+        <div class="content-body">
+            <div class="main">
+                <div class="container-fluid">
+                    <p class="section-heading">FAQs</p>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">Do we record your data?</h3>
+                                    <b class="card-text">No. Well, our logs record which pages are accessed, but nothing PII.</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">Do we send your data across the wire?</h3>
+                                    <b class="card-text">Yes, but only to our backend servers for processing. But you
+                                        don't need to just take our word! We've open sourced our backend <a
+                                                href="">here</a>.
+                                        So please feel free to verify!</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">Can I be tracked for using this service?</h3>
+                                    <b class="card-text">No. </b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="section-heading">Terminology</p>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title">What is tax loss harvesting?</h3>
+                                    <b class="card-text">Tax loss harvesting or capital loss harvesting is a valuable strategy that can help investors manage their risk and maximize their returns. By claiming capital losses on investments that have gone down in value, investors can offset the gains from investments that have appreciated. For more details please see here</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ template "footer" }}
+    </div>
+</div>
+</body>
+</html>
