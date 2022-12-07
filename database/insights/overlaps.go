@@ -45,7 +45,10 @@ func (l *logger) overlapsDirectory(etfHolder string) (directory string) {
 func (l *logger) FetchOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error) {
 	directory := l.overlapsDirectory(string(utils.FetchAccountTicker(etfName)))
 	fileInfos, err := ioutil.ReadDir(directory)
-	utils.PanicErr(err)
+	if err != nil {
+		// TODO: Assumption that this will only happen when there are no overlaps for this ETF
+		return map[string][]models.LETFOverlapAnalysis{}, nil
+	}
 
 	var parsedOverlaps = map[string][]models.LETFOverlapAnalysis{}
 	for _, info := range fileInfos {
