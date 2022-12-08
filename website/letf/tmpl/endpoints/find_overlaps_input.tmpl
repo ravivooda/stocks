@@ -26,6 +26,8 @@
         }
 
     </script>
+    <link href="/plugins/nestable/css/nestable.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
 <div>
@@ -38,39 +40,69 @@
             <div class="main">
                 <div class="container-fluid">
                     <h1>Input your stock holdings to find an appropriate ETF(s) to replace them with</h1>
-                    <div class="col-lg-4">
-                        <h4 class="card-title">Input Instructions</h4>
-                        <h6 class="card-subtitle">Input one row for each of the stock holding</h6>
-                        <ul class="list-icons">
-                            <li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i>First text box: Stock
-                                    Name</a></li>
-                            <li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i>Second text box: Market
-                                    Value of your
-                                    holding (number of shares you own * today's market price of the stock)</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-4">
-                        <h4 class="card-title">FAQs</h4>
-                        <h6 class="card-subtitle">With that information, we will look for potential ETFs for you to
-                            replace,
-                            or consolidate
-                            your holdings into.</h6>
-                        <ul class="list-icons">
-                            <li><a href="javascript:void(0)"><i class="fa fa-check text-info"></i>Do we record your
-                                    data?
-                                    Answer: <b>No</b></a>
-                            </li>
-                            <li><a href="javascript:void(0)"><i class="fa fa-check text-info"></i>Do we send your data
-                                    across the wire?
-                                    Answer: Yes, but only to our backend servers for processing. But you don't
-                                    need to just take our word! We've open sourced our backend <a href="">here</a>. So
-                                    please feel free to
-                                    verify!</a></li>
-                            <li><a href="javascript:void(0)"><i class="fa fa-check text-info"></i>Do we record your
-                                    data?
-                                    Answer: <b>No</b></a>
-                            </li>
-                        </ul>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">How to use this tool</h4>
+                                    <div class="card-content">
+                                        <div class="nestable">
+                                            <div class="dd" id="nestable">
+                                                <ol class="dd-list">
+                                                    <li class="dd-item" data-id="1">
+                                                        <div class="dd-handle">1. List your investments (stocks/ETFs)
+                                                            that have lost value
+                                                        </div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="2">
+                                                        <div class="dd-handle">2. For each investment, enter its ticker
+                                                            and the current value of your stake.
+                                                        </div>
+                                                        <ol class="dd-list">
+                                                            <li class="dd-item" data-id="2a">
+                                                                <div class="dd-handle">2a. Add more assets to the tool
+                                                                    by clicking the + icon.
+                                                                </div>
+                                                            </li>
+                                                        </ol>
+                                                    </li>
+                                                    <li class="dd-item" data-id="3">
+                                                        <div class="dd-handle">3. The tool will generate ETFs ranked by
+                                                            their exposure by your selected list of assets. Click "Find
+                                                            ETFs" to see the results of the ranking.
+                                                        </div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="4">
+                                                        <div class="dd-handle">4. Want to use leveraged funds? Select
+                                                            the "leverage" you are replacing.
+                                                        </div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="5">
+                                                        <div class="dd-handle">5. Swap your positions with the
+                                                            "swappable" ones.
+                                                        </div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="6">
+                                                        <div class="dd-handle">6. Congratulations!!! You've just
+                                                            harvested your capital losses while retaining similar
+                                                            positions
+                                                        </div>
+                                                        <ol class="dd-list">
+                                                            <li class="dd-item" data-id="6a">
+                                                                <div class="dd-handle">6a. You can reduce your tax bill
+                                                                    with the harvested losses. You can also carry the
+                                                                    harvest forward to reduce your future tax bill.
+                                                                </div>
+                                                            </li>
+                                                        </ol>
+                                                    </li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <section id="holdings-content">

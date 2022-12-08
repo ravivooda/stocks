@@ -80,6 +80,10 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderFAQs(c)
 	})
 
+	router.GET("/contact.html", func(c *gin.Context) {
+		s.renderContactPage(c)
+	})
+
 	if kill > time.Second {
 		fmt.Printf("Configured to be killed in %v\n", kill)
 		s.setupToKill(ctx, kill, router)

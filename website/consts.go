@@ -38,4 +38,5 @@ var (
 	disclaimerTemplate        = "disclaimer.tmpl"
 	findOverlapsInputTemplate = "find_overlaps_input.tmpl"
 	faqsTemplate              = "faq.tmpl"
+	contactTemplate           = "contact.tmpl"
 )
