@@ -2,6 +2,8 @@ package website
 
 import (
 	"fmt"
+	"stocks/models"
+	"stocks/utils"
 )
 
 const stockParamKey = "stock"
@@ -40,3 +42,7 @@ var (
 	faqsTemplate              = "faq.tmpl"
 	contactTemplate           = "contact.tmpl"
 )
+
+func renderETFsArray(input []models.LETFAccountTicker) string {
+	return utils.JoinLETFAccountTicker(input, ",")
+}

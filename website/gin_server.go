@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -30,6 +31,9 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		}
 	}
 	router.Static("/static", "./website/letf/static")
+	router.SetFuncMap(template.FuncMap{
+		"renderETFsArray": renderETFsArray,
+	})
 	router.LoadHTMLGlob(s.metadata.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 
 	router.GET("/", func(c *gin.Context) {
