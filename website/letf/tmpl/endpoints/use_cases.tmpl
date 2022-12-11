@@ -136,7 +136,49 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h1 class="card-title">Consolidation/Themefication</h1>
+                                        <h2 class="card-title">Tax Loss Harvesting</h2>
+                                        <h3 id="example-2">Example 2</h3>
+                                        <p class="card-text">Sold 800
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/FNGU.html'">
+                                                FNGU
+                                            </button>
+                                            at $9.45,
+                                        </p>
+                                        <p class="card-text">
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/BULZ.html'">
+                                                BULZ
+                                            </button>
+                                            is at $5.31 and
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
+                                                TQQQ
+                                            </button>
+                                            is at $30.74
+                                        </p>
+                                        <p class="card-text"><button type="button" class="btn mb-1 btn-outline-primary btn-sm">800 * 9.45 / (5.31 + 30.74)</button> ~= 210</p>
+                                        <p class="card-text">So buy 210
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/BULZ.html'">
+                                                BULZ
+                                            </button>
+                                            and 210
+                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/TQQQ.html'">
+                                                TQQQ
+                                            </button>
+                                            shares
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h1 class="card-title">Future Tax Optimization</h1>
+                                        Investors buying an ETF or a stock is an expectation that the underlying investment will go up in the future. But what if the downturn continues? Would you like to be prepared for such scenarios?
+                                        Here is how you can do it. Let's say you want to invest in SPY. You know if it goes down you have other ETFs that you can swap into for future tax loss harvesting.
                                         <p class="card-text">Example: I own
                                             <button type="button" class="btn mb-1 btn-outline-success btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/SNDL.html'">
@@ -148,10 +190,7 @@
                                                 TLRY
                                             </button>
                                             ,
-                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/CRON.html'">
-                                                CRON
-                                            </button>
+                                            {{ template "stock" "CRON" }}
                                             . Can I replace the three holdings with an ETF? Yes.
                                             <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
                                                     onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/POTX.html'">
@@ -165,29 +204,24 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h1 class="card-title">Consolidation/Themefication</h1>
-                                        <p class="card-text">Example: I own
-                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/SNDL.html'">
-                                                SNDL
-                                            </button>
-                                            ,
-                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/TLRY.html'">
-                                                TLRY
-                                            </button>
-                                            ,
-                                            <button type="button" class="btn mb-1 btn-outline-success btn-sm"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/CRON.html'">
-                                                CRON
-                                            </button>
-                                            . Can I replace the three holdings with an ETF? Yes.
-                                            <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
-                                                    onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/POTX.html'">
-                                                POTX
-                                            </button>
-                                            has ~ 30% exposure to these stocks + other weed stocks :)
-                                        </p>
+                                        <h1 class="card-title">Consolidation</h1>
+                                        Consolidation of positions is a strategy that can be used to simplify the management of a portfolio.
+                                        It involves combining multiple investments into one, reducing the complexity of the portfolio and allowing it to be more easily managed.
+                                        For example, if an investor holds a variety of ETFs, stocks, and other investments, they can consolidate those positions into a single ETF such as SPY, which contains all the same investments.
+                                        This allows the investor to manage their portfolio with less effort, while still maintaining exposure to the same assets.
+                                        For example, an investor who holds {{ template "stock" "AMZN" }}, {{ template "stock" "META" }},
+                                        {{ template "stock" "MSFT" }}, and {{template "stock" "AAPL" }} can consolidate those positions into the SPY ETF, which contains all of those stocks. Consolidation of positions can be a
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h1 class="card-title">Themefication</h1>
+                                        Stocks and ETFs are a popular way to invest in the stock market, allowing investors to diversify their investments and benefit from potential returns. One way to categorize stocks is through themefication.
+                                        This means that stocks can be grouped according to their characteristics, such as sector, size, or style.
+                                        For example, {{template "stock" "SNDL" }}, {{template "stock" "CRON" }} and {{template "stock" "TLRY" }} are all in the cannabis industry, while
+                                        {{template "etf" "POTX" }} is an ETF that tracks the performance of the cannabis sector. By themefying stocks, investors can identify and invest in companies that have similar characteristics and could potentially provide higher returns. Additionally, themefication can also help investors identify potential risks associated with a particular sector or industry. Overall, themefication can be a useful tool
                                     </div>
                                 </div>
                             </div>

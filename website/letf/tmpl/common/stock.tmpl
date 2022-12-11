@@ -1,0 +1,5 @@
+{{ define "stock" }}
+    <button type="button" class="btn mb-1 btn-outline-success btn-sm"
+            {{/*TODO: Hardcoded Stock Summary URL below. This should have followed from the inputs to the template instead*/}}
+            onclick="location.href='/stock-summary/{{ . }}.html'">{{ . }}</button>
+{{ end }}

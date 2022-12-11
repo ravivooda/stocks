@@ -1,0 +1,5 @@
+{{ define "etf" }}
+    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+            {{/*TODO: Hardcoded ETF Summary URL below. This should have followed from the inputs to the template instead*/}}
+            onclick="location.href='/etf-summary/{{ . }}.html'">{{ . }}</button>
+{{ end }}
