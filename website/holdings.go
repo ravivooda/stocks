@@ -11,7 +11,19 @@ import (
 )
 
 func (s *server) renderFindOverlapsInputHTML(c *gin.Context) {
-	c.HTML(http.StatusOK, findOverlapsInputTemplate, s.commonStruct())
+	c.HTML(http.StatusOK, findOverlapsInputTemplate, struct {
+		TemplateCustomMetadata TemplateCustomMetadata
+		TotalProvidersCount    int
+		TotalStocksCount       int
+		TotalETFsCount         int
+		TotalOverlaps          int
+	}{
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
+		TotalProvidersCount:    len(s.metadata.ProvidersMap),
+		TotalStocksCount:       len(s.metadata.StocksMap),
+		TotalETFsCount:         len(s.metadata.AccountMap),
+		TotalOverlaps:          123456,
+	})
 }
 
 func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {
