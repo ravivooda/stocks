@@ -27,10 +27,14 @@ func (s *server) renderStock(c *gin.Context) {
 		Ticker                 string
 		MappedHoldings         map[string][]models.LETFHolding
 		TemplateCustomMetadata TemplateCustomMetadata
+		TotalETFsCount         int
+		TotalProvidersCount    int
 	}{
 		Ticker:                 stock,
 		MappedHoldings:         mappedHoldings,
 		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
+		TotalETFsCount:         len(holdings),
+		TotalProvidersCount:    len(s.metadata.ProvidersMap),
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }
