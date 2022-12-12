@@ -16,6 +16,7 @@ type Logger interface {
 	FetchOverlap(holdee string, holders string) (models.LETFOverlapAnalysis, error)
 	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error)
 	FetchStock(stock string) ([]models.LETFHolding, error)
+	HasStock(stock string) (bool, error)
 }
 
 type Config struct {

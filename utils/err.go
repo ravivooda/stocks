@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"runtime/debug"
 )
 
 func PanicErr(err error) {
@@ -12,7 +13,8 @@ func PanicErr(err error) {
 }
 
 func LogErr(err error) {
-	fmt.Printf("%+v", err)
+	debug.PrintStack()
+	fmt.Printf("%+v\n", err)
 }
 
 func PanicErrWithExtraMessage(err error, message string) {

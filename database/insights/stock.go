@@ -56,3 +56,12 @@ func (l *logger) FetchStock(stock string) ([]models.LETFHolding, error) {
 	}
 	return data.Holdings, nil
 }
+
+func (l *logger) HasStock(stock string) (bool, error) {
+	_, fileAddr := l.stocksFilePaths(stock)
+	_, err := ioutil.ReadFile(fileAddr)
+	if err == nil {
+		return true, nil
+	}
+	return false, err
+}

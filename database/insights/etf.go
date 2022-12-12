@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -38,7 +39,10 @@ func (l *logger) holdingsFilePaths(etfName string) (string, string) {
 func (l *logger) FetchHoldings(etfName string) ([]models.LETFHolding, string, error) {
 	_, fileAddr := l.holdingsFilePaths(etfName)
 	file, err := ioutil.ReadFile(fileAddr)
-	utils.PanicErr(err)
+	if err != nil {
+		utils.LogErr(err)
+		return nil, "", errors.New(fmt.Sprintf("Sorry, cannot find ETF: %s", etfName))
+	}
 
 	data := holdingsWrapper{}
 
