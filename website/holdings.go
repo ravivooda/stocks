@@ -73,7 +73,9 @@ func (s *server) findOverlaps(etfName models.LETFAccountTicker, customHoldings m
 	var eligibleETFs = map[models.LETFAccountTicker]bool{}
 	for stockTicker := range customHoldings {
 		stockHoldings, err := s.dependencies.Logger.FetchStock(string(stockTicker))
-		utils.PanicErr(err)
+		if err != nil {
+			continue
+		}
 		for _, stockHolding := range stockHoldings {
 			eligibleETFs[stockHolding.LETFAccountTicker] = true
 		}
