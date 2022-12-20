@@ -48,24 +48,30 @@
         <div class="content-body">
             <div class="main">
                 <div class="container-fluid">
-                    <section id="custom_header">
+                    <section id="holdings-content">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card">
+                                    <img class="img-fluid" src="static/images/banner.jpg"
+                                         style="max-height: 700px" alt="">
                                     <div class="card-body">
-                                        <h1>Input your stock holdings to find an appropriate ETF(s) to replace them with</h1>
+                                        <h3 class="card-title">What is this tool?</h3>
+                                        Investing in the stock market can be a great way to build wealth, but it can also be a source of financial stress.
+                                        If you’ve ever had to sell stocks at a loss, you know that it’s not a pleasant experience.
+                                        But did you know that it’s possible to actually use those losses to your advantage?
+                                        Harvesting capital losses is a powerful tool that savvy investors use to reduce their tax burden and maximize their returns.
+                                        <br/><br/>
+
+                                        In order to find these unique opportunities in your current portfolio, you have to use our tool!
+                                        With it, you are able to strategically harvest capital losses, while retaining a significant portion of your exposure.
+                                        Our underlying generation engine checks against 6 Million combinations of possible outcomes, empowering you to make informed decisions.
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
-
-                    <section id="holdings-content">
-                        <div class="row">
                             <div class="col-lg-6">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h3 class="card-title">Input your current positions</h3>
+                                        <h3 class="card-title">Enter your current positions</h3>
                                         <form action="/find_overlaps.html" method="post" id="frm_data">
                                             <table class="table table-striped table table-bordered">
                                                 <thead>
@@ -122,26 +128,23 @@
                                                 <div class="dd" id="nestable">
                                                     <ol class="dd-list">
                                                         <li class="dd-item" data-id="1">
-                                                            <div class="dd-handle">1. List your investments
-                                                                (stocks/ETFs)
-                                                                that have lost value
+                                                            <div class="dd-handle">
+                                                                1. List your investments (stocks/ETFs) that have lost value
                                                             </div>
                                                         </li>
                                                         <li class="dd-item" data-id="2">
-                                                            <div class="dd-handle">2. For each investment, enter its
-                                                                ticker
-                                                                and the current value of your stake.
+                                                            <div class="dd-handle">
+                                                                2. For each investment, enter its ticker and the current value of your stake.
                                                             </div>
                                                             <ol class="dd-list">
-                                                                <li class="dd-item" data-id="2a">
-                                                                    <div class="dd-handle">2a. Add more assets to the
-                                                                        tool
-                                                                        by clicking the + icon.
+                                                                <li class="dd-item" data-id="3">
+                                                                    <div class="dd-handle">
+                                                                        2a. Add more assets to the tool by clicking the + icon.
                                                                     </div>
                                                                 </li>
                                                             </ol>
                                                         </li>
-                                                        <li class="dd-item" data-id="3">
+                                                        <li class="dd-item" data-id="4">
                                                             <div class="dd-handle">3. The tool will generate ETFs ranked
                                                                 by
                                                                 their exposure by your selected list of assets. Click
@@ -149,24 +152,25 @@
                                                                 ETFs" to see the results of the ranking.
                                                             </div>
                                                         </li>
-                                                        <li class="dd-item" data-id="4">
+                                                        <li class="dd-item" data-id="empty"></li>
+                                                        <li class="dd-item" data-id="5">
                                                             <div class="dd-handle">4. Want to use leveraged funds?
                                                                 Select
                                                                 the "leverage" you are replacing.
                                                             </div>
                                                         </li>
-                                                        <li class="dd-item" data-id="5">
+                                                        <li class="dd-item" data-id="6">
                                                             <div class="dd-handle">5. Swap your positions with the
                                                                 "swappable" ones.
                                                             </div>
                                                         </li>
-                                                        <li class="dd-item" data-id="6">
+                                                        <li class="dd-item" data-id="7">
                                                             <div class="dd-handle">6. Congratulations!!! You've just
                                                                 harvested your capital losses while retaining similar
                                                                 positions
                                                             </div>
                                                             <ol class="dd-list">
-                                                                <li class="dd-item" data-id="6a">
+                                                                <li class="dd-item" data-id="8">
                                                                     <div class="dd-handle">6a. You can reduce your tax
                                                                         bill
                                                                         with the harvested losses. You can also carry
@@ -176,7 +180,8 @@
                                                                 </li>
                                                             </ol>
                                                         </li>
-                                                        <li class="dd-item" data-id="7">
+                                                        <li class="dd-item" data-id="10"></li>
+                                                        <li class="dd-item" data-id="9">
                                                             <div class="dd-handle">7. Got any questions? <a href="contact.html" class="text-green">Email Us!</a>
                                                             </div>
                                                         </li>
@@ -221,7 +226,7 @@
                                     <div class="col-lg-6">
                                         <div class="card gradient-1">
                                             <div class="card-body">
-                                                <h3 class="card-title text-white">ETFs Inventory</h3>
+                                                <h3 class="card-title text-white">ETFs Curated</h3>
                                                 <div class="d-inline-block">
                                                     <h2 class="text-white"> {{ .TotalETFsCount }} </h2>
                                                     <p class="text-white mb-0">Jan - March 2019</p>
