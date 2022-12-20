@@ -39,17 +39,20 @@
                                                  style="max-height: 700px" alt="Want to cut your Tax Bill With Tax Loss Harvesting? Let's get started!">
                                             <div class="card-body">
                                                 <h2 class="card-title">Tax Loss Harvesting</h2>
-                                                Can I harvest my current losses in {{template "etf" "TECL"}} without
-                                                losing exposure and triggering wash sales? Yes, you can!
-                                                1 {{template "etf" "TECL"}} = 1 {{template "etf" "UPRO"}} +
-                                                1 {{template "etf" "TQQQ"}}
-                                                (<a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/TECL_UPRO_TQQQ.html"><code
-                                                            class="font-weight-bold">72.53%</code>
-                                                    combined overlap</a>)!
-                                                <h4 id="solve-how-many-shares-you-need-to-swap-with">Solve how many
-                                                    shares you
-                                                    need to swap with</h4>
+                                                <blockquote>Is it possible to harvest the current losses I have in {{template "etf" "TECL"}} without exposing myself to wash sales and losing exposure?</blockquote>
+
+                                                <p class="font-weight-bold text-primary">Yes, you can!</p>
+                                                With the help of our tool, you can discover that there are numerous ETFs that overlap with {{template "etf" "TECL"}}, ranging from 1% to 87% (overlap dictates similarity between two assets).
+                                                In light of the fact that TECL is a 3x leveraged ETF, investors are likely to be looking for 3x leveraged ETFs to replace it with.
+                                                Having overlaps broken down by leverage further helps rationalize the whole process.
                                                 <br/><br/>
+                                                {{template "etf" "TQQQ"}} was the ETF with the highest amount of overlap; each have the same holdings on their portfolios, hence resulting in a 47% overlap.
+                                                The next best ETF was {{template "etf" "UPRO"}} with 27% overlap. If both of them were juxtaposed, the combined overlap would be around 70%!
+                                                <br/><br/>
+                                                You may find that you can sell all your stakes in TECL on the same day that you buy TQQQ and UPRO. The difference between these two stocks is that they are not identical, so there is no wash sale, and thus harvested losses are available to offset current tax obligations immediately.
+                                                <br/><br/>
+                                                <h4>Great! But how much should I buy?</h4>
+                                                Let's take a hypothetical end of the day price of the assets as following
                                                 <div class="table-responsive">
                                                     <table class="table table-bordered">
                                                         <thead>
@@ -60,7 +63,7 @@
                                                         </thead>
                                                         <tr>
                                                             <td rowspan="2">
-                                                                {{template "etf" "TECL"}} <span
+                                                                {{template "etf" "TECL"}} is at <span
                                                                         class="text-warning">$36.40</span>
                                                             </td>
                                                             <td>
@@ -76,12 +79,12 @@
                                                         </tr>
                                                     </table>
                                                 </div>
-                                                <button type="button" class="btn mb-1 btn-outline-warning btn-sm">Number
+                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm">Number
                                                     of
                                                     shares of TECL owned
                                                 </button>
                                                 *
-                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm">Price
+                                                <button type="button" class="btn mb-1 btn-outline-warning btn-sm">Price
                                                     of
                                                     TECL share
                                                 </button>
@@ -100,28 +103,13 @@
                                                     TQQQ share
                                                 </button>
                                                 .
-                                                Solve for
-                                                <button type="button" class="btn mb-1 btn-danger btn-sm">X</button>
-                                                !
                                                 <br/> <br/>
                                                 Substituting we get
-                                                <button type="button" class="btn mb-1 btn-outline-primary btn-sm">36.40
-                                                    *
-                                                    1385 / (41.39 + 30.74)
-                                                </button>
-                                                ~= 699 =
-                                                <button type="button" class="btn mb-1 btn-danger btn-sm">X</button>
-                                                !
-                                                <h5 id="harvested-loss">Harvested Loss</h5>
-                                                While keeping approximately 73% of the same exposure, you&#39;ve
-                                                captured
-                                                approximately
-                                                <button type="button" class="btn mb-1 btn-success btn-sm">18,836$
-                                                </button>
-                                                worth of tax losses
-                                                which are not eligible for Wash Sale (assuming no more transactions on
-                                                {{template "etf" "TECL"}}
-                                                )
+                                                <button type="button" class="btn mb-1 btn-danger btn-sm">X</button> ~= 700!
+                                                <hr/>
+                                                <h4 id="harvested-loss">Harvested Capital Losses</h4>
+                                                In this example, you would have harvested all your capital losses while retaining 70% of the same exposure.
+                                                As far as you do not transact further on TECL for the span of a month, the wash sale would not be triggered allowing you to be able to fully utilize your losses in this example
                                             </div>
                                         </div>
                                     </div>
