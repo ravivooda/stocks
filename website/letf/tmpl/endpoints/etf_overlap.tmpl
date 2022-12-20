@@ -19,35 +19,45 @@
                         <small>Overlap between </small>{{ .Analysis.LETFHolder }} <small>overlap with </small>
                         [{{ range $index,$element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
                     </h1>
-                    <h2>
-                        <small>Total Overlap Percentage: </small> {{ .Analysis.OverlapPercentage }}
-                    </h2>
                     <section id="holdings-content">
                         <div class="row">
                             <div class="col-lg-3">
-                                <div class="card">
-                                    <div class="stat-widget-one">
-                                        <div class="stat-icon dib"><i class="ti-crown color-success border-success"></i>
+                                <div class="card gradient-1">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-white">Cumulative Overlap Percentage</h3>
+                                        <div class="d-inline-block">
+                                            <h2 class="text-white"> {{ .Analysis.OverlapPercentage }} </h2>
+                                            <p class="text-white mb-0">Jan - March 2019</p>
                                         </div>
-                                        <div class="stat-content dib">
-                                            <div class="stat-text">Total holdings in <b>{{ .Analysis.LETFHolder }}</b>
-                                            </div>
-                                            <div class="stat-digit">{{ (index $.ETFsMap .Analysis.LETFHolder).HoldingsCount }}</div>
+                                        <span class="float-right display-5 opacity-5"><i
+                                                    class="fa fa-ge"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card gradient-5">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-white">Total holdings in <b>{{ .Analysis.LETFHolder }}</b></h3>
+                                        <div class="d-inline-block">
+                                            <h2 class="text-white"> {{ (index $.ETFsMap .Analysis.LETFHolder).HoldingsCount }} </h2>
+                                            <p class="text-white mb-0">Jan - March 2019</p>
                                         </div>
+                                        <span class="float-right display-5 opacity-5"><i
+                                                    class="fa fa-ge"></i></span>
                                     </div>
                                 </div>
                             </div>
                             {{ range .Analysis.LETFHoldees }}
                                 <div class="col-lg-3">
-                                    <div class="card">
-                                        <div class="stat-widget-one">
-                                            <div class="stat-icon dib"><i
-                                                        class="ti-control-backward color-primary border-primary"></i>
+                                    <div class="card gradient-2">
+                                        <div class="card-body">
+                                            <h3 class="card-title text-white">Total holdings in <b>{{ . }}</b></h3>
+                                            <div class="d-inline-block">
+                                                <h2 class="text-white">{{ (index $.ETFsMap .).HoldingsCount }}</h2>
+                                                <p class="text-white mb-0">Jan - March 2019</p>
                                             </div>
-                                            <div class="stat-content dib">
-                                                <div class="stat-text">Total holdings in <b>{{ . }}</b></div>
-                                                <div class="stat-digit">{{ (index $.ETFsMap .).HoldingsCount }}</div>
-                                            </div>
+                                            <span class="float-right display-5 opacity-5"><i
+                                                        class="fa fa-anchor"></i></span>
                                         </div>
                                     </div>
                                 </div>

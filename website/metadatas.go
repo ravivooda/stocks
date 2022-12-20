@@ -17,6 +17,10 @@ func (s *server) renderFAQs(c *gin.Context) {
 	c.HTML(http.StatusOK, faqsTemplate, s.commonStruct())
 }
 
+func (s *server) renderContactPage(c *gin.Context) {
+	c.HTML(http.StatusOK, contactTemplate, s.commonStruct())
+}
+
 func (s *server) commonStruct() struct{ TemplateCustomMetadata TemplateCustomMetadata } {
 	return struct {
 		TemplateCustomMetadata TemplateCustomMetadata

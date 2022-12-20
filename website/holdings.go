@@ -11,7 +11,19 @@ import (
 )
 
 func (s *server) renderFindOverlapsInputHTML(c *gin.Context) {
-	c.HTML(http.StatusOK, findOverlapsInputTemplate, s.commonStruct())
+	c.HTML(http.StatusOK, findOverlapsInputTemplate, struct {
+		TemplateCustomMetadata TemplateCustomMetadata
+		TotalProvidersCount    int
+		TotalStocksCount       int
+		TotalETFsCount         int
+		TotalOverlaps          int
+	}{
+		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
+		TotalProvidersCount:    len(s.metadata.ProvidersMap),
+		TotalStocksCount:       len(s.metadata.StocksMap),
+		TotalETFsCount:         len(s.metadata.AccountMap),
+		TotalOverlaps:          600000, //TODO: Hardcoded the figure here by running the math locally. Need to fix this
+	})
 }
 
 func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {
@@ -27,41 +39,71 @@ func (s *server) findOverlapsForCustomHoldings(c *gin.Context) {
 		totalMarketValue += float
 	}
 
-	m := map[models.StockTicker][]models.LETFHolding{}
 	var etfHoldings []models.LETFHolding
 	etfString := "Custom"
+	didNotFindMatches := map[string]float64{}
 	for index, value := range marketValuesMapFloats {
 		if stockName, ok := stocksMap[index]; ok {
-			stockTicker := utils.FetchStockTicker(stockName)
-			etfHolding := models.LETFHolding{
-				TradeDate:         "N/A",
-				LETFAccountTicker: models.LETFAccountTicker(etfString),
-				LETFDescription:   "Custom Holdings created by customer",
-				StockTicker:       stockTicker,
-				StockDescription:  s.metadata.StocksMap[stockTicker].StockDescription,
-				Shares:            0,
-				Price:             0,
-				NotionalValue:     0,
-				MarketValue:       int64(value),
-				PercentContained:  utils.RoundedPercentage(value / totalMarketValue * 100),
-				Provider:          "Customer",
+			stockExists, _ := s.dependencies.Logger.HasStock(stockName)
+			if stockExists {
+				_, etfHolding := s.createStockHolding(stockName, etfString, value, totalMarketValue)
+				etfHoldings = append(etfHoldings, etfHolding)
+			} else {
+				didNotFindMatches[stockName] = value
 			}
-			m[stockTicker] = []models.LETFHolding{etfHolding}
-			etfHoldings = append(etfHoldings, etfHolding)
 		} else {
 			log.Panicf("did not find index: %s in the stocksMap; %s", index, debugMessage)
 		}
 	}
 
+	// For all the not found, see if we can find an ETF match instead
+	for stockName, value := range didNotFindMatches {
+		holdings, _, err := s.dependencies.Logger.FetchHoldings(stockName)
+		if err != nil {
+			continue
+		}
+		for i, holding := range holdings {
+			holdings[i].StockDescription = fmt.Sprintf("%s (in %s)", holdings[i].StockDescription, stockName)
+			holdings[i].PercentContained = utils.RoundedPercentage(value * holding.PercentContained / totalMarketValue)
+		}
+		etfHoldings, _ = utils.MergeHoldings(etfHoldings, holdings)
+		delete(didNotFindMatches, stockName)
+	}
+
+	// For all the remaining, just add them as unsupported
+	for stockName, value := range didNotFindMatches {
+		_, letfHolding := s.createStockHolding(stockName, etfString, value, totalMarketValue)
+		etfHoldings = append(etfHoldings, letfHolding)
+	}
+
+	m := utils.MapLETFHoldingsWithStockTicker(etfHoldings)
+
 	overlapAnalyses := s.findOverlaps(models.LETFAccountTicker(etfString), m)
 	s._renderETF(c, etfString, etfHoldings, overlapAnalyses)
+}
+
+func (s *server) createStockHolding(stockName string, etfString string, value float64, totalMarketValue float64) (models.StockTicker, models.LETFHolding) {
+	stockTicker := utils.FetchStockTicker(stockName)
+	etfHolding := models.LETFHolding{
+		TradeDate:         "N/A",
+		LETFAccountTicker: models.LETFAccountTicker(etfString),
+		LETFDescription:   "Custom Holdings created by customer",
+		StockTicker:       stockTicker,
+		StockDescription:  s.metadata.StocksMap[stockTicker].StockDescription,
+		MarketValue:       int64(value),
+		PercentContained:  utils.RoundedPercentage(value / totalMarketValue * 100),
+		Provider:          "Customer",
+	}
+	return stockTicker, etfHolding
 }
 
 func (s *server) findOverlaps(etfName models.LETFAccountTicker, customHoldings map[models.StockTicker][]models.LETFHolding) map[string][]models.LETFOverlapAnalysis {
 	var eligibleETFs = map[models.LETFAccountTicker]bool{}
 	for stockTicker := range customHoldings {
 		stockHoldings, err := s.dependencies.Logger.FetchStock(string(stockTicker))
-		utils.PanicErr(err)
+		if err != nil {
+			continue
+		}
 		for _, stockHolding := range stockHoldings {
 			eligibleETFs[stockHolding.LETFAccountTicker] = true
 		}

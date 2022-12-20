@@ -2,6 +2,8 @@ package website
 
 import (
 	"fmt"
+	"stocks/models"
+	"stocks/utils"
 )
 
 const stockParamKey = "stock"
@@ -38,4 +40,9 @@ var (
 	disclaimerTemplate        = "disclaimer.tmpl"
 	findOverlapsInputTemplate = "find_overlaps_input.tmpl"
 	faqsTemplate              = "faq.tmpl"
+	contactTemplate           = "contact.tmpl"
 )
+
+func renderETFsArray(input []models.LETFAccountTicker) string {
+	return utils.JoinLETFAccountTicker(input, ",")
+}

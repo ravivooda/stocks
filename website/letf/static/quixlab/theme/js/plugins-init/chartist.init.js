@@ -166,7 +166,7 @@
     return data;
   }, {
     labels: [],
-    series: times(4).map(function() { return new Array() })
+    series: times(4).map(function() { return [] })
   });
   
   var options = {
@@ -592,11 +592,13 @@
   //Animating a Donut with Svg.animate
   
   var chart = new Chartist.Pie('#animating-donut', {
-    series: [10, 20, 50, 20, 5, 50, 15],
-    labels: [1, 2, 3, 4, 5, 6, 7]
+    series: [10, 20, 50, 20, 5, 50, 15, 123],
+    labels: ['TQQQ', 'BULZ', 3, 4, 5, 6, 7, '8 TWQQ']
   }, {
     donut: true,
-    showLabel: false,
+    showLabel: true,
+    labelOffset: 20,
+    chartPadding: 20,
     plugins: [
       Chartist.plugins.tooltip()
     ]
@@ -616,7 +618,7 @@
       var animationDefinition = {
         'stroke-dashoffset': {
           id: 'anim' + data.index,
-          dur: 1000,
+          dur: 500,
           from: -pathLength + 'px',
           to:  '0px',
           easing: Chartist.Svg.Easing.easeOutQuint,
@@ -693,7 +695,7 @@
       }
     }],
     ['screen and (min-width: 1024px)', {
-      labelOffset: 80,
+      labelOffset: 120,
       chartPadding: 20
     }]
   ];

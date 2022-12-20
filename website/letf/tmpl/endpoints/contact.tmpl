@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to LETFs Data Validator</title>
+    {{ template "includes" }}
+</head>
+<body>
+<div>
+    <div id="main-wrapper">
+        {{/* Wrapper */}}
+        {{ template "wrapper" $.TemplateCustomMetadata }}
+
+        {{/* Main Content */}}
+        <div class="content-body">
+            <div class="main">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3" style="margin: 0 auto;">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">Contact us</h5>
+                                    <p class="card-subtitle">Want a demo? Have feedback to share? Let's chat!</p>
+                                    <p class="card-text"> Send an email to info@taxlossharvestingtool.com or click below</p>
+                                    <p class="card-text"> <a href="mailto: info@taxlossharvestingtool.com" class="btn btn-primary">Email Us!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ template "footer" }}
+    </div>
+</div>
+</body>
+</html>

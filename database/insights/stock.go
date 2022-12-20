@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/fs"
 	"io/ioutil"
 	"stocks/models"
@@ -42,10 +43,25 @@ func (l *logger) stocksFilePaths(stockName string) (string, string) {
 func (l *logger) FetchStock(stock string) ([]models.LETFHolding, error) {
 	_, fileAddr := l.stocksFilePaths(stock)
 	file, err := ioutil.ReadFile(fileAddr)
-	utils.PanicErr(err)
-
+	if err != nil {
+		utils.LogErr(err)
+		return nil, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
+	}
 	data := stockWrapper{}
 
-	utils.PanicErr(json.Unmarshal(file, &data))
+	err = json.Unmarshal(file, &data)
+	if err != nil {
+		utils.LogErr(err)
+		return nil, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
+	}
 	return data.Holdings, nil
+}
+
+func (l *logger) HasStock(stock string) (bool, error) {
+	_, fileAddr := l.stocksFilePaths(stock)
+	_, err := ioutil.ReadFile(fileAddr)
+	if err == nil {
+		return true, nil
+	}
+	return false, err
 }

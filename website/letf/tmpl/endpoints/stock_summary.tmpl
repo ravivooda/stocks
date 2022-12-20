@@ -2,6 +2,22 @@
 <html lang="en">
 <head>
     <title>{{ .Ticker }} Summary, Exposure to ETFs</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            {{ with .MappedHoldings }}
+            {{ range $leverage, $overlaps := . }}
+            $('#test-row-{{ $leverage }}').css('cursor', 'pointer');
+            $('#test-row-{{ $leverage }}').click(function () {
+                $('html, body').animate({
+                    scrollTop: $("#leverage-{{ $leverage }}").offset().top
+                }, 1000);
+                return false;
+            });
+            {{ end }}
+            {{ end }}
+        });
+    </script>
     {{ template "includes" }}
 </head>
 <body>
@@ -18,11 +34,47 @@
                     <h3>
                         Summary for <b>{{ .Ticker }}</b>
                     </h3>
-                    <h4>ETFs with exposure to <b>{{ .Ticker }}</b></h4>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="card gradient-1">
+                                <div class="card-body">
+                                    <h3 class="card-title text-white">ETFs count</h3>
+                                    <div class="d-inline-block">
+                                        <h2 class="text-white"> {{ .TotalETFsCount }} </h2>
+                                        <p class="text-white mb-0">From {{ .TotalProvidersCount }} providers</p>
+                                    </div>
+                                    <span class="float-right display-5 opacity-5"><i
+                                                class="fa fa-bar-chart"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        {{ with .MappedHoldings }}
+                            {{ range $leverage, $overlaps := .}}
+                                <div class="col-lg-3" id="test-row-{{ $leverage }}">
+                                    <div class="card gradient-2">
+                                        <div class="card-body">
+                                            <h3 class="card-title text-white">Top Exposure ({{ $leverage }}
+                                                Leverage)</h3>
+                                            <div class="d-inline-block">
+                                                <h2 class="text-white"> {{ (index $overlaps 0).LETFAccountTicker }}
+                                                    -
+                                                    {{ (index $overlaps 0).PercentContained }}% exposure</h2>
+                                                <p class="text-white mb-0"> {{ len $overlaps }} other
+                                                    matches</p>
+                                            </div>
+                                            <span class="float-right display-5 opacity-5"><i
+                                                        class="fa">{{ $leverage }}</i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ end }}
+                        {{ end }}
+                    </div>
+                    <h4 class="section-heading">ETFs with exposure to <b>{{ .Ticker }}</b></h4>
                     {{ with .MappedHoldings }}
                         {{ range $leverage, $overlaps := .}}
                             <section id="stock-leverage-{{ $leverage }}">
-                                <div class="row">
+                                <div class="row" id="leverage-{{ $leverage }}">
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
@@ -47,7 +99,9 @@
                                                                     <td>
                                                                         <span class="rounded_border">{{ .Provider }}</span>
                                                                     </td>
-                                                                    <td><button type="button" class="btn mb-1 btn-outline-primary btn-sm"
+                                                                    <td>
+                                                                        <button type="button"
+                                                                                class="btn mb-1 btn-outline-primary btn-sm"
                                                                                 onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ .LETFAccountTicker }}.html'">{{ .LETFAccountTicker }}</button>
                                                                     </td>
                                                                     <td>

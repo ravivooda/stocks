@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,10 +16,7 @@ import (
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router := gin.New()
 
-	router.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
-		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
-		//c.AbortWithStatus(http.StatusInternalServerError)
-	}))
+	s.setupPanicAndFailureHandlers(router)
 
 	dirname := "./website/letf/static/quixlab/theme"
 	infos, err := ioutil.ReadDir(dirname)
@@ -30,14 +28,15 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		}
 	}
 	router.Static("/static", "./website/letf/static")
+	router.SetFuncMap(template.FuncMap{
+		"renderETFsArray": renderETFsArray,
+	})
 	router.LoadHTMLGlob(s.metadata.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 
-	router.GET("/", func(c *gin.Context) {
-		s.renderAllETFs(c)
-	})
+	var index = []string{"", "index", "index.html", "find_overlaps.html", "find_overlaps"}
 
-	router.GET("/index", func(c *gin.Context) {
-		s.renderAllETFs(c)
+	s.route(index, router, func(c *gin.Context) {
+		s.renderFindOverlapsInputHTML(c)
 	})
 
 	router.GET(fmt.Sprintf("/etf-summary/overlap/:%s", overlapParam), func(c *gin.Context) {
@@ -60,10 +59,6 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderDisclaimer(c)
 	})
 
-	router.GET("/find_overlaps.html", func(c *gin.Context) {
-		s.renderFindOverlapsInputHTML(c)
-	})
-
 	router.POST("/find_overlaps.html", func(c *gin.Context) {
 		s.findOverlapsForCustomHoldings(c)
 	})
@@ -80,6 +75,10 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderFAQs(c)
 	})
 
+	router.GET("/contact.html", func(c *gin.Context) {
+		s.renderContactPage(c)
+	})
+
 	if kill > time.Second {
 		fmt.Printf("Configured to be killed in %v\n", kill)
 		s.setupToKill(ctx, kill, router)
@@ -87,6 +86,26 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		return router.Run(addr)
 	}
 	return nil
+}
+
+func (s *server) setupPanicAndFailureHandlers(router *gin.Engine) {
+	router.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
+		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+		//c.AbortWithStatus(http.StatusInternalServerError)
+	}))
+
+	router.NoRoute(func(c *gin.Context) {
+		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+	})
+	router.NoMethod(func(c *gin.Context) {
+		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+	})
+}
+
+func (s *server) route(paths []string, router *gin.Engine, handler func(c *gin.Context)) {
+	for _, path := range paths {
+		router.GET(path, handler)
+	}
 }
 
 const addr = ":8080"
