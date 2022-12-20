@@ -48,7 +48,17 @@
         <div class="content-body">
             <div class="main">
                 <div class="container-fluid">
-                    <h1>Input your stock holdings to find an appropriate ETF(s) to replace them with</h1>
+                    <section id="custom_header">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h1>Input your stock holdings to find an appropriate ETF(s) to replace them with</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="holdings-content">
                         <div class="row">
@@ -60,7 +70,7 @@
                                             <table class="table table-striped table table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>Stock Name</th>
+                                                    <th>Stock/ETF Name</th>
                                                     <th>Market Value in USD</th>
                                                     <th>
                                                         <button type="button" class="btn mb-1 btn-success btn-sm"
@@ -166,6 +176,10 @@
                                                                 </li>
                                                             </ol>
                                                         </li>
+                                                        <li class="dd-item" data-id="7">
+                                                            <div class="dd-handle">7. Got any questions? <a href="contact.html" class="text-green">Email Us!</a>
+                                                            </div>
+                                                        </li>
                                                     </ol>
                                                 </div>
                                             </div>
@@ -177,17 +191,18 @@
                     </section>
                     <section id="tutorial">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-body text-center">
-                                        <h3 class="card-title">An instructional video</h3>
-                                        <video width="80%" controls>
-                                            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                                                    type="video/mp4">
-                                        </video>
-                                    </div>
-                                </div>
-                            </div>
+{{/* TODO: Bring back the video tutorial                            */}}
+{{/*                            <div class="col-lg-6">*/}}
+{{/*                                <div class="card">*/}}
+{{/*                                    <div class="card-body text-center">*/}}
+{{/*                                        <h3 class="card-title">An instructional video</h3>*/}}
+{{/*                                        <video width="80%" preload="none" controls>*/}}
+{{/*                                            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"*/}}
+{{/*                                                    type="video/mp4">*/}}
+{{/*                                        </video>*/}}
+{{/*                                    </div>*/}}
+{{/*                                </div>*/}}
+{{/*                            </div>*/}}
                             <div class="col-lg-6">
                                 <div class="row">
                                     <div class="col-lg-6">
@@ -234,11 +249,40 @@
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">Opportunities Generated</h3>
                                                 <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ .TotalOverlaps }} </h2>
+                                                    <h2 class="text-white"> {{ .TotalOverlaps }}+ </h2>
                                                     <p class="text-white mb-0">Jan - March 2019</p>
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
                                                             class="fa fa-gears"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Upcoming Features</h4>
+                                        <div class="basic-list-group">
+                                            <div class="list-group">
+                                                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h5 class="mb-1">Add video tutorial explaining the power of the tool</h5><small>Priority: High</small>
+                                                    </div>
+                                                    <p class="mb-1">100 words can be summarized in an image. 100 images can be summarized in 1 video. Use a video to demonstrate the power of the tool</p><small>Less than a week.</small>
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h5 class="mb-1">Support breaking down of Pooled ETFs</h5><small class="text-muted">Priority: Medium</small>
+                                                    </div>
+                                                    <p class="mb-1">An ETF of ETFs is an exchange-traded fund (ETF) that itself tracks other ETFs rather than an underlying stock, bond, or index. Improve the tool to account for breaking down holdings</p><small class="text-muted">Less than a week.</small>
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h5 class="mb-1">Bring back merging ETFs algorithm to dramatically improve overlap percentage even more</h5><small class="text-muted">Priority: Medium</small>
+                                                    </div>
+                                                    <p class="mb-1">Currently the tool only supports one ETF lookup. Merging of multiple ETFs is implemented but there are some scaling issues.</p><small class="text-muted">In 2 weeks.</small>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -250,14 +294,7 @@
                     </section>
                     <section id="future">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-header">Upcoming features</div>
-                                    <div class="card-body">
-                                        TBD
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </section>
                 </div>
