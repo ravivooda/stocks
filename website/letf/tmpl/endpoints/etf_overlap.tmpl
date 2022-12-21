@@ -27,10 +27,10 @@
                                         <h3 class="card-title text-white">Cumulative Overlap Percentage</h3>
                                         <div class="d-inline-block">
                                             <h2 class="text-white"> {{ .Analysis.OverlapPercentage }} </h2>
-                                            <p class="text-white mb-0">Jan - March 2019</p>
+                                            <p class="text-white mb-0">using min algorithm</p>
                                         </div>
                                         <span class="float-right display-5 opacity-5"><i
-                                                    class="fa fa-ge"></i></span>
+                                                    class="fa fa-percent"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +40,7 @@
                                         <h3 class="card-title text-white">Total holdings in <b>{{ .Analysis.LETFHolder }}</b></h3>
                                         <div class="d-inline-block">
                                             <h2 class="text-white"> {{ (index $.ETFsMap .Analysis.LETFHolder).HoldingsCount }} </h2>
-                                            <p class="text-white mb-0">Jan - March 2019</p>
+                                            <p class="text-white mb-0">As of Dec 2022</p>
                                         </div>
                                         <span class="float-right display-5 opacity-5"><i
                                                     class="fa fa-ge"></i></span>
@@ -54,7 +54,7 @@
                                             <h3 class="card-title text-white">Total holdings in <b>{{ . }}</b></h3>
                                             <div class="d-inline-block">
                                                 <h2 class="text-white">{{ (index $.ETFsMap .).HoldingsCount }}</h2>
-                                                <p class="text-white mb-0">Jan - March 2019</p>
+                                                <p class="text-white mb-0">As of Dec 2022</p>
                                             </div>
                                             <span class="float-right display-5 opacity-5"><i
                                                         class="fa fa-anchor"></i></span>
@@ -68,7 +68,7 @@
                                         <h3 class="card-title text-white">Intersection holdings</h3>
                                         <div class="d-inline-block">
                                             <h2 class="text-white">{{ (len $.Analysis.DetailedOverlap ) }}</h2>
-                                            <p class="text-white mb-0">Jan - March 2019</p>
+                                            <p class="text-white mb-0">As of Dec 2022</p>
                                         </div>
                                         <span class="float-right display-5 opacity-5"><i
                                                     class="fa fa-diamond"></i></span>
