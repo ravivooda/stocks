@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ .Analysis.LETFHolder }} overlap with {{$equipment := .Analysis.LETFHoldees}}{{ range $index, $element :=
-        .Analysis.LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}</title>
+    <title>{{ .Analysis.LETFHolder }} overlap with {{ renderETFsArray .Analysis.LETFHoldees }}</title>
     {{ template "includes" }}
+    <meta name="description" content="Describes overlap between ETFs {{ .Analysis.LETFHolder }} and {{ renderETFsArray .Analysis.LETFHoldees }}">
 </head>
 <body>
 <div>
@@ -17,7 +17,7 @@
                 <div class="container-fluid">
                     <h1>
                         <small>Overlap between </small>{{ .Analysis.LETFHolder }} <small>overlap with </small>
-                        [{{ range $index,$element := .Analysis.LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}]
+                        {{ renderETFsArray .Analysis.LETFHoldees }}
                     </h1>
                     <section id="holdings-content">
                         <div class="row">
