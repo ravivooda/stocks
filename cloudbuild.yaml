@@ -57,7 +57,7 @@ steps:
 
   # Deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: [ 'run', 'deploy', 'stocks-${SHORT_SHA}',
+    args: [ 'run', 'deploy', 'stocks',
             '--image=us-west1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/stocks:$SHORT_SHA',
             '--region', 'us-west1', '--platform', 'managed' ]
 
