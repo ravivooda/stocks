@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/ioutil"
@@ -15,6 +16,8 @@ import (
 
 func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	router := gin.New()
+
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	s.setupPanicAndFailureHandlers(router)
 

@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/DrGrimshaw/gohtml v0.0.0-20211105122738-1231c86d1d16
+	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.8.1
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/viper v1.10.1
