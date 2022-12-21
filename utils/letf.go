@@ -44,6 +44,14 @@ func FetchAccountTicker(input string) models.LETFAccountTicker {
 	return models.LETFAccountTicker(cleanAndMap(input))
 }
 
+func FetchAccountTickers(input []string) []models.LETFAccountTicker {
+	var rets []models.LETFAccountTicker
+	for _, s := range input {
+		rets = append(rets, models.LETFAccountTicker(cleanAndMap(s)))
+	}
+	return rets
+}
+
 func MapLETFHoldingsWithAccountTicker(input []models.LETFHolding) map[models.LETFAccountTicker][]models.LETFHolding {
 	var rets = map[models.LETFAccountTicker][]models.LETFHolding{}
 	for _, holding := range input {

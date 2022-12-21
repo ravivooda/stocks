@@ -63,15 +63,15 @@
                                 </div>
                             {{ end }}
                             <div class="col-lg-3">
-                                <div class="card">
-                                    <div class="stat-widget-one">
-                                        <div class="stat-icon dib"><i
-                                                    class="ti-target color-primary border-success"></i>
+                                <div class="card gradient-4">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-white">Intersection holdings</h3>
+                                        <div class="d-inline-block">
+                                            <h2 class="text-white">{{ (len $.Analysis.DetailedOverlap ) }}</h2>
+                                            <p class="text-white mb-0">Jan - March 2019</p>
                                         </div>
-                                        <div class="stat-content dib">
-                                            <div class="stat-text">Intersection holdings</div>
-                                            <div class="stat-digit">{{ (len $.Analysis.DetailedOverlap ) }}</div>
-                                        </div>
+                                        <span class="float-right display-5 opacity-5"><i
+                                                    class="fa fa-diamond"></i></span>
                                     </div>
                                 </div>
                             </div>

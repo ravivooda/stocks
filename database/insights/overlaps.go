@@ -72,11 +72,33 @@ func (l *logger) fetchOverlap(fileAddr string) overlapWrapper {
 	return data
 }
 
-func (l *logger) FetchOverlap(holder string, holdees string) (models.LETFOverlapAnalysis, error) {
-	_, fileAddr := l.overlapsFilePath(holder, holdees)
-	o := l.fetchOverlap(fileAddr)
-	sort.Slice(*o.Analysis.DetailedOverlap, func(i, j int) bool {
-		return (*o.Analysis.DetailedOverlap)[i].Percentage > (*o.Analysis.DetailedOverlap)[j].Percentage
+func (l *logger) FetchOverlapDetails(lhs string, rhs []string) (models.LETFOverlapAnalysis, error) {
+	lhsETFHoldings, _, err := l.FetchHoldings(lhs)
+	utils.PanicErr(err)
+
+	// TODO: Forcefully assuming that only one element exists in rhs
+	//var rhsETFHoldings [][]models.LETFHolding
+	//for _, rh := range rhs {
+	//	rhETFHoldings, rhsleverage, err := l.FetchHoldings(rh)
+	//	utils.PanicErr(err)
+	//	rhsETFHoldings = append(rhsETFHoldings)
+	//}
+	rhsETFHoldings, _, err := l.FetchHoldings(rhs[0])
+	utils.PanicErr(err)
+
+	totalOverlapPercentage, details := l.g.Compare(
+		utils.MapLETFHoldingsWithStockTicker(lhsETFHoldings),
+		utils.MapLETFHoldingsWithStockTicker(rhsETFHoldings),
+	)
+
+	sort.Slice(details, func(i, j int) bool {
+		return details[i].Percentage > details[j].Percentage
 	})
-	return o.Analysis, nil
+
+	return models.LETFOverlapAnalysis{
+		LETFHolder:        utils.FetchAccountTicker(lhs),
+		LETFHoldees:       utils.FetchAccountTickers(rhs),
+		OverlapPercentage: totalOverlapPercentage,
+		DetailedOverlap:   &details,
+	}, nil
 }

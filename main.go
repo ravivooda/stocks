@@ -36,7 +36,8 @@ func main() {
 }
 
 func logicProviders(config orchestrate.Config, insightsConfig insights.Config) ([]overlap.Generator, insights.Logger) {
-	return []overlap.Generator{overlap.NewOverlapGenerator(config.Outputs.Insights)}, insights.NewInsightsLogger(insightsConfig)
+	generator := overlap.NewOverlapGenerator(config.Outputs.Insights)
+	return []overlap.Generator{generator}, insights.NewInsightsLogger(insightsConfig, generator)
 }
 
 func defaults() (context.Context, database.DB, []models.ETF, website.Paths) {

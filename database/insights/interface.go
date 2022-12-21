@@ -2,6 +2,7 @@ package insights
 
 import (
 	"context"
+	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/utils"
 )
@@ -13,7 +14,7 @@ type Logger interface {
 	LogHoldings(context context.Context, etfName models.LETFAccountTicker, holdings []models.LETFHolding, leverage string) (FileName, error)
 	FetchHoldings(etfName string) (etfHoldings []models.LETFHolding, leverage string, err error)
 	FetchOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error)
-	FetchOverlap(holdee string, holders string) (models.LETFOverlapAnalysis, error)
+	FetchOverlapDetails(lhs string, rhs []string) (models.LETFOverlapAnalysis, error)
 	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error)
 	FetchStock(stock string) ([]models.LETFHolding, error)
 	HasStock(stock string) (bool, error)
@@ -28,14 +29,18 @@ type Config struct {
 
 type logger struct {
 	c Config
+	g overlap.Generator
 }
 
-func NewInsightsLogger(config Config) Logger {
+func NewInsightsLogger(config Config, generator overlap.Generator) Logger {
 	_, err := utils.MakeDirs([]string{
 		config.ETFHoldingsDirectory,
 		config.OverlapsDirectory,
 		config.StocksDirectory,
 	})
 	utils.PanicErr(err)
-	return &logger{c: config}
+	return &logger{
+		c: config,
+		g: generator,
+	}
 }
