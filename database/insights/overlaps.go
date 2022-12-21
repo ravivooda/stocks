@@ -11,19 +11,20 @@ import (
 	"stocks/utils"
 )
 
-type overlapWrapper struct {
+type OverlapWrapper struct {
 	Leverage string
 	Analysis models.LETFOverlapAnalysis
 }
 
-func (l *logger) LogOverlapAnalysis(leverage string, analysis models.LETFOverlapAnalysis) (FileName, error) {
-	_, err := utils.MakeDirs([]string{l.overlapsDirectory(string(analysis.LETFHolder))})
+type allOverlapsWrapper struct {
+	All []OverlapWrapper
+}
+
+func (l *logger) LogOverlapAnalysisForHolder(lhs models.LETFAccountTicker, wrappers []OverlapWrapper) (FileName, error) {
+	_, err := utils.MakeDirs([]string{l.overlapsDirectory(string(lhs))})
 	utils.PanicErr(err)
-	fileName, fileAddr := l.overlapsFilePath(string(analysis.LETFHolder), utils.JoinLETFAccountTicker(analysis.LETFHoldees, "_"))
-	b, err := json.Marshal(overlapWrapper{
-		Leverage: leverage,
-		Analysis: analysis,
-	})
+	fileName, fileAddr := l.allOverlapsPercentageFilePath(string(lhs))
+	b, err := json.Marshal(allOverlapsWrapper{All: wrappers})
 	bytes.Replace(b, []byte(":NaN"), []byte(":null"), -1)
 	utils.PanicErr(err)
 
@@ -37,37 +38,45 @@ func (l *logger) overlapsFilePath(etfHolder string, etfHoldees string) (fileName
 	return fileName, fileAddr
 }
 
+const allOverlapsFileName = "all.json"
+
+func (l *logger) allOverlapsPercentageFilePath(etfHolder string) (fileName string, fileAddr string) {
+	fileAddr = fmt.Sprintf("%s/%s", l.overlapsDirectory(etfHolder), allOverlapsFileName)
+	return allOverlapsFileName, fileAddr
+}
+
 func (l *logger) overlapsDirectory(etfHolder string) (directory string) {
 	directory = fmt.Sprintf("%s/%s", l.c.OverlapsDirectory, etfHolder)
 	return directory
 }
 
-func (l *logger) FetchOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error) {
-	directory := l.overlapsDirectory(string(utils.FetchAccountTicker(etfName)))
-	fileInfos, err := ioutil.ReadDir(directory)
-	if err != nil {
-		// TODO: Assumption that this will only happen when there are no overlaps for this ETF
-		return map[string][]models.LETFOverlapAnalysis{}, nil
-	}
+func (l *logger) FetchOverlapsWithoutDetailedOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error) {
+	_, allOverlapsPercentageFilePath := l.allOverlapsPercentageFilePath(string(utils.FetchAccountTicker(etfName)))
+
+	file, err := ioutil.ReadFile(allOverlapsPercentageFilePath)
+	utils.PanicErr(err)
+
+	data := allOverlapsWrapper{}
+	utils.PanicErr(json.Unmarshal(file, &data))
 
 	var parsedOverlaps = map[string][]models.LETFOverlapAnalysis{}
-	for _, info := range fileInfos {
-		data := l.fetchOverlap(fmt.Sprintf("%s/%s", directory, info.Name()))
-		var analyses = parsedOverlaps[data.Leverage]
+	for _, wrapper := range data.All {
+		var analyses = parsedOverlaps[wrapper.Leverage]
 		if analyses == nil {
 			analyses = []models.LETFOverlapAnalysis{}
 		}
-		analyses = append(analyses, data.Analysis)
-		parsedOverlaps[data.Leverage] = analyses
+		analyses = append(analyses, wrapper.Analysis)
+		parsedOverlaps[wrapper.Leverage] = analyses
 	}
+
 	return utils.SortOverlapsWithinLeverage(parsedOverlaps), nil
 }
 
-func (l *logger) fetchOverlap(fileAddr string) overlapWrapper {
+func (l *logger) fetchOverlap(fileAddr string) OverlapWrapper {
 	file, err := ioutil.ReadFile(fileAddr)
 	utils.PanicErr(err)
 
-	data := overlapWrapper{}
+	data := OverlapWrapper{}
 	utils.PanicErr(json.Unmarshal(file, &data))
 	return data
 }

@@ -147,7 +147,7 @@ func generateInsights(_ context.Context, request Request, holdingsWithAccountTic
 	for _, iGenerator := range request.InsightGenerators {
 		iGenerator.Generate(holdingsWithAccountTickerMap, func(value []models.LETFOverlapAnalysis) {
 			letfMappedOverlappedAnalysis := utils.MapLETFAnalysisWithAccountTicker(value)
-			for _, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
+			for ticker, letfOverlapAnalyses := range letfMappedOverlappedAnalysis {
 				totalGatheredInsights += len(letfOverlapAnalyses)
 				mappedOverlapAnalysis := map[string][]models.LETFOverlapAnalysis{}
 				for _, analysis := range letfOverlapAnalyses {
@@ -159,12 +159,23 @@ func generateInsights(_ context.Context, request Request, holdingsWithAccountTic
 					mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
 				}
 
+				var wrappedOverlaps []insights.OverlapWrapper
 				for leverage, overlapAnalyses := range mappedOverlapAnalysis {
 					for _, analysis := range overlapAnalyses {
-						_, err := request.InsightsLogger.LogOverlapAnalysis(leverage, analysis)
-						utils.PanicErr(err)
+						wrappedOverlaps = append(wrappedOverlaps, insights.OverlapWrapper{
+							Leverage: leverage,
+							Analysis: models.LETFOverlapAnalysis{
+								LETFHolder:        analysis.LETFHolder,
+								LETFHoldees:       analysis.LETFHoldees,
+								OverlapPercentage: analysis.OverlapPercentage,
+								DetailedOverlap:   nil,
+							},
+						})
 					}
 				}
+
+				_, err := request.InsightsLogger.LogOverlapAnalysisForHolder(ticker, wrappedOverlaps)
+				utils.PanicErr(err)
 			}
 		})
 	}

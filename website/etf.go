@@ -13,7 +13,7 @@ func (s *server) renderETF(c *gin.Context) {
 	etfHoldings, _, err := s.dependencies.Logger.FetchHoldings(etf)
 	utils.PanicErr(err)
 
-	overlaps, err := s.dependencies.Logger.FetchOverlaps(etf)
+	overlaps, err := s.dependencies.Logger.FetchOverlapsWithoutDetailedOverlaps(etf)
 	utils.PanicErr(err)
 
 	s._renderETF(c, etf, etfHoldings, overlaps)

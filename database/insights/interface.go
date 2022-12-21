@@ -10,10 +10,10 @@ import (
 type FileName string
 
 type Logger interface {
-	LogOverlapAnalysis(leverage string, analysis models.LETFOverlapAnalysis) (FileName, error)
+	LogOverlapAnalysisForHolder(lhs models.LETFAccountTicker, wrappers []OverlapWrapper) (FileName, error)
 	LogHoldings(context context.Context, etfName models.LETFAccountTicker, holdings []models.LETFHolding, leverage string) (FileName, error)
 	FetchHoldings(etfName string) (etfHoldings []models.LETFHolding, leverage string, err error)
-	FetchOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error)
+	FetchOverlapsWithoutDetailedOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error)
 	FetchOverlapDetails(lhs string, rhs []string) (models.LETFOverlapAnalysis, error)
 	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error)
 	FetchStock(stock string) ([]models.LETFHolding, error)
