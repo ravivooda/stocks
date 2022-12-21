@@ -21,6 +21,8 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 
 	s.setupPanicAndFailureHandlers(router)
 
+	s.setupRobotsAndSiteMap(router)
+
 	dirname := "./website/letf/static/quixlab/theme"
 	infos, err := ioutil.ReadDir(dirname)
 	utils.PanicErr(err)
@@ -108,6 +110,10 @@ func (s *server) route(paths []string, router *gin.Engine, handler func(c *gin.C
 	for _, path := range paths {
 		router.GET(path, handler)
 	}
+}
+func (s *server) setupRobotsAndSiteMap(r *gin.Engine) {
+	r.StaticFile("robots.txt", "./website/letf/generated/robots.txt")
+	r.StaticFile("sitemap.xml", "./website/letf/generated/sitemap.xml")
 }
 
 const addr = ":8080"
