@@ -93,15 +93,14 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 
 func (s *server) setupPanicAndFailureHandlers(router *gin.Engine) {
 	router.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
-		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
-		//c.AbortWithStatus(http.StatusInternalServerError)
+		c.HTML(http.StatusInternalServerError, error404tmpl, s.commonStruct())
 	}))
 
 	router.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+		c.HTML(http.StatusInternalServerError, error404tmpl, s.commonStruct())
 	})
 	router.NoMethod(func(c *gin.Context) {
-		c.HTML(http.StatusInternalServerError, "page-error-404.html", s.commonStruct())
+		c.HTML(http.StatusInternalServerError, error404tmpl, s.commonStruct())
 	})
 }
 

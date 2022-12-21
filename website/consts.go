@@ -41,6 +41,8 @@ var (
 	findOverlapsInputTemplate = "find_overlaps_input.tmpl"
 	faqsTemplate              = "faq.tmpl"
 	contactTemplate           = "contact.tmpl"
+
+	error404tmpl = "page-error-404.tmpl"
 )
 
 func renderETFsArray(input []models.LETFAccountTicker) string {
