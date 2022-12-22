@@ -45,9 +45,8 @@
                                                 <h4 class="card-title">{{$group}}</h4>
                                                 <ul class="list-inline">
                                                     {{ range $ticker := $value }}
-                                                        <button type="button"
-                                                                class="btn mb-1 btn-outline-success btn-sm"
-                                                                onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
+                                                    <a class="btn mb-1 btn-outline-success btn-sm"
+                                                       href="{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
                                                     {{ end }}
                                                 </ul>
                                             </div>

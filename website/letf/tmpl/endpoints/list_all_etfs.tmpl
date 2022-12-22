@@ -42,8 +42,8 @@
                                                 <h4><small>Provider: </small>{{ $key }}</h4>
                                                 <h5>{{len $value.ETFTickers }}<small> ETFs</small></h5>
                                                 {{ range $ticker := $value.ETFTickers }}
-                                                    <button type="button" class="btn mb-1 btn-outline-primary btn-sm"
-                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html'">{{ $ticker }}</button>
+                                                    <a class="btn mb-1 btn-outline-primary btn-sm"
+                                                            href="{{ $.TemplateCustomMetadata.WebsitePaths.LETFSummary }}/{{ $ticker }}.html">{{ $ticker }}</a>
                                                 {{ end }}
                                             </div>
                                         </div>
