@@ -48,3 +48,10 @@ var (
 func renderETFsArray(input []models.LETFAccountTicker) string {
 	return utils.JoinLETFAccountTicker(input, ",")
 }
+
+func renderPercentage(input float64) string {
+	if input < 10 {
+		return fmt.Sprintf("0%.2f", input)
+	}
+	return fmt.Sprintf("%.2f", input)
+}

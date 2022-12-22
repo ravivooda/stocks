@@ -113,7 +113,7 @@
                                                                 {{ range $.Analysis.LETFHoldees }}
                                                                     <td>{{index $individualPercentagesMap .}}</td>
                                                                 {{ end }}
-                                                                <td>{{ .Percentage }}</td>
+                                                                <td>{{ renderPercentage .Percentage }}</td>
                                                             </tr>
                                                         {{ end }}
                                                     {{ end }}

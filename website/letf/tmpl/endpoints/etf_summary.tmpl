@@ -117,7 +117,7 @@
                                                                         class="btn mb-1 btn-outline-success btn-sm"
                                                                         onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html'">{{ .StockTicker }}</button>
                                                             </td>
-                                                            <td>{{ .PercentContained }}</td>
+                                                            <td>{{ renderPercentage .PercentContained }}</td>
                                                         </tr>
                                                     {{ end }}
                                                 {{ end }}
@@ -184,8 +184,8 @@
                                                                         {{ end }}
                                                                     </td>
                                                                     <td>
-                                                                        <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">{{
-                                                                            .OverlapPercentage }}
+                                                                        <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">
+                                                                            {{ renderPercentage .OverlapPercentage }}
                                                                             <span>&#8594;</span></a>
                                                                     </td>
                                                                 </tr>
