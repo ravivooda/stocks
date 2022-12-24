@@ -51,7 +51,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-3">
                                         <div class="card gradient-1">
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">Number of Holdings</h3>
@@ -61,6 +61,19 @@
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
                                                             class="fa fa-pie-chart"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="card gradient-1">
+                                            <div class="card-body">
+                                                <h3 class="card-title text-white">Total Overlapping ETFs</h3>
+                                                <div class="d-inline-block">
+                                                    <h2 class="text-white"> {{ .OverlapsTotalCount }}</h2>
+                                                    <p class="text-white mb-0">From {{ .TotalProvidersCount }} providers</p>
+                                                </div>
+                                                <span class="float-right display-5 opacity-5"><i
+                                                            class="fa fa-anchor"></i></span>
                                             </div>
                                         </div>
                                     </div>
