@@ -2,6 +2,8 @@ package website
 
 import (
 	"fmt"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"stocks/models"
 	"stocks/utils"
 )
@@ -54,4 +56,9 @@ func renderPercentage(input float64) string {
 		return fmt.Sprintf("0%.2f", input)
 	}
 	return fmt.Sprintf("%.2f", input)
+}
+
+func renderLargeNumbers(input int) string {
+	p := message.NewPrinter(language.English)
+	return p.Sprintf("%d\n", input)
 }

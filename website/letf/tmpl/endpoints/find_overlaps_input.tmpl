@@ -216,7 +216,7 @@
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">Stocks Inventory</h3>
                                                 <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ .TotalStocksCount }} </h2>
+                                                    <h2 class="text-white"> {{ renderLargeNumbers .TotalStocksCount }} </h2>
                                                     <p class="text-white mb-0">AAPL, MSFT and more!</p>
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
@@ -229,7 +229,7 @@
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">ETFs Curated</h3>
                                                 <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ .TotalETFsCount }} </h2>
+                                                    <h2 class="text-white"> {{ renderLargeNumbers .TotalETFsCount }} </h2>
                                                     <p class="text-white mb-0">TQQQ, SPY, VAT and more!</p>
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
@@ -242,7 +242,7 @@
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">Providers Integrated</h3>
                                                 <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ .TotalProvidersCount }} </h2>
+                                                    <h2 class="text-white"> {{ renderLargeNumbers .TotalProvidersCount }} </h2>
                                                     <p class="text-white mb-0">Direxion, ProShares and more</p>
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
@@ -255,7 +255,7 @@
                                             <div class="card-body">
                                                 <h3 class="card-title text-white">Opportunities Generated</h3>
                                                 <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ .TotalOverlaps }}+ </h2>
+                                                    <h2 class="text-white"> {{ renderLargeNumbers .TotalOverlaps }}+ </h2>
                                                     <p class="text-white mb-0">As of Dec 2022</p>
                                                 </div>
                                                 <span class="float-right display-5 opacity-5"><i
