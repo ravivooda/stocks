@@ -18,7 +18,23 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a href="/find_overlaps.html" class="dropdown-item">Optimize Your Portfolio</a>
-                                <a href="javascript: void(0);" class="dropdown-item">Share</a>
+                                <a href="javascript: shareURL()" class="dropdown-item">Share</a>
+                                <script>
+                                    function shareURL() {
+                                        const shareData = {
+                                            title: 'Tax Loss Harvesting Tool',
+                                            text: 'Invest in stock? Optimize taxes by harvesting losses.',
+                                            url: window.location,
+                                        }
+                                        try {
+                                            navigator.share(shareData);
+                                        } catch (err) {
+                                            console.log("error occurred when sharing:")
+                                            console.log(err)
+                                        }
+                                    }
+
+                                </script>
                             </div>
                         </div>
                     </li>
