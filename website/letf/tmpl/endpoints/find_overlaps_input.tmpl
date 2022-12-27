@@ -20,14 +20,16 @@
             var row = '<tr>' +
                 '<td>\
                     <div class="form-group">\
-                        <input class="form-control" type="text" name="stocks[' + n + ']" placeholder="AAPL">\
+                    <label hidden="hidden" for="stocks_' + n + '"></label>\
+                        <input class="form-control" type="text" name="stocks[' + n + ']" placeholder="AAPL" id="stocks_' + n + '">\
                     </div>\
                 </td>' +
                 '<td>\
                     <div class="input-group mb-3">\
                         <div class="input-group-prepend"><span class="input-group-text">$</span>\
                         </div>\
-                        <input type="number" name="market_values[' + n + ']" class="form-control" placeholder = "10,000">\
+                        <label hidden="hidden" for="market_values_' + n + '"></label>\
+                        <input type="number" name="market_values[' + n + ']" class="form-control" placeholder = "10,000" id="market_values_' + n + '">\
                     </div>\
                 </td>' +
                 '<td><button type="button" class="btn mb-1 btn-danger btn-sm" id = "del_row"><span class="btn-icon-right"><i class="fa fa-close"></i></span></button></td>' +
@@ -92,8 +94,9 @@
                                                 <tr>
                                                     <td>
                                                         <div class="form-group">
+                                                            <label hidden="hidden" for="stocks_1"></label>
                                                             <input class="form-control" type="text" name="stocks[1]"
-                                                                   placeholder="AAPL">
+                                                                   placeholder="AAPL" id="stocks_1">
                                                         </div>
                                                     </td>
                                                     <td>
@@ -101,8 +104,9 @@
                                                             <div class="input-group-prepend"><span
                                                                         class="input-group-text">$</span>
                                                             </div>
+                                                            <label hidden="hidden" for="market_values_1"></label>
                                                             <input type="number" name="market_values[1]"
-                                                                   class="form-control">
+                                                                   class="form-control" id="market_values_1">
                                                         </div>
                                                     </td>
                                                     <td title="This Row Can't be Deleted"></td>
