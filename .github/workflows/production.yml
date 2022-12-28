@@ -40,54 +40,33 @@ jobs:
     - name: Run orchestrator
       run: |
         go run .
+        
 
-#    - id: 'auth'
-#      name: 'Authenticate to Google Cloud'
-#      uses: 'google-github-actions/auth@v0.4.0'
-#      with:
-#        workload_identity_provider: 'projects/659322829339/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
-#        service_account: 'github-test-upload-to-containe@stocks-348021.iam.gserviceaccount.com'
-#
-#    - name: 'Configure docker for GCP'
-#      run: gcloud auth configure-docker
-#
-#    - name: 'Build docker image'
-#      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/stocks:latest .
-#
-#    - name: 'Push to Google Container Registry'
-#      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/stocks:latest
-
-    # TODO: Hardcoded for now, need to fix this in future
-    # Need to support sending email to multiple people
-    - name: Send mail
-      uses: dawidd6/action-send-mail@v3
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        # Required mail server address:
-        server_address: smtp.gmail.com
-        # Required mail server port:
-        server_port: 465
-        # Optional (recommended): mail server username:
-        username: ${{secrets.MAIL_USERNAME}}
-        # Optional (recommended) mail server password:
-        password: ${{secrets.GMAIL_ALERTER_APP_KEY}}
-        # Required mail subject:
-        subject: Github Actions job result
-        # Required recipients' addresses:
-        to: 05.dreaded_baobabs@icloud.com
-        # Required sender full name (address can be skipped):
-        from: Alerter GitHub # <user@example.com>
-        # Optional whether this connection use TLS (default is true if server_port is 465)
-        secure: true
-        # Optional HTML body read from file:
-        html_body: file://${{ github.workspace }}/tmp/Ravi_Vooda_Notifications__tmp/email.html
-        # Optional unsigned/invalid certificates allowance:
-        ignore_cert: true
-        # Optional converting Markdown to HTML (set content_type to text/html too):
-        convert_markdown: false
-        # Optional priority: 'high', 'normal' (default) or 'low'
-        priority: low
-#    # Example of using the output
-#    - id: 'upload_'
-#      uses: 'foo/bar@main'
-#      env:
-#        files: '${{ steps.upload-folder.outputs.uploaded }}'
+      token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Generate GITHUB_SHA
+      id: github-sha
+      shell: bash
+      run: |
+        SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+        echo "::set-output name=sha::$SHORT_SHA"
+    - name: Publish Image to Digital Ocean Container Registry
+      shell: bash
+      run: |
+        doctl registry login --expiry-seconds 600
+        docker build . -t registry.digitalocean.com/stocks:${{steps.github-sha.outputs.sha}}
+        docker push registry.digitalocean.com/stocks:${{steps.github-sha.outputs.sha}}
+
+    - name: DigitalOcean App Platform deployment
+      uses: digitalocean/app_action@main
+      with:
+        app_name: stocks-docker-image-droplet
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        images: '[{
+                    "name": "web",
+                    "repository": "registry.digitalocean.com/stocks",
+                    "tag": "${{steps.github-sha.outputs.sha}}"
+                  }
+                ]'
