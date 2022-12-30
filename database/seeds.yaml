@@ -2,6 +2,12 @@ seeds:
   direxion:
     url_base: https://www.direxion.com/holdings
     simple:
+      skipped:
+        - TENG
+        - COM
+        - RUSL # Negative Tickers from here on
+        - CLDS
+        - LABD
       negative_tickers:
         - WEBS
         - FAZ
@@ -9,15 +15,12 @@ seeds:
         - HIBS
         - CHAD
         - SPDN
-        - RUSL
         - DUST
         - ERY
-        - CLDS
         - EDZ
         - YANG
         - TZA
         - SPXS
-        - LABD
         - SOXS
         - TECS
         - TYO
@@ -52,7 +55,6 @@ seeds:
         - EDC
         - MEXX
         - KORU
-        - TENG
         - CHAU
         - CWEB
         - CLDL
@@ -90,8 +92,6 @@ seeds:
           prefix: "Shares Outstanding:"
     complicated:
       tickers:
-        - COM
-        - NIFE
         - LOPX
         - QQQE
         - RWGV

@@ -16,8 +16,9 @@ func (i dumbDatabase) ListSeeds(_ context.Context) ([]models.Seed, error) {
 			Direxion struct {
 				UrlBase string `mapstructure:"url_base"`
 				Simple  struct {
-					Tickers []string
-					Header  models.Header
+					Tickers         []string
+					NegativeTickers []string `mapstructure:"negative_tickers"`
+					Header          models.Header
 				}
 				Complicated struct {
 					Tickers []string
@@ -45,7 +46,9 @@ func (i dumbDatabase) ListSeeds(_ context.Context) ([]models.Seed, error) {
 	}
 	fmt.Println(c)
 	var rets []models.Seed
-	for _, stock := range c.Seeds.Direxion.Simple.Tickers {
+	var totalDirexionTickers = c.Seeds.Direxion.Simple.Tickers
+	totalDirexionTickers = append(totalDirexionTickers, c.Seeds.Direxion.Simple.NegativeTickers...)
+	for _, stock := range totalDirexionTickers {
 		rets = append(rets, models.Seed{
 			URL:      fmt.Sprintf("%s/%s.csv", c.Seeds.Direxion.UrlBase, stock),
 			Ticker:   stock,

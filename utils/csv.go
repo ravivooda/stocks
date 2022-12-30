@@ -34,7 +34,9 @@ func DownloadFile(filepath string, url string) error {
 }
 
 var replacements = map[string]string{
-	"Triumph Group, Inc.,": "\"Triumph Group, Inc.\",",
+	", Inc":                   " Inc",
+	"Fair, Isaac Corporation": "\"Fair, Isaac Corporation\"",
+	"Becton, Dickinson":       "\"Becton, Dickinson\"",
 }
 
 func ReadCSVFromUrlWithLocalMasks(url string, temporaryDir string, comma rune, fieldsPerRecord int) ([][]string, error) {

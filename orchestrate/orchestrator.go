@@ -77,13 +77,13 @@ func GetHoldings(ctx context.Context, holdingsRequest ClientHoldingsRequest) ([]
 		minPercentageTotal = 100.0
 		maxPercentageTotal = 0.0
 	)
-	var mapsDidNotSumUp = map[string]float64{}
+	var mapsDidNotSumUp = map[string][]string{}
 	for seed, holdings := range holdingsWithAccountTickerMap {
 		sum := utils.SumHoldings(holdings)
 		if math.Abs(sum-100) > 30 {
 			//filteredHoldings := utils.FilteredForPrinting(holdings)
 			//return nil, errors.New(fmt.Sprintf("total percentage (%f) did not add up to 100 percent for etf %+v with holdings %+v", sum, seed, filteredHoldings))
-			mapsDidNotSumUp[string(seed)] = sum
+			mapsDidNotSumUp[holdings[0].Provider] = append(mapsDidNotSumUp[holdings[0].Provider], fmt.Sprintf("%s, %f, provider: %s", seed, sum, holdings[0].Provider))
 			delete(holdingsWithAccountTickerMap, seed)
 		}
 		minPercentageTotal = math.Min(sum, minPercentageTotal)
