@@ -62,3 +62,10 @@ func renderLargeNumbers(input int) string {
 	p := message.NewPrinter(language.English)
 	return p.Sprintf("%d\n", input)
 }
+
+func renderStockTickersCount(input []models.StockTicker) string {
+	if len(input) > 1 {
+		return fmt.Sprintf("%d stocks", len(input))
+	}
+	return "1 stock"
+}

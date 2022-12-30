@@ -19,7 +19,8 @@
         });
     </script>
     {{ template "includes" }}
-    <meta name="description" content="Detailed summary of stock {{ .Ticker }}. Lists all the ETFs containing the {{ .Ticker }} under different leverages">
+    <meta name="description"
+          content="Detailed summary of stock {{ .Ticker }}. Lists all the ETFs containing the {{ .Ticker }} under different leverages">
 </head>
 <body>
 <div>
@@ -36,7 +37,7 @@
                         Summary for <b>{{ .Ticker }}</b>
                     </h3>
                     <div class="row">
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <div class="card gradient-1">
                                 <div class="card-body">
                                     <h3 class="card-title text-white">ETFs count</h3>
@@ -72,11 +73,53 @@
                         {{ end }}
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-lg-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <h2 class="card-title">Why and how to harvest losses</h2>
-                                    Harvesting capital
+                                    <h2 class="card-title">What</h2>
+                                    Tax Loss Harvesting is a strategy used to reduce income taxes by harvesting losses in a market downturn.
+                                    The strategy involves selling investments that have lost value and consolidating the proceeds into Exchange Traded Funds (ETFs).
+                                    <hr/>
+                                    <h2 class="card-title">How</h2>
+                                    By inputting all your existing holdings in our tool, our tool will analyze your portfolio opportunistically and look for good ways to harvest losses as a group along with your retention (overlap) percentage.
+                                    By analyzing this data, you can make an educated decision on your tax loss harvesting strategy.
+                                </div>
+                                <div class="card-footer">
+                                    <p class="card-text d-inline"><small class="text-muted">You can use our tool for harvesting losses, but we do not harvest your data :)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="card-title">Consolidation Overlaps</h2>
+                                    <h5 class="card-subtitle text-muted">
+                                        Overlap percentage when combined with other stocks</h5>
+                                    {{ with .Combinations }}
+                                        {{ range $combination := .}}
+                                            <div class="mt-4">
+                                                {{ with $combination.Tickers }}
+                                                    {{ range $ticker := . }}
+                                                        {{ template "stock_bold" $ticker}}
+                                                    {{ end }}
+                                                {{ end }}
+                                                <span class="pull-right"> {{template "etf" $combination.ETF.Ticker}}</span>
+                                                <h6> {{ renderStockTickersCount $combination.Tickers }} <span
+                                                            class="pull-right">{{ $combination.SummedPercent}}</span>
+                                                </h6>
+                                                <div class="progress mb-3" style="height: 7px">
+                                                    <div class="progress-bar bg-primary"
+                                                         style="width: {{ $combination.SummedPercent}}%;"
+                                                         role="progressbar"><span
+                                                                class="sr-only">{{ $combination.SummedPercent}}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{ end }}
+                                    {{ end}}
+                                </div>
+                                <div class="card-footer">
+                                    <p class="card-text d-inline"><small class="text-muted">For 1x Leveraged ETFs</small>
                                 </div>
                             </div>
                         </div>

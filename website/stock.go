@@ -11,10 +11,10 @@ import (
 
 func (s *server) renderStock(c *gin.Context) {
 	stock := s.fetchStock(c)
-	holdings, err := s.dependencies.Logger.FetchStock(stock)
+	stockWrapper, err := s.dependencies.Logger.FetchStock(stock)
 	utils.PanicErr(err)
 
-	mappedHoldings := s.mappedHoldings(holdings)
+	mappedHoldings := s.mappedHoldings(stockWrapper.Holdings)
 
 	for leverage, letfHoldings := range mappedHoldings {
 		sort.Slice(letfHoldings, func(i, j int) bool {
@@ -26,6 +26,7 @@ func (s *server) renderStock(c *gin.Context) {
 	data := struct {
 		Ticker                 string
 		MappedHoldings         map[string][]models.LETFHolding
+		Combinations           []models.StockCombination
 		TemplateCustomMetadata TemplateCustomMetadata
 		TotalETFsCount         int
 		TotalProvidersCount    int
@@ -33,7 +34,8 @@ func (s *server) renderStock(c *gin.Context) {
 		Ticker:                 stock,
 		MappedHoldings:         mappedHoldings,
 		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
-		TotalETFsCount:         len(holdings),
+		Combinations:           stockWrapper.Combinations,
+		TotalETFsCount:         len(stockWrapper.Holdings),
 		TotalProvidersCount:    len(s.metadata.ProvidersMap),
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)

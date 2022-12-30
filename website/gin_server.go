@@ -34,9 +34,10 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 	}
 	router.Static("/static", "./website/letf/static")
 	router.SetFuncMap(template.FuncMap{
-		"renderETFsArray":    renderETFsArray,
-		"renderPercentage":   renderPercentage,
-		"renderLargeNumbers": renderLargeNumbers,
+		"renderETFsArray":         renderETFsArray,
+		"renderPercentage":        renderPercentage,
+		"renderLargeNumbers":      renderLargeNumbers,
+		"renderStockTickersCount": renderStockTickersCount,
 	})
 	router.LoadHTMLGlob(s.metadata.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 

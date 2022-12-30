@@ -112,7 +112,7 @@ func Orchestrate(
 	}
 
 	logHoldings(ctx, request.InsightsLogger, holdingsWithAccountTickerMap, request.EtfsMaps)
-	logStocks(ctx, request, holdingsWithStockTickerMap)
+	logStocks(ctx, request, holdingsWithStockTickerMap, holdingsWithAccountTickerMap, request.EtfsMaps)
 
 	generateInsights(ctx, request, holdingsWithAccountTickerMap)
 }
@@ -180,13 +180,6 @@ func generateInsights(_ context.Context, request Request, holdingsWithAccountTic
 		})
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
-}
-
-func logStocks(ctx context.Context, request Request, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) {
-	fmt.Printf("Generating %d stock summaries\n", len(holdingsWithStockTickerMap))
-	fileNames, err := request.InsightsLogger.LogStocks(ctx, holdingsWithStockTickerMap)
-	fmt.Printf("Generated files: %s\n", fileNames)
-	utils.PanicErr(err)
 }
 
 func gatherAlerts(

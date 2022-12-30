@@ -3,3 +3,9 @@
             {{/*TODO: Hardcoded Stock Summary URL below. This should have followed from the inputs to the template instead*/}}
             onclick="location.href='/stock-summary/{{ . }}.html'">{{ . }}</button>
 {{ end }}
+
+{{ define "stock_bold" }}
+    <button type="button" class="btn mb-1 btn-success btn-sm"
+            {{/*TODO: Hardcoded Stock Summary URL below. This should have followed from the inputs to the template instead*/}}
+            onclick="location.href='/stock-summary/{{ . }}.html'">{{ . }}</button>
+{{ end }}

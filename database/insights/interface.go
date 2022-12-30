@@ -15,8 +15,8 @@ type Logger interface {
 	FetchHoldings(etfName string) (etfHoldings []models.LETFHolding, leverage string, err error)
 	FetchOverlapsWithoutDetailedOverlaps(etfName string) (map[string][]models.LETFOverlapAnalysis, error)
 	FetchOverlapDetails(lhs string, rhs []string) (models.LETFOverlapAnalysis, error)
-	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error)
-	FetchStock(stock string) ([]models.LETFHolding, error)
+	LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker]StockWrapper) ([]FileName, error)
+	FetchStock(stock string) (StockWrapper, error)
 	HasStock(stock string) (bool, error)
 }
 

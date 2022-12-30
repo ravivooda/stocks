@@ -174,7 +174,7 @@ func New(config Config) (Client, error) {
 }
 
 func loadData(config Config) [][]string {
-	local := false
+	local := true
 	if local {
 		return loadLocalCacheFile()
 	} else {
@@ -225,6 +225,9 @@ func parse(record []string) models.LETFHolding {
 		ticker = strings.Split(record[16], ":")[0]
 	} else {
 		ticker = record[3]
+	}
+	if strings.Contains(strings.ToLower(ticker), "cash") {
+		ticker = "cash"
 	}
 	if math.IsNaN(percentContained) {
 		utils.PanicErr(errors.New("Unexpected NaN"))

@@ -11,11 +11,12 @@ import (
 	"stocks/utils"
 )
 
-type stockWrapper struct {
-	Holdings []models.LETFHolding
+type StockWrapper struct {
+	Holdings     []models.LETFHolding
+	Combinations []models.StockCombination
 }
 
-func (l *logger) LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding) ([]FileName, error) {
+func (l *logger) LogStocks(ctx context.Context, holdingsWithStockTickerMap map[models.StockTicker]StockWrapper) ([]FileName, error) {
 	var filesCreated []FileName
 	for ticker, holdings := range holdingsWithStockTickerMap {
 		fileName, err := l.logStock(ctx, ticker, holdings)
@@ -25,9 +26,9 @@ func (l *logger) LogStocks(ctx context.Context, holdingsWithStockTickerMap map[m
 	return filesCreated, nil
 }
 
-func (l *logger) logStock(_ context.Context, ticker models.StockTicker, holdings []models.LETFHolding) (FileName, error) {
+func (l *logger) logStock(_ context.Context, ticker models.StockTicker, wrapper StockWrapper) (FileName, error) {
 	fileName, fileAddr := l.stocksFilePaths(string(ticker))
-	b, err := json.Marshal(stockWrapper{Holdings: holdings})
+	b, err := json.Marshal(wrapper)
 	utils.PanicErr(err)
 
 	utils.PanicErr(ioutil.WriteFile(fileAddr, b, fs.ModePerm))
@@ -40,21 +41,21 @@ func (l *logger) stocksFilePaths(stockName string) (string, string) {
 	return fileName, fileAddr
 }
 
-func (l *logger) FetchStock(stock string) ([]models.LETFHolding, error) {
+func (l *logger) FetchStock(stock string) (StockWrapper, error) {
 	_, fileAddr := l.stocksFilePaths(stock)
 	file, err := ioutil.ReadFile(fileAddr)
 	if err != nil {
 		utils.LogErr(err)
-		return nil, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
+		return StockWrapper{}, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
 	}
-	data := stockWrapper{}
+	data := StockWrapper{}
 
 	err = json.Unmarshal(file, &data)
 	if err != nil {
 		utils.LogErr(err)
-		return nil, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
+		return StockWrapper{}, errors.New(fmt.Sprintf("Sorry, we currently do not support ticker: %s", stock))
 	}
-	return data.Holdings, nil
+	return data, nil
 }
 
 func (l *logger) HasStock(stock string) (bool, error) {
