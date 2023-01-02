@@ -56,8 +56,8 @@ jobs:
       shell: bash
       run: |
         doctl registry login --expiry-seconds 600
-        docker build . -t registry.digitalocean.com/stocks:${{steps.github-sha.outputs.sha}}
-        docker push registry.digitalocean.com/stocks:${{steps.github-sha.outputs.sha}}
+        docker build . -t registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
+        docker push registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
 
     - name: DigitalOcean App Platform deployment
       uses: digitalocean/app_action@main
