@@ -24,6 +24,8 @@ securities:
       - Market Value
   master_data_reports:
     holdings_csv_url: "https://masterdatareports.com/Download-Files/ETFData42.csv"
+  invesco:
+    url: "https://www.invesco.com/us/financial-products/etfs/holdings/main/holdings/0?audienceType=Investor&action=download&ticker=%s"
 outputs:
   insights:
     min_threshold_percentage: 0

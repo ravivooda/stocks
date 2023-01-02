@@ -7,7 +7,6 @@ import (
 	"stocks/models"
 	"stocks/securities"
 	"stocks/utils"
-	"strconv"
 	"strings"
 )
 
@@ -45,7 +44,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF
 		if strings.ToLower(d[7]) == "swap" {
 			continue
 		}
-		percent := parseFloat(d[8])
+		percent := utils.ParseFloat(d[8])
 		if percent >= 100 || percent <= -100 {
 			panic(fmt.Sprintf("Percent was beyong comprehensible: %f, %+v, %+v, %+v\n", percent, data, holdings, seed))
 		}
@@ -56,9 +55,9 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF
 			LETFDescription:   etf.ETFName,
 			StockTicker:       utils.FetchStockTicker(d[2]),
 			StockDescription:  d[3],
-			Shares:            parseInt(d[4]),
-			Price:             parseInt(d[5]),
-			MarketValue:       parseInt(d[6]),
+			Shares:            utils.ParseInt(d[4]),
+			Price:             utils.ParseInt(d[5]),
+			MarketValue:       utils.ParseInt(d[6]),
 			PercentContained:  percent,
 			Provider:          "Direxion",
 		})
@@ -69,17 +68,6 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF
 	}
 
 	return holdings, nil
-}
-
-func parseFloat(s string) float64 {
-	p, _ := strconv.ParseFloat(s, 64)
-	return p
-}
-
-func parseInt(s string) int64 {
-	s = strings.Split(s, ".")[0]
-	ri, _ := strconv.ParseInt(s, 10, 64)
-	return ri
 }
 
 func NewClient(config Config) (securities.Client, error) {

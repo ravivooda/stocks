@@ -18,6 +18,7 @@ import (
 	"stocks/orchestrate"
 	"stocks/securities"
 	"stocks/securities/direxion"
+	"stocks/securities/invesco"
 	"stocks/securities/masterdatareports"
 	"stocks/securities/microsector"
 	"stocks/securities/proshares"
@@ -37,7 +38,7 @@ type setupRequest struct {
 
 func setup(context context.Context, shouldOrchestrate bool, request setupRequest) {
 	defer utils.Elapsed("setup")()
-	microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier := createSecurityClients(request.config)
+	microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier, invescoClient := createSecurityClients(request.config)
 
 	etfsMap := utils.MappedLETFS(request.etfs)
 	clientHoldingsRequest := orchestrate.ClientHoldingsRequest{
@@ -46,11 +47,13 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 		SeedGenerators: []database.DB{
 			request.db,
 			proSharesClient,
+			invescoClient,
 		},
 		Clients: map[models.Provider]securities.Client{
 			models.Direxion:    direxionClient,
 			models.MicroSector: microSectorClient,
 			models.ProShares:   proSharesClient,
+			models.Invesco:     invescoClient,
 		},
 		BackupClient: masterdatareportsClient,
 		EtfsMaps:     etfsMap,
@@ -197,10 +200,18 @@ func createMaps(
 	return stocksMap, providersMap, accountMap
 }
 
-func createSecurityClients(config orchestrate.Config) (securities.Client, securities.Client, securities.SeedProvider, masterdatareports.Client, []alerts.AlertParser, notifications.Notifier) {
+func createSecurityClients(config orchestrate.Config) (
+	microsectorClient securities.Client,
+	direxionClient securities.Client,
+	prosharesClient securities.SeedProvider,
+	mdrClient masterdatareports.Client,
+	parser []alerts.AlertParser,
+	notifier notifications.Notifier,
+	invescoClient securities.SeedProvider,
+) {
 	microSectorClient, err := microsector.NewClient()
 	utils.PanicErr(err)
-	direxionClient, err := direxion.NewClient(direxion.Config{TemporaryDir: config.Directories.Temporary})
+	direxionClient, err = direxion.NewClient(direxion.Config{TemporaryDir: config.Directories.Temporary})
 	utils.PanicErr(err)
 	proSharesClient, err := proshares.New(config.Securities.ProShares)
 	utils.PanicErr(err)
@@ -213,7 +224,9 @@ func createSecurityClients(config orchestrate.Config) (securities.Client, securi
 		movers.New(movers.Config{MSAPI: msapi}),
 	}
 
-	notifier := notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
+	notifier = notifications.New(notifications.Config{TempDirectory: config.Directories.Temporary})
 
-	return microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier
+	invescoClient = invesco.New(config.Securities.Invesco)
+
+	return microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier, invescoClient
 }

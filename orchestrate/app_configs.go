@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"stocks/alerts/movers/morning_star"
 	"stocks/insights/overlap"
+	"stocks/securities/invesco"
 	"stocks/securities/masterdatareports"
 	"stocks/securities/proshares"
 	"stocks/utils"
@@ -36,6 +37,7 @@ type Config struct {
 	Securities struct {
 		ProShares         proshares.Config         `mapstructure:"pro_shares"`
 		MasterDataReports masterdatareports.Config `mapstructure:"master_data_reports"`
+		Invesco           invesco.Config           `mapstructure:"invesco"`
 	} `mapstructure:"securities"`
 	Secrets Secrets
 	Outputs struct {
