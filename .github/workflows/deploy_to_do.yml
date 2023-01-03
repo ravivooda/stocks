@@ -1,16 +1,16 @@
-name: Push CI
+name: Deploy To DO
 
 on:
+  schedule:
+    - cron: '0 22 * * 1-5'
   workflow_dispatch:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
     - uses: actions/checkout@v3
 
@@ -25,14 +25,14 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-      # TODO: Need to refactor this code with simple secrets.yaml creation
+    # TODO: Need to refactor this code with simple secrets.yaml creation
     - name: Setup secrets.yaml
       run: |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
-
+        
         cp secrets.yaml secrets_production.yaml
-
+        
         echo "notifications:" >> secrets.yaml
         echo "  should_send_email: true" >> secrets.yaml
         echo "uploads:" >> secrets.yaml
@@ -48,3 +48,24 @@ jobs:
       run: |
         rm secrets.yaml
         cp secrets_production.yaml secrets.yaml
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Generate GITHUB_SHA
+      id: github-sha
+      shell: bash
+      run: |
+        SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+        echo "::set-output name=sha::$SHORT_SHA"
+
+    - name: Build container image
+      run: docker build . -t registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
+
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+
+    - name: Push image to DigitalOcean Container Registry
+      run: docker push registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
