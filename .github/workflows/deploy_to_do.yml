@@ -1,4 +1,4 @@
-name: Run Prod
+name: Deploy To DO
 
 on:
   schedule:
@@ -53,27 +53,19 @@ jobs:
       uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
     - name: Generate GITHUB_SHA
       id: github-sha
       shell: bash
       run: |
         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         echo "::set-output name=sha::$SHORT_SHA"
-    - name: Publish Image to Digital Ocean Container Registry
-      shell: bash
-      run: |
-        doctl registry login --expiry-seconds 600
-        docker build . -t registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
-        docker push registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
 
-    - name: DigitalOcean App Platform deployment
-      uses: digitalocean/app_action@main
-      with:
-        app_name: stocks-docker-image-droplet
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        images: '[{
-                    "name": "web",
-                    "repository": "registry.digitalocean.com/stocks",
-                    "tag": "${{steps.github-sha.outputs.sha}}"
-                  }
-                ]'
+    - name: Build container image
+      run: docker build . -t registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
+
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+
+    - name: Push image to DigitalOcean Container Registry
+      run: docker push registry.digitalocean.com/stocks/stocks:${{steps.github-sha.outputs.sha}}
