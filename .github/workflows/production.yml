@@ -30,6 +30,9 @@ jobs:
       run: |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
+        
+        cp secrets.yaml secrets_production.yaml
+        
         echo "notifications:" >> secrets.yaml
         echo "  should_send_email: true" >> secrets.yaml
         echo "uploads:" >> secrets.yaml
@@ -40,7 +43,11 @@ jobs:
     - name: Run orchestrator
       run: |
         go run .
-        
+
+    - name: Resetting Secrets for production
+      run: |
+        rm secrets.yaml
+        cp secrets_production.yaml secrets.yaml
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
