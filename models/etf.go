@@ -68,3 +68,8 @@ type ETFMetadata struct {
 	Leveraged     string
 	HoldingsCount int
 }
+
+type ETFAutoCompleteMetadata struct {
+	//Description string `json:"d"`
+	//Leveraged   string `json:"l"`
+}

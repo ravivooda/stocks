@@ -27,13 +27,14 @@ import (
 )
 
 type setupRequest struct {
-	fileAddr       string
-	config         orchestrate.Config
-	insightsConfig insights.Config
-	db             database.DB
-	etfs           []models.ETF
-	generators     []overlap.Generator
-	logger         insights.Logger
+	metadataFileDestination     string
+	autoCompleteFileDestination string
+	config                      orchestrate.Config
+	insightsConfig              insights.Config
+	db                          database.DB
+	etfs                        []models.ETF
+	generators                  []overlap.Generator
+	logger                      insights.Logger
 }
 
 func setup(context context.Context, shouldOrchestrate bool, request setupRequest) {
@@ -74,11 +75,15 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
 	}
 
-	metadata := createMetadata(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap, 10, 10)
+	metadata, autoCompleteMetadata := createMetadata(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap, 10, 10)
+	// Write metadata
 	b, err := json.Marshal(metadata)
 	utils.PanicErr(err)
-
-	utils.PanicErr(ioutil.WriteFile(request.fileAddr, b, fs.ModePerm))
+	utils.PanicErr(ioutil.WriteFile(request.metadataFileDestination, b, fs.ModePerm))
+	// Write autocomplete metadata
+	c, err := json.Marshal(autoCompleteMetadata)
+	utils.PanicErr(err)
+	utils.PanicErr(ioutil.WriteFile(request.autoCompleteFileDestination, c, fs.ModePerm))
 }
 
 func createMetadata(
@@ -87,7 +92,7 @@ func createMetadata(
 	etfsMap map[models.LETFAccountTicker]models.ETF,
 	topStocksCount int,
 	topETFsCount int,
-) website.Metadata {
+) (website.Metadata, website.AutoCompleteMetadata) {
 	stocksMap, providersMap, accountMap := createMaps(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap)
 
 	topStocks := filterTopStocks(stocksMap, topStocksCount)
@@ -118,7 +123,10 @@ func createMetadata(
 			},
 		},
 	}
-	return metadata
+	return metadata, website.AutoCompleteMetadata{
+		StocksMap:  utils.MapToArrayForStockTickers(stocksMap),
+		AccountMap: utils.MapToArrayForAccountTickers(accountMap),
+	}
 }
 
 func filterTopETFs(accountMap map[models.LETFAccountTicker]models.ETFMetadata, topETFsCount int) []models.LETFAccountTicker {

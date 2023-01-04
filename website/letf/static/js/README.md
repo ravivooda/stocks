@@ -1,0 +1,1 @@
+For [autocomplete](autocomplete.js), today I manually generate the map as json object in setup. Then I copied the array to the file. This should be automated in the future.

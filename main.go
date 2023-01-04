@@ -17,21 +17,23 @@ import (
 func main() {
 	ctx, db, etfs, websitePaths := defaults()
 	config, insightsConfig := createConfigs()
-	fileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "metadata")
+	metadataFileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "metadata")
+	autoCompleteMetadataFileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "autocomplete_metadata")
 	generators, logger := logicProviders(config, insightsConfig)
 	if config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		setup(ctx, true, setupRequest{
-			fileAddr:       fileAddr,
-			config:         config,
-			insightsConfig: insightsConfig,
-			db:             db,
-			etfs:           etfs,
-			generators:     generators,
-			logger:         logger,
+		setup(ctx, false, setupRequest{
+			metadataFileDestination:     metadataFileAddr,
+			autoCompleteFileDestination: autoCompleteMetadataFileAddr,
+			config:                      config,
+			insightsConfig:              insightsConfig,
+			db:                          db,
+			etfs:                        etfs,
+			generators:                  generators,
+			logger:                      logger,
 		})
 	} else {
 		// TODO: Hardcoded 0 index lookup on generators[0] in the line below
-		serve(config, ctx, insightsConfig, generators[0], logger, websitePaths, fileAddr)
+		serve(config, ctx, insightsConfig, generators[0], logger, websitePaths, metadataFileAddr)
 	}
 }
 
