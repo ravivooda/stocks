@@ -208,7 +208,7 @@ func parseLeveraged(s string) string {
 	if s, ok := acceptableLeverages[s]; !ok {
 		panic(fmt.Sprintf("found invalid leverage: %s", s))
 	}
-	return s
+	return acceptableLeverages[s]
 }
 
 func parseFloat(s string) float64 {
