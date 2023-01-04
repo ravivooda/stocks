@@ -9,11 +9,11 @@ import (
 	"stocks/alerts"
 	"stocks/database"
 	"stocks/database/insights"
+	"stocks/external/securities"
+	"stocks/external/securities/masterdatareports"
 	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/notifications"
-	"stocks/securities"
-	"stocks/securities/masterdatareports"
 	"stocks/utils"
 )
 

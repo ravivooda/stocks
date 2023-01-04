@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"stocks/external/securities"
 	"stocks/models"
-	"stocks/securities"
 	"stocks/utils"
 	"strconv"
 )

@@ -4,10 +4,10 @@ import (
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"stocks/alerts/movers/morning_star"
+	"stocks/external/securities/invesco"
+	"stocks/external/securities/masterdatareports"
+	"stocks/external/securities/proshares"
 	"stocks/insights/overlap"
-	"stocks/securities/invesco"
-	"stocks/securities/masterdatareports"
-	"stocks/securities/proshares"
 	"stocks/utils"
 )
 

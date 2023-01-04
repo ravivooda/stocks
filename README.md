@@ -3,9 +3,9 @@
 fetch all the stocks from different providers. Currently, supports:
 
 - Direxion
-- MicroSector ([limited](securities/microsector/holdings))
-- [ProShares](securities/proshares/README.md)
-- [Master Data Reports](securities/masterdatareports/README.md)
+- MicroSector ([limited](external/securities/microsector/holdings))
+- [ProShares](external/securities/proshares/README.md)
+- [Master Data Reports](external/securities/masterdatareports/README.md)
 
 If you are interested in all the tickers, please see [seeds.yaml](database/seeds.yaml)
 
