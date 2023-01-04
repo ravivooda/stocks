@@ -21,7 +21,7 @@ func main() {
 	autoCompleteMetadataFileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "autocomplete_metadata")
 	generators, logger := logicProviders(config, insightsConfig)
 	if config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
-		setup(ctx, false, setupRequest{
+		setup(ctx, true, setupRequest{
 			metadataFileDestination:     metadataFileAddr,
 			autoCompleteFileDestination: autoCompleteMetadataFileAddr,
 			config:                      config,
