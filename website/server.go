@@ -28,6 +28,11 @@ type Metadata struct {
 	TemplateCustomMetadata TemplateCustomMetadata
 }
 
+type AutoCompleteMetadata struct {
+	StocksMap  []models.StockTicker
+	AccountMap []models.LETFAccountTicker
+}
+
 type server struct {
 	config       Config
 	dependencies Dependencies

@@ -147,3 +147,19 @@ func SortOverlapsWithinLeverage(parsedOverlaps map[string][]models.LETFOverlapAn
 	}
 	return sortedOverlaps
 }
+
+func MapToArrayForStockTickers(input map[models.StockTicker]models.StockMetadata) []models.StockTicker {
+	var rets []models.StockTicker
+	for ticker := range input {
+		rets = append(rets, ticker)
+	}
+	return rets
+}
+
+func MapToArrayForAccountTickers(input map[models.LETFAccountTicker]models.ETFMetadata) []models.LETFAccountTicker {
+	var rets []models.LETFAccountTicker
+	for ticker := range input {
+		rets = append(rets, ticker)
+	}
+	return rets
+}
