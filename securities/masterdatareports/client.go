@@ -174,22 +174,24 @@ func New(config Config) (Client, error) {
 }
 
 func loadData(config Config) [][]string {
-	local := false
-	if local {
-		return loadLocalCacheFile()
-	} else {
+	results, err := loadLocalCacheFile()
+	if err != nil {
+		fmt.Printf("could not read local file, trying remote")
 		return loadRemoteData(config)
 	}
+	return results
 }
 
-func loadLocalCacheFile() (records [][]string) {
+func loadLocalCacheFile() (records [][]string, err error) {
 	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
-	records, err := utils.RetryFetching(func() ([][]string, error) {
+	records, err = utils.RetryFetching(func() ([][]string, error) {
 		return utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
 	}, 3, 0)
-	utils.PanicErr(err)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Printf("From local file, number of records: %d\n", len(records))
-	return records
+	return records, nil
 }
 
 func loadRemoteData(config Config) [][]string {
