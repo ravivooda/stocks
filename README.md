@@ -57,4 +57,4 @@ Using open sourced theme [quixlab](https://themefisher.com/products/quixlab).
 
 --
 
-[![Run Prod](https://github.com/ravivooda/stocks/actions/workflows/production.yml/badge.svg)](https://github.com/ravivooda/stocks/actions/workflows/production.yml)
+[![Deploy To DO](https://github.com/ravivooda/stocks/actions/workflows/deploy_to_do.yml/badge.svg)](https://github.com/ravivooda/stocks/actions/workflows/deploy_to_do.yml)
