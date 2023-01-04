@@ -3,6 +3,8 @@ name: Deploy To DO
 on:
   schedule:
     - cron: '0 22 * * 1-5'
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -57,8 +59,9 @@ jobs:
     - name: Generate GITHUB_SHA
       id: github-sha
       shell: bash
+      # SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7) -- Removed this
       run: |
-        SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+        SHORT_SHA=prod
         echo "::set-output name=sha::$SHORT_SHA"
 
     - name: Build container image
