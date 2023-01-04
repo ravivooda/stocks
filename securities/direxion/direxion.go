@@ -63,7 +63,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF
 		})
 	}
 
-	if totalPercent < 70 || totalPercent > 125 {
+	if totalPercent < 70 || totalPercent > 130 {
 		panic(fmt.Sprintf("holdings did not add up to 100 for %+v, %+v, %f\n", holdings, seed, totalPercent))
 	}
 
