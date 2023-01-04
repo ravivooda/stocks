@@ -99,14 +99,18 @@ func ReadCSVFromUrl(url string, comma rune, fieldsPerRecord int) ([][]string, er
 
 func ReadCSVFromLocalFile(filePath string) ([][]string, error) {
 	f, err := os.Open(filePath)
-	PanicErr(err)
+	if err != nil {
+		return nil, err
+	}
 	defer func(f *os.File) {
 		PanicErr(f.Close())
 	}(f)
 
 	csvReader := csv.NewReader(f)
 	records, err := csvReader.ReadAll()
-	PanicErr(err)
+	if err != nil {
+		return nil, err
+	}
 
 	return records, nil
 }
