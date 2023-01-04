@@ -40,7 +40,7 @@
                         <div class="col-lg-3">
                             <div class="card gradient-1">
                                 <div class="card-body">
-                                    <h3 class="card-title text-white">ETFs count</h3>
+                                    <h3 class="card-title text-white">ETFs containing {{ .Ticker }}</h3>
                                     <div class="d-inline-block">
                                         <h2 class="text-white"> {{ .TotalETFsCount }} </h2>
                                         <p class="text-white mb-0">From {{ .TotalProvidersCount }} providers</p>
@@ -60,7 +60,7 @@
                                             <div class="d-inline-block">
                                                 <h2 class="text-white"> {{ (index $overlaps 0).LETFAccountTicker }}
                                                     -
-                                                    {{ (index $overlaps 0).PercentContained }}% exposure</h2>
+                                                    {{ renderPercentage (index $overlaps 0).PercentContained }}% exposure</h2>
                                                 <p class="text-white mb-0"> {{ len $overlaps }} other
                                                     matches</p>
                                             </div>

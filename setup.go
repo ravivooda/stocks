@@ -197,11 +197,15 @@ func createMaps(
 
 	var accountMap = map[models.LETFAccountTicker]models.ETFMetadata{}
 	for ticker, holdings := range holdingsWithAccountTickerMap {
+		leveraged := etfsMap[ticker].Leveraged
+		if leveraged == "" {
+			panic(fmt.Sprintf("found empty leverage for etf: %s", ticker))
+		}
 		accountMap[ticker] = models.ETFMetadata{
 			Ticker:        ticker,
 			Provider:      models.Provider(holdings[0].Provider),
 			Description:   holdings[0].LETFDescription,
-			Leveraged:     etfsMap[ticker].Leveraged,
+			Leveraged:     leveraged,
 			HoldingsCount: len(holdings),
 		}
 	}

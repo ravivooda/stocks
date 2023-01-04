@@ -183,10 +183,30 @@ func parseTime(s string) *time.Time {
 	return &parse
 }
 
+var acceptableLeverages = map[string]string{
+	"1x":       "1x",
+	"1.5x":     "1.5x",
+	"1.25x":    "1.25x",
+	"1.75x":    "1.75x",
+	"2x":       "2x",
+	"3x":       "3x",
+	"4x":       "4x",
+	"-0.5x":    "-0.5x",
+	"-1x":      "-1x",
+	"-1.25x":   "-1.25x",
+	"-1.5x":    "-1.5x",
+	"-2x":      "-2x",
+	"-3x":      "-3x",
+	"false":    "1x",
+	"no":       "1x",
+	"variable": "variable",
+	"other":    "other",
+}
+
 func parseLeveraged(s string) string {
 	s = strings.TrimSpace(strings.ToLower(s))
-	if s == "false" || s == "" {
-		return "1x"
+	if s, ok := acceptableLeverages[s]; !ok {
+		panic(fmt.Sprintf("found invalid leverage: %s", s))
 	}
 	return s
 }
