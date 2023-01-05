@@ -33,44 +33,65 @@
         <div class="content-body">
             <div class="main">
                 <div class="container-fluid">
-                    <h3>
-                        Summary for <b>{{ .Ticker }}</b>
-                    </h3>
                     <div class="row">
                         <div class="col-lg-3">
-                            <div class="card gradient-1">
+                            <div class="transparent-card card-widget">
                                 <div class="card-body">
-                                    <h3 class="card-title text-white">ETFs containing {{ .Ticker }}</h3>
-                                    <div class="d-inline-block">
-                                        <h2 class="text-white"> {{ .TotalETFsCount }} </h2>
-                                        <p class="text-white mb-0">From {{ .TotalProvidersCount }} providers</p>
-                                    </div>
-                                    <span class="float-right display-5 opacity-5"><i
-                                                class="fa fa-bar-chart"></i></span>
+                                    <h5 class="text-muted">You are viewing <span class="text-success">stock</span> summary for</h5>
+                                    <h2 class="mt-4"> {{ .Description }} ({{ .Ticker }})</h2>
+                                    <span>As of {{ renderDate .LatestDate }}</span>
                                 </div>
-                            </div>
-                        </div>
-                        {{ with .MappedHoldings }}
-                            {{ range $leverage, $overlaps := .}}
-                                <div class="col-lg-3" id="test-row-{{ $leverage }}">
-                                    <div class="card gradient-2">
-                                        <div class="card-body">
-                                            <h3 class="card-title text-white">Top Exposure ({{ $leverage }}
-                                                Leverage)</h3>
-                                            <div class="d-inline-block">
-                                                <h2 class="text-white"> {{ (index $overlaps 0).LETFAccountTicker }}
-                                                    -
-                                                    {{ renderPercentage (index $overlaps 0).PercentContained }}% exposure</h2>
-                                                <p class="text-white mb-0"> {{ len $overlaps }} other
-                                                    matches</p>
+                                <div class="card-footer border-0 bg-transparent">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="card gradient-2-shadow">
+                                                <div class="stat-widget-one">
+                                                    <div class="stat-content">
+                                                        <div class="stat-text">Previous Close</div>
+                                                        <div class="stat-digit gradient-price-text"><i class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span class="float-right display-5 opacity-5"><i
-                                                        class="fa">{{ $leverage }}</i></span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="card gradient-1">
+                                                <div class="stat-widget-one">
+                                                    <div class="stat-content">
+                                                        <div class="stat-text">Contained in</div>
+                                                        <div class="stat-digit mb-1">{{ .TotalETFsCount }} ETFs</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="row">
+                            {{ with .MappedHoldings }}
+                                {{ range $leverage, $overlaps := .}}
+                                    <div class="col-lg-4" id="test-row-{{ $leverage }}">
+                                        <div class="card gradient-2">
+                                            <div class="card-body">
+                                                <h3 class="card-title text-white">Top Exposure ({{ $leverage }}
+                                                    Leverage)</h3>
+                                                <div class="d-inline-block">
+                                                    <h2 class="text-white"> {{ (index $overlaps 0).LETFAccountTicker }}
+                                                        -
+                                                        {{ renderPercentage (index $overlaps 0).PercentContained }}% exposure</h2>
+                                                    <p class="text-white mb-0"> {{ len $overlaps }} other
+                                                        matches</p>
+                                                </div>
+                                                <span class="float-right display-5 opacity-5"><i
+                                                            class="fa">{{ $leverage }}</i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{ end }}
                             {{ end }}
-                        {{ end }}
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-3">

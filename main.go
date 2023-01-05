@@ -7,6 +7,7 @@ import (
 	"stocks/database"
 	"stocks/database/etfdb"
 	"stocks/database/insights"
+	"stocks/external/stocks/alphavantage"
 	"stocks/insights/overlap"
 	"stocks/models"
 	"stocks/orchestrate"
@@ -20,6 +21,7 @@ func main() {
 	metadataFileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "metadata")
 	autoCompleteMetadataFileAddr := fmt.Sprintf("%s/%s.json", insightsConfig.RootDirectory, "autocomplete_metadata")
 	generators, logger := logicProviders(config, insightsConfig)
+	alphavantageClient := alphavantage.New(config.Secrets.AlphaVantage)
 	if config.Secrets.Uploads.ShouldUploadInsightsOutputToGCP {
 		setup(ctx, true, setupRequest{
 			metadataFileDestination:     metadataFileAddr,
@@ -33,7 +35,7 @@ func main() {
 		})
 	} else {
 		// TODO: Hardcoded 0 index lookup on generators[0] in the line below
-		serve(config, ctx, insightsConfig, generators[0], logger, websitePaths, metadataFileAddr)
+		serve(config, ctx, insightsConfig, generators[0], logger, alphavantageClient, websitePaths, metadataFileAddr)
 	}
 }
 

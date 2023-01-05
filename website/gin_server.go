@@ -38,6 +38,7 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		"renderPercentage":        renderPercentage,
 		"renderLargeNumbers":      renderLargeNumbers,
 		"renderStockTickersCount": renderStockTickersCount,
+		"renderDate":              renderDate,
 	})
 	router.LoadHTMLGlob(s.metadata.TemplateCustomMetadata.WebsitePaths.TemplatesRootDir + "/**/*")
 

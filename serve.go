@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"stocks/database/insights"
+	"stocks/external/stocks/alphavantage"
 	"stocks/insights/overlap"
 	"stocks/orchestrate"
 	"stocks/utils"
@@ -19,6 +20,7 @@ func serve(
 	insightsConfig insights.Config,
 	generator overlap.Generator,
 	logger insights.Logger,
+	client alphavantage.Client,
 	websitePaths website.Paths,
 	fileAddr string,
 ) {
@@ -33,7 +35,7 @@ func serve(
 	// TODO: Improve on the hack below
 	metadata.TemplateCustomMetadata.WebsitePaths = websitePaths
 
-	beginServing(ctx, logger, generator, metadata, testDuration, website.Config{
+	beginServing(ctx, logger, generator, metadata, testDuration, client, website.Config{
 		InsightsConfig: insightsConfig,
 	})
 }
@@ -44,11 +46,13 @@ func beginServing(
 	generator overlap.Generator,
 	metadata website.Metadata,
 	testDuration time.Duration,
+	client alphavantage.Client,
 	websiteConfig website.Config,
 ) {
 	server := website.New(websiteConfig, website.Dependencies{
-		Logger:    logger,
-		Generator: generator,
+		Logger:       logger,
+		Generator:    generator,
+		AlphaVantage: client,
 	}, metadata)
 	fmt.Println("started serving!!")
 	utils.PanicErr(server.StartServing(ctx, testDuration))
