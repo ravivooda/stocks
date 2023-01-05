@@ -59,7 +59,7 @@ func (d *client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF
 			Price:             utils.ParseInt(d[5]),
 			MarketValue:       utils.ParseInt(d[6]),
 			PercentContained:  percent,
-			Provider:          "Direxion",
+			Provider:          models.Direxion,
 		})
 	}
 
