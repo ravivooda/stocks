@@ -38,6 +38,7 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		TotalProvidersCount    int
 		LatestData             alphavantage.DailyData
 		LatestDate             string
+		Top10Percentage        float64
 	}{
 		AccountTicker:          models.LETFAccountTicker(etf),
 		Holdings:               etfHoldings,
@@ -48,8 +49,17 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		TotalProvidersCount:    len(s.metadata.ProvidersMap),
 		LatestData:             latestData,
 		LatestDate:             latestDate,
+		Top10Percentage:        s.top10HoldingsPercentage(10, etfHoldings),
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
+}
+
+func (s *server) top10HoldingsPercentage(max int, etfHoldings []models.LETFHolding) float64 {
+	top10HoldingsPercentage := 0.0
+	for i := 0; i < max; i++ {
+		top10HoldingsPercentage += etfHoldings[i].PercentContained
+	}
+	return utils.RoundedPercentage(top10HoldingsPercentage)
 }
 
 func (s *server) fetchETF(c *gin.Context) string {
