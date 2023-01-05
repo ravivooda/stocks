@@ -28,6 +28,7 @@ type Metadata struct {
 	StocksMap              map[models.StockTicker]models.StockMetadata
 	ProvidersMap           map[models.Provider]models.ProviderMetadata
 	TemplateCustomMetadata TemplateCustomMetadata
+	GeneratedInsightsCount int
 }
 
 type AutoCompleteMetadata struct {

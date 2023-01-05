@@ -22,7 +22,7 @@ func (s *server) renderFindOverlapsInputHTML(c *gin.Context) {
 		TotalProvidersCount:    len(s.metadata.ProvidersMap),
 		TotalStocksCount:       len(s.metadata.StocksMap),
 		TotalETFsCount:         len(s.metadata.AccountMap),
-		TotalOverlaps:          600000, //TODO: Hardcoded the figure here by running the math locally. Need to fix this
+		TotalOverlaps:          s.metadata.GeneratedInsightsCount,
 	})
 }
 

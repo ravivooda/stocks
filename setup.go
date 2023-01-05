@@ -63,9 +63,9 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 	holdingsWithStockTickerMap := utils.MapLETFHoldingsWithStockTicker(totalHoldings)
 	holdingsWithAccountTickerMap := utils.MapLETFHoldingsWithAccountTicker(totalHoldings)
 	utils.PanicErr(err)
-
+	generatedInsights := 600000
 	if shouldOrchestrate {
-		orchestrate.Orchestrate(context, orchestrate.Request{
+		generatedInsights = orchestrate.Orchestrate(context, orchestrate.Request{
 			Config:            request.config,
 			Parsers:           alertParsers,
 			Notifier:          notifier,
@@ -75,7 +75,7 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
 	}
 
-	metadata, autoCompleteMetadata := createMetadata(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap, 10, 10)
+	metadata, autoCompleteMetadata := createMetadata(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap, 10, 10, generatedInsights)
 	// Write metadata
 	b, err := json.Marshal(metadata)
 	utils.PanicErr(err)
@@ -92,6 +92,7 @@ func createMetadata(
 	etfsMap map[models.LETFAccountTicker]models.ETF,
 	topStocksCount int,
 	topETFsCount int,
+	generatedInsights int,
 ) (website.Metadata, website.AutoCompleteMetadata) {
 	stocksMap, providersMap, accountMap := createMaps(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap)
 
@@ -122,6 +123,7 @@ func createMetadata(
 				TopStocks: topStocks,
 			},
 		},
+		GeneratedInsightsCount: generatedInsights,
 	}
 	return metadata, website.AutoCompleteMetadata{
 		StocksMap:  utils.MapToArrayForStockTickers(stocksMap),

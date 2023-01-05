@@ -96,12 +96,7 @@ func GetHoldings(ctx context.Context, holdingsRequest ClientHoldingsRequest) ([]
 	return totalHoldings, nil
 }
 
-func Orchestrate(
-	ctx context.Context,
-	request Request,
-	holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding,
-	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
-) {
+func Orchestrate(ctx context.Context, request Request, holdingsWithStockTickerMap map[models.StockTicker][]models.LETFHolding, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) int {
 	gatheredAlerts, err := gatherAlerts(ctx, request.Parsers, holdingsWithStockTickerMap)
 	utils.PanicErr(err)
 	fmt.Printf("Found alerts: %d\n", len(gatheredAlerts))
@@ -114,7 +109,7 @@ func Orchestrate(
 	logHoldings(ctx, request.InsightsLogger, holdingsWithAccountTickerMap, request.EtfsMaps)
 	logStocks(ctx, request, holdingsWithStockTickerMap, holdingsWithAccountTickerMap, request.EtfsMaps)
 
-	generateInsights(ctx, request, holdingsWithAccountTickerMap)
+	return generateInsights(ctx, request, holdingsWithAccountTickerMap)
 }
 
 func logHoldings(
@@ -130,7 +125,7 @@ func logHoldings(
 	}
 }
 
-func generateInsights(_ context.Context, request Request, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) {
+func generateInsights(_ context.Context, request Request, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) int {
 	var totalGatheredInsights = 0
 
 	//
@@ -180,6 +175,7 @@ func generateInsights(_ context.Context, request Request, holdingsWithAccountTic
 		})
 	}
 	fmt.Printf("Total insights count: %d\n", totalGatheredInsights)
+	return totalGatheredInsights
 }
 
 func gatherAlerts(
