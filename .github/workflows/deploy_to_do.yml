@@ -32,6 +32,8 @@ jobs:
       run: |
         echo "ms_api:" >> secrets.yaml
         echo "  key: ${{secrets.MS_API_KEY_SECRET}}" >> secrets.yaml
+        echo "alpha_vantage:" >> secrets.yaml
+        echo "  key: ${{secrets.ALPHA_VANTAGE_KEY_SECRET}}" >> secrets.yaml
         
         cp secrets.yaml secrets_production.yaml
         

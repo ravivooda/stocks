@@ -31,22 +31,39 @@
         <div class="content-body">
             <div class="main">
                 <div class="container-fluid">
-                    <h3>
-                        Summary for {{ .AccountTicker }}
-                    </h3>
                     <section id="holdings-content">
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="row">
-
                                     <div class="col-lg-6">
-                                        <div class="card gradient-1">
+                                        <div class="transparent-card card-widget">
                                             <div class="card-body">
-                                                <h3 class="card-title text-white">{{ .AccountTicker }}</h3>
-                                                <div class="d-inline-block">
-                                                    <h2 class="text-white"> {{ (index $.Holdings 0).LETFDescription }}</h2>
-                                                    <p class="text-white mb-0"> Provider:
-                                                        <b>{{ (index $.Holdings 0).Provider }}</b></p>
+                                                <h5 class="text-muted">You are viewing <span class="gradient-2-text">ETF</span> summary for</h5>
+                                                <h2 class="mt-4"> {{ (index $.Holdings 0).LETFDescription }} ({{ .AccountTicker }})</h2>
+                                                <span>As of {{ renderDate .LatestDate }}</span>
+                                            </div>
+                                            <div class="card-footer border-0 bg-transparent">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="card gradient-2-shadow">
+                                                            <div class="stat-widget-one">
+                                                                <div class="stat-content">
+                                                                    <div class="stat-text">Previous Close</div>
+                                                                    <div class="stat-digit gradient-price-text"><i class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="card gradient-2-shadow">
+                                                            <div class="stat-widget-one">
+                                                                <div class="stat-content">
+                                                                    <div class="stat-text">Provider</div>
+                                                                    <div class="stat-digit gradient-3-text">{{ (index $.Holdings 0).Provider }}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -151,7 +168,7 @@
                         </div>
                         <!-- /# column -->
                     </section>
-                    <h2>Most Similar other ETFs</h2>
+                    <h2>Most Similar ETFs</h2>
                     <section id="main-content">
                         {{ with .Overlaps }}
                             {{ range $leverage, $overlaps := . }}
@@ -167,7 +184,7 @@
                                                            aria-describedby="row-select_info">
                                                         <thead>
                                                         <tr>
-                                                            <th>ETF Provider</th>
+                                                            <th class="d-none d-lg-block">ETF Provider</th>
                                                             <th>ETF Name</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Percentage Overlap Today</th>
@@ -177,7 +194,7 @@
                                                         {{ with $overlaps }}
                                                             {{ range .}}
                                                                 <tr>
-                                                                    <td>
+                                                                    <td class="d-none d-lg-block">
                                                                         {{ range .LETFHoldees }}
                                                                             {{ (index $.AccountsMap .).Provider }}
                                                                         {{ end }}
@@ -208,7 +225,7 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <th>ETF Provider</th>
+                                                            <th class="d-none d-lg-block">ETF Provider</th>
                                                             <th>ETF Name</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Percentage Overlap Today</th>

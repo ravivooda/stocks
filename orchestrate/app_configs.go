@@ -4,10 +4,11 @@ import (
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"stocks/alerts/movers/morning_star"
+	"stocks/external/securities/invesco"
+	"stocks/external/securities/masterdatareports"
+	"stocks/external/securities/proshares"
+	"stocks/external/stocks/alphavantage"
 	"stocks/insights/overlap"
-	"stocks/securities/invesco"
-	"stocks/securities/masterdatareports"
-	"stocks/securities/proshares"
 	"stocks/utils"
 )
 
@@ -15,6 +16,7 @@ type Secrets struct {
 	MSAPI struct {
 		Key string
 	} `mapstructure:"ms_api"`
+	AlphaVantage  alphavantage.Config `mapstructure:"alpha_vantage"`
 	Notifications struct {
 		ShouldSendEmails bool `mapstructure:"should_send_email"`
 	} `mapstructure:"notifications"`

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
+	"stocks/external/securities"
 	"stocks/models"
-	"stocks/securities"
 	"stocks/utils"
 	"strings"
 )

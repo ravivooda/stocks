@@ -6,6 +6,7 @@ import (
 	"golang.org/x/text/message"
 	"stocks/models"
 	"stocks/utils"
+	"time"
 )
 
 const stockParamKey = "stock"
@@ -68,4 +69,9 @@ func renderStockTickersCount(input []models.StockTicker) string {
 		return fmt.Sprintf("%d stocks", len(input))
 	}
 	return "1 stock"
+}
+
+func renderDate(input string) string {
+	date, _ := time.Parse("2006-01-02", input) // TODO: Silently ignoring error when parsing date
+	return date.Format("Mon January 2, 2006")
 }

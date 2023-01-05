@@ -3,6 +3,7 @@ package website
 import (
 	"context"
 	"stocks/database/insights"
+	"stocks/external/stocks/alphavantage"
 	"stocks/insights/overlap"
 	"stocks/models"
 	"time"
@@ -13,8 +14,9 @@ type Server interface {
 }
 
 type Dependencies struct {
-	Logger    insights.Logger
-	Generator overlap.Generator
+	Logger       insights.Logger
+	Generator    overlap.Generator
+	AlphaVantage alphavantage.Client
 }
 
 type Config struct {

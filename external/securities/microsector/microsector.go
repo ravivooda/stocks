@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"stocks/external/securities"
 	"stocks/models"
-	"stocks/securities"
 	"stocks/utils"
 	"strconv"
 )
@@ -17,7 +17,7 @@ type client struct {
 }
 
 func (c client) GetHoldings(_ context.Context, seed models.Seed, etf models.ETF) ([]models.LETFHolding, error) {
-	file, err := os.Open(fmt.Sprintf("securities/microsector/holdings/%s_Holdings.csv", seed.Ticker))
+	file, err := os.Open(fmt.Sprintf("external/securities/microsector/holdings/%s_Holdings.csv", seed.Ticker))
 	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)
