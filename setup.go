@@ -39,9 +39,9 @@ type setupRequest struct {
 
 func setup(context context.Context, shouldOrchestrate bool, request setupRequest) {
 	defer utils.Elapsed("setup")()
-	microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier, invescoClient := createSecurityClients(request.config)
-
 	etfsMap := utils.MappedLETFS(request.etfs)
+	microSectorClient, direxionClient, proSharesClient, masterdatareportsClient, alertParsers, notifier, invescoClient := createSecurityClients(request.config, etfsMap)
+
 	clientHoldingsRequest := orchestrate.ClientHoldingsRequest{
 		Config: request.config,
 		ETFs:   request.etfs,
@@ -212,7 +212,7 @@ func createMaps(
 	return stocksMap, providersMap, accountMap
 }
 
-func createSecurityClients(config orchestrate.Config) (
+func createSecurityClients(config orchestrate.Config, etfsMap map[models.LETFAccountTicker]models.ETF) (
 	microsectorClient securities.Client,
 	direxionClient securities.Client,
 	prosharesClient securities.SeedProvider,
@@ -227,7 +227,7 @@ func createSecurityClients(config orchestrate.Config) (
 	utils.PanicErr(err)
 	proSharesClient, err := proshares.New(config.Securities.ProShares)
 	utils.PanicErr(err)
-	masterdatareportsClient, err := masterdatareports.New(config.Securities.MasterDataReports)
+	masterdatareportsClient, err := masterdatareports.New(config.Securities.MasterDataReports, etfsMap)
 	utils.PanicErr(err)
 	fmt.Printf("Loaded master data reports client, found %d number of etfs data\n", masterdatareportsClient.Count())
 

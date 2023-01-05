@@ -74,7 +74,7 @@ var (
 	}
 )
 
-func New(config Config) (Client, error) {
+func New(config Config, etfsMap map[models.LETFAccountTicker]models.ETF) (Client, error) {
 	records := loadData(config)
 
 	if len(records) == 0 {
@@ -105,6 +105,9 @@ func New(config Config) (Client, error) {
 			continue
 		}
 		var holding = parse(record)
+		if etf, ok := etfsMap[holding.LETFAccountTicker]; ok {
+			holding.LETFDescription = etf.ETFName
+		}
 		holdings := parsedHoldings[holding.LETFAccountTicker]
 		if holdings == nil {
 			holdings = []models.LETFHolding{}
