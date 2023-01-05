@@ -14,8 +14,32 @@
                 }, 1000);
                 return false;
             });
+            waitForElm('#row-select-leverage-{{ $leverage}}_length').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
+            waitForElm('#row-select-leverage-{{ $leverage}}_filter').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
+            waitForElm('#row-select-leverage-{{ $leverage}}_info').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
             {{ end }}
             {{ end }}
+            waitForElm('#row-select-holdings_length').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
+            waitForElm('#row-select-holdings_filter').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
+            waitForElm('#row-select-holdings_info').then((elm) => {
+                elm.classList.add("d-none")
+                elm.classList.add("d-lg-block")
+            })
         });
     </script>
     {{ template "includes" }}
@@ -38,8 +62,10 @@
                                     <div class="col-lg-12">
                                         <div class="transparent-card card-widget">
                                             <div class="card-body">
-                                                <h5 class="text-muted">You are viewing <span class="gradient-2-text">ETF</span> summary for</h5>
-                                                <h2 class="mt-4"> {{ (index $.Holdings 0).LETFDescription }} ({{ .AccountTicker }})</h2>
+                                                <h5 class="text-muted">You are viewing <span
+                                                            class="gradient-2-text">ETF</span> summary for</h5>
+                                                <h2 class="mt-4"> {{ (index $.Holdings 0).LETFDescription }}
+                                                    ({{ .AccountTicker }})</h2>
                                                 <span>As of {{ renderDate .LatestDate }}</span>
                                             </div>
                                             <div class="card-footer border-0 bg-transparent">
@@ -49,7 +75,9 @@
                                                             <div class="stat-widget-one">
                                                                 <div class="stat-content">
                                                                     <div class="stat-text">Previous Close</div>
-                                                                    <div class="stat-digit gradient-price-text"><i class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}</div>
+                                                                    <div class="stat-digit gradient-price-text"><i
+                                                                                class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -67,10 +95,13 @@
                                                     <div class="col-xl-6">
                                                         <div class="card gradient-1">
                                                             <div class="card-body">
-                                                                <h3 class="card-title text-white">Number of Holdings</h3>
+                                                                <h3 class="card-title text-white">Number of
+                                                                    Holdings</h3>
                                                                 <div class="d-inline-block">
                                                                     <h2 class="text-white"> {{len .Holdings }}</h2>
-                                                                    <p class="text-white mb-0">Top 10 holdings: <span class="font-weight-bold">{{ .Top10Percentage }}</span></p>
+                                                                    <p class="text-white mb-0">Top 10 holdings: <span
+                                                                                class="font-weight-bold">{{ .Top10Percentage }}</span>
+                                                                    </p>
                                                                 </div>
                                                                 <span class="float-right display-5 opacity-5"><i
                                                                             class="fa fa-pie-chart"></i></span>
@@ -80,10 +111,12 @@
                                                     <div class="col-xl-6">
                                                         <div class="card gradient-1">
                                                             <div class="card-body">
-                                                                <h3 class="card-title text-white">Total Overlapping ETFs</h3>
+                                                                <h3 class="card-title text-white">Total Overlapping
+                                                                    ETFs</h3>
                                                                 <div class="d-inline-block">
                                                                     <h2 class="text-white"> {{ .OverlapsTotalCount }}</h2>
-                                                                    <p class="text-white mb-0">From {{ .TotalProvidersCount }} providers</p>
+                                                                    <p class="text-white mb-0">
+                                                                        From {{ .TotalProvidersCount }} providers</p>
                                                                 </div>
                                                                 <span class="float-right display-5 opacity-5"><i
                                                                             class="fa fa-anchor"></i></span>
@@ -106,7 +139,8 @@
                                                         <div class="d-inline-block">
                                                             <h2 class="text-white"> {{ renderETFsArray (index $overlaps 0).LETFHoldees }}
                                                                 -
-                                                                {{ (index $overlaps 0).OverlapPercentage }}% similar</h2>
+                                                                {{ (index $overlaps 0).OverlapPercentage }}%
+                                                                similar</h2>
                                                             <p class="text-white mb-0"> {{ len $overlaps }} other
                                                                 matches</p>
                                                         </div>
@@ -177,7 +211,8 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <h3 class="card-title">Leverage: <b>{{ $leverage }}</b></h3>
-                                                <p class="card-subtitle text-muted"> As of {{ renderDate $.LatestDate }} </p>
+                                                <p class="card-subtitle text-muted"> As
+                                                    of {{ renderDate $.LatestDate }} </p>
                                                 <div class="table-responsive">
                                                     <table id="row-select-leverage-{{ $leverage }}"
                                                            class="table table-striped table-bordered similar-etfs-ordering"
@@ -216,8 +251,17 @@
                                                                     </td>
                                                                     <td>
                                                                         <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">
-                                                                            {{ renderPercentage .OverlapPercentage }}
-                                                                            <span>&#8594;</span></a>
+                                                                            {{ renderPercentage .OverlapPercentage }}%
+                                                                            <span>&#8594;</span>
+                                                                            <div class="progress mb-3"
+                                                                                 style="height: 7px">
+                                                                                <div class="progress-bar bg-primary"
+                                                                                     style="width: {{ renderPercentage .OverlapPercentage}}%;"
+                                                                                     role="progressbar"><span
+                                                                                            class="sr-only">{{ renderPercentage .OverlapPercentage}}%</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>
                                                                     </td>
                                                                 </tr>
 
