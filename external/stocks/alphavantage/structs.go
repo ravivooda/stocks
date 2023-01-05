@@ -23,5 +23,11 @@ type Response struct {
 }
 
 func (r Response) LatestDate() string {
-	return r.MetaData.LastRefreshed
+	retDate := ""
+	for date := range r.TimeSeriesDaily {
+		if date > retDate {
+			retDate = date
+		}
+	}
+	return retDate
 }
