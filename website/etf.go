@@ -3,6 +3,7 @@ package website
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"stocks/external/stocks/alphavantage"
 	"stocks/models"
 	"stocks/utils"
 	"strings"
@@ -24,6 +25,9 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 	for _, analyses := range overlaps {
 		totalOverlapAnalyses += len(analyses)
 	}
+
+	latestDate, latestData := s.fetchStockTradingData(etf)
+
 	data := struct {
 		AccountTicker          models.LETFAccountTicker
 		Holdings               []models.LETFHolding
@@ -32,6 +36,8 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		OverlapsTotalCount     int
 		TemplateCustomMetadata TemplateCustomMetadata
 		TotalProvidersCount    int
+		LatestData             alphavantage.DailyData
+		LatestDate             string
 	}{
 		AccountTicker:          models.LETFAccountTicker(etf),
 		Holdings:               etfHoldings,
@@ -40,6 +46,8 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		OverlapsTotalCount:     totalOverlapAnalyses,
 		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
 		TotalProvidersCount:    len(s.metadata.ProvidersMap),
+		LatestData:             latestData,
+		LatestDate:             latestDate,
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }

@@ -13,7 +13,6 @@ import (
 
 func (s *server) renderStock(c *gin.Context) {
 	stock := s.fetchStock(c)
-	stockTicker := utils.FetchStockTicker(stock)
 	stockWrapper, err := s.dependencies.Logger.FetchStock(stock)
 	utils.PanicErr(err)
 
@@ -26,7 +25,7 @@ func (s *server) renderStock(c *gin.Context) {
 		mappedHoldings[leverage] = letfHoldings
 	}
 
-	latestDate, latestData := s.fetchStockTradingData(stockTicker)
+	latestDate, latestData := s.fetchStockTradingData(stock)
 
 	data := struct {
 		Ticker                 string
@@ -52,11 +51,11 @@ func (s *server) renderStock(c *gin.Context) {
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }
 
-func (s *server) fetchStockTradingData(stockTicker models.StockTicker) (string, alphavantage.DailyData) {
+func (s *server) fetchStockTradingData(ticker string) (string, alphavantage.DailyData) {
 	// See if we can fetch data from alpha vantage about the stock
-	tradingData, err := s.dependencies.AlphaVantage.FetchStockTradingData(stockTicker)
+	tradingData, err := s.dependencies.AlphaVantage.FetchStockTradingData(ticker)
 	if err != nil {
-		fmt.Printf("Error when fetching trading data for %s, error is: %s\n", stockTicker, err)
+		fmt.Printf("Error when fetching trading data for %s, error is: %s\n", ticker, err)
 	} else {
 		latestDate := tradingData.LatestDate()
 		if k, ok := tradingData.TimeSeriesDaily[latestDate]; ok {

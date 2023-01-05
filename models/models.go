@@ -17,7 +17,7 @@ const (
 	Direxion          Provider = "direxion"
 	MicroSector                = "microsector"
 	ProShares                  = "proshares"
-	Invesco                    = "invesco"
+	Invesco                    = "Invesco"
 	MasterDataReports          = "masterdatareports"
 )
 

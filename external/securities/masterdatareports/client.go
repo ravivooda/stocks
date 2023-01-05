@@ -183,7 +183,7 @@ func loadData(config Config) [][]string {
 }
 
 func loadLocalCacheFile() (records [][]string, err error) {
-	const hardcodedCSVLocation = "securities/masterdatareports/Backup/ETFData42.csv"
+	const hardcodedCSVLocation = "external/securities/masterdatareports/Backup/ETFData42.csv"
 	records, err = utils.RetryFetching(func() ([][]string, error) {
 		return utils.ReadCSVFromLocalFile(hardcodedCSVLocation)
 	}, 3, 0)
@@ -246,6 +246,6 @@ func parse(record []string) models.LETFHolding {
 		MarketValue:      int64(marketValue),
 		NotionalValue:    notionalValue,
 		PercentContained: percentContained * 100.00, // The CSV reports weights summing up to 1
-		Provider:         fmt.Sprintf("Master Data Reports: %s", record[0]),
+		Provider:         record[0],
 	}
 }

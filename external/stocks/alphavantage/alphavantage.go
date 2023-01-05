@@ -4,17 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"stocks/models"
 )
 
 const formattedURL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=%s&outputsize=compact&apikey=%s"
 
 type Client struct {
-	cache  map[models.StockTicker]Response
+	cache  map[string]Response
 	config Config
 }
 
-func (c Client) FetchStockTradingData(ticker models.StockTicker) (Response, error) {
+func (c Client) FetchStockTradingData(ticker string) (Response, error) {
 	if resp, ok := c.cache[ticker]; ok {
 		return resp, nil
 	}
@@ -27,7 +26,7 @@ func (c Client) FetchStockTradingData(ticker models.StockTicker) (Response, erro
 	return c.cache[ticker], nil
 }
 
-func (c Client) loadFromRemote(ticker models.StockTicker) (Response, error) {
+func (c Client) loadFromRemote(ticker string) (Response, error) {
 	url := fmt.Sprintf(formattedURL, ticker, c.config.APIKey)
 	//fmt.Printf("[Alpha Vantage] Making request: %s\n", url)
 	req, err := http.NewRequest("GET", url, nil)
@@ -56,7 +55,7 @@ type Config struct {
 
 func New(config Config) Client {
 	return Client{
-		cache:  map[models.StockTicker]Response{},
+		cache:  map[string]Response{},
 		config: config,
 	}
 }
