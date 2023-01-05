@@ -8,6 +8,7 @@ seeds:
         - RUSL # Negative Tickers from here on
         - CLDS
         - LABD
+        - YANG
       negative_tickers:
         - WEBS
         - FAZ
@@ -18,7 +19,6 @@ seeds:
         - DUST
         - ERY
         - EDZ
-        - YANG
         - TZA
         - SPXS
         - SOXS
