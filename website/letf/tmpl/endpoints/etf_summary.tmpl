@@ -167,7 +167,7 @@
                                                            aria-describedby="row-select_info">
                                                         <thead>
                                                         <tr>
-                                                            <th>ETF Provider</th>
+                                                            <th class="d-none d-lg-block">ETF Provider</th>
                                                             <th>ETF Name</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Percentage Overlap Today</th>
@@ -177,7 +177,7 @@
                                                         {{ with $overlaps }}
                                                             {{ range .}}
                                                                 <tr>
-                                                                    <td>
+                                                                    <td class="d-none d-lg-block">
                                                                         {{ range .LETFHoldees }}
                                                                             {{ (index $.AccountsMap .).Provider }}
                                                                         {{ end }}
@@ -208,7 +208,7 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <th>ETF Provider</th>
+                                                            <th class="d-none d-lg-block">ETF Provider</th>
                                                             <th>ETF Name</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Percentage Overlap Today</th>

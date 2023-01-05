@@ -161,7 +161,7 @@
                                                            aria-describedby="row-select_info">
                                                         <thead>
                                                         <tr>
-                                                            <th>Provider</th>
+                                                            <th class="d-none d-lg-block">Provider</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Description</th>
                                                             <th>{{ $.Ticker }} Percentage Exposure</th>
@@ -171,7 +171,7 @@
                                                         {{ with $overlaps }}
                                                             {{ range . }}
                                                                 <tr>
-                                                                    <td>
+                                                                    <td class="d-none d-lg-block">
                                                                         <span class="rounded_border">{{ .Provider }}</span>
                                                                     </td>
                                                                     <td>
@@ -189,7 +189,7 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <th>Provider</th>
+                                                            <th class="d-none d-lg-block">Provider</th>
                                                             <th>ETF Ticker</th>
                                                             <th>Description</th>
                                                             <th>{{ $.Ticker }} Percentage Exposure</th>
