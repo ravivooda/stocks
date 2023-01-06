@@ -9,26 +9,22 @@
                     <span class="toggle-icon"><i class="icon-menu"></i></span>
                 </div>
             </div>
-            <div class="header-left">
+            <div class="header-left w-auto">
                 <div class="input-group icons">
                     <script src="/static/js/autocomplete.js">
                     </script>
-{{/*                    <div class="input-group-prepend">*/}}
-{{/*                        <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>*/}}
-{{/*                    </div>*/}}
-                    <input type="search" class="form-control" placeholder="Search Ticker" aria-label="Search Ticker" id="search_input">
-                    <div class="drop-down animated flipInX d-md-none">
-                        <form action="#">
-                            <label for="search_input" hidden="hidden"></label>
-                            <input type="text" class="form-control" placeholder="Search" id="search_input">
-                        </form>
-                    </div>
+                    {{/*                    <div class="input-group-prepend">*/}}
+                    {{/*                        <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>*/}}
+                    {{/*                    </div>*/}}
+                    <input type="search" class="form-control border-dark" placeholder="Search for stocks and etfs" aria-label="Search Ticker"
+                           id="search_input">
                     <style>
                         @media (max-width: 767px) {
                             .header-left input[type="search"] {
                                 position: relative !important;
                                 top: unset !important;
                                 max-width: 150px;
+                                font-size: 16px;
                             }
                         }
 
@@ -41,8 +37,6 @@
                         .autocomplete-items {
                             position: absolute;
                             border: 1px solid #d4d4d4;
-                            border-bottom: none;
-                            border-top: none;
                             z-index: 99;
                             /*position the autocomplete items to be the same width as the container:*/
                             top: 100%;
@@ -51,14 +45,19 @@
                         }
 
                         .autocomplete-items div {
+                            background-color: white;
+                            overflow: hidden;
+                        }
+
+                        .autocomplete-items div div {
                             padding: 5px;
                             cursor: pointer;
-                            background-color: #fff;
-                            border-bottom: 1px solid #d4d4d4;
+                            background-color: transparent;
+                            /*border-bottom: 1px solid #d4d4d4;*/
                         }
 
                         /*when hovering an item:*/
-                        .autocomplete-items div:hover {
+                        .autocomplete-items div div:hover {
                             background-color: #e9e9e9;
                         }
 
@@ -73,7 +72,7 @@
                     </script>
                 </div>
             </div>
-            <div class="header-right">
+            <div class="header-right d-inline-block">
                 <ul class="clearfix">
                     <li class="icons dropdown">
                         <div class="btn-group">
