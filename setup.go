@@ -121,6 +121,11 @@ func createMetadata(
 			SideBarMetadata: website.SideBarMetadata{
 				TopETFs:   topETFs,
 				TopStocks: topStocks,
+				SocialNetworkMetadata: website.SocialNetworkMetadata{ //TODO: Should move this to configuration instead.
+					LinkedInURL: "https://tinyurl.com/tlhtli",
+					FacebookURL: "https://tinyurl.com/tlhtfb",
+					TwitterURL:  "https://tinyurl.com/tlhttw",
+				},
 			},
 		},
 		GeneratedInsightsCount: generatedInsights,

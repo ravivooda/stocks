@@ -9,9 +9,16 @@ type TemplateCustomMetadata struct {
 	WebsitePaths    Paths
 }
 
+type SocialNetworkMetadata struct {
+	LinkedInURL string
+	FacebookURL string
+	TwitterURL  string
+}
+
 type SideBarMetadata struct {
-	TopETFs   []models.LETFAccountTicker
-	TopStocks []models.StockTicker
+	TopETFs               []models.LETFAccountTicker
+	TopStocks             []models.StockTicker
+	SocialNetworkMetadata SocialNetworkMetadata
 }
 
 type HeaderMetadata struct {
