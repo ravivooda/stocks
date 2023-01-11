@@ -43,16 +43,20 @@
                                 </div>
                                 <div class="card-footer border-0 bg-transparent">
                                     <div class="row">
-                                        <div class="col">
-                                            <div class="card gradient-2-shadow">
-                                                <div class="stat-widget-one">
-                                                    <div class="stat-content">
-                                                        <div class="stat-text">Previous Close</div>
-                                                        <div class="stat-digit gradient-price-text"><i class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}</div>
+                                        {{ if .ShouldRenderAlphaVantage }}
+                                            <div class="col">
+                                                <div class="card gradient-2-shadow">
+                                                    <div class="stat-widget-one">
+                                                        <div class="stat-content">
+                                                            <div class="stat-text">Previous Close</div>
+                                                            <div class="stat-digit gradient-price-text">
+                                                                <i class="fa fa-usd"></i>{{ .LatestData.AdjustedClose }}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        {{ end }}
                                         <div class="col">
                                             <div class="card gradient-1">
                                                 <div class="stat-widget-one">
@@ -144,6 +148,58 @@
                                 </div>
                             </div>
                         </div>
+                        {{ if .ShouldRenderAlphaVantage }}
+                            <!-- Line Chart -->
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">{{ $.Ticker }} Stock Price</h4>
+                                        <canvas id="lineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                            <script type="application/javascript">
+                                //line chart
+                                let ctx = document.getElementById("lineChart");
+                                ctx.height = 200;
+
+                                let myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: [{{ range $i, $d := .LinearDailyData }}"{{$d.Date}}",{{ end }}],
+                                        datasets: [{
+                                            label: 'Stock Price',
+                                            data: [{{ range $i, $d := .LinearDailyData }}"{{$d.DailyPrice}}",{{ end }}],
+                                            borderColor: 'rgb(75, 192, 192)',
+                                            spanGaps: true,
+                                            fill: {
+                                                above: 'rgba(146,252,109,0.5)',
+                                                below: 'rgba(250,122,122,0.5)',
+                                                target: {value: {{ (index .LinearDailyData 0).DailyPrice }}}
+                                            }
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        tooltips: {
+                                            mode: 'index',
+                                            intersect: false,
+                                            position: 'nearest',
+                                        },
+                                        scales: {
+                                            xAxes: [{
+                                                ticks: {
+                                                    autoSkip: false,
+                                                    maxRotation: 90,
+                                                    minRotation: 90
+                                                }
+                                            }]
+                                        }
+                                    }
+                                });
+                            </script>
+                        {{ end }}
                     </div>
                     <h4 class="section-heading">ETFs with exposure to <b>{{ .Ticker }}</b></h4>
                     {{ with .MappedHoldings }}

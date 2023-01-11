@@ -1,5 +1,7 @@
 package alphavantage
 
+import "sort"
+
 type DailyData struct {
 	Open             string `json:"1. open"`
 	High             string `json:"2. high"`
@@ -30,4 +32,40 @@ func (r Response) LatestDate() string {
 		}
 	}
 	return retDate
+}
+
+type LinearTimeSeriesDaily struct {
+	Date       string
+	DailyPrice string
+}
+
+func (r Response) SplitByXDates(chunkSize int) (rets []LinearTimeSeriesDaily) {
+	items := r.sorted()
+	if len(items) <= chunkSize {
+		return items
+	}
+
+	lastDate := items[len(items)-1]
+
+	for chunkSize < len(items) {
+		rets, items = append(rets, items[0]), items[chunkSize:]
+	}
+
+	rets = append(rets, lastDate)
+	return
+}
+
+func (r Response) sorted() []LinearTimeSeriesDaily {
+	var rets []LinearTimeSeriesDaily
+	for date, data := range r.TimeSeriesDaily {
+		rets = append(rets, LinearTimeSeriesDaily{
+			Date:       date,
+			DailyPrice: data.AdjustedClose,
+		})
+	}
+
+	sort.Slice(rets, func(i, j int) bool {
+		return rets[i].Date < rets[j].Date
+	})
+	return rets
 }

@@ -26,30 +26,34 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		totalOverlapAnalyses += len(analyses)
 	}
 
-	latestDate, latestData := s.fetchStockTradingData(etf)
+	latestDate, latestData, linear10DaysData, err := s.fetchStockTradingData(etf, 10) // TODO: Hardcoded 10 days split data
 
 	data := struct {
-		AccountTicker          models.LETFAccountTicker
-		Holdings               []models.LETFHolding
-		Overlaps               map[string][]models.LETFOverlapAnalysis
-		AccountsMap            map[models.LETFAccountTicker]models.ETFMetadata
-		OverlapsTotalCount     int
-		TemplateCustomMetadata TemplateCustomMetadata
-		TotalProvidersCount    int
-		LatestData             alphavantage.DailyData
-		LatestDate             string
-		Top10Percentage        float64
+		AccountTicker            models.LETFAccountTicker
+		Holdings                 []models.LETFHolding
+		Overlaps                 map[string][]models.LETFOverlapAnalysis
+		AccountsMap              map[models.LETFAccountTicker]models.ETFMetadata
+		OverlapsTotalCount       int
+		TemplateCustomMetadata   TemplateCustomMetadata
+		TotalProvidersCount      int
+		ShouldRenderAlphaVantage bool
+		LatestData               alphavantage.DailyData
+		LatestDate               string
+		Top10Percentage          float64
+		LinearDailyData          []alphavantage.LinearTimeSeriesDaily
 	}{
-		AccountTicker:          models.LETFAccountTicker(etf),
-		Holdings:               etfHoldings,
-		Overlaps:               overlaps,
-		AccountsMap:            s.metadata.AccountMap,
-		OverlapsTotalCount:     totalOverlapAnalyses,
-		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
-		TotalProvidersCount:    len(s.metadata.ProvidersMap),
-		LatestData:             latestData,
-		LatestDate:             latestDate,
-		Top10Percentage:        s.top10HoldingsPercentage(10, etfHoldings),
+		AccountTicker:            models.LETFAccountTicker(etf),
+		Holdings:                 etfHoldings,
+		Overlaps:                 overlaps,
+		AccountsMap:              s.metadata.AccountMap,
+		OverlapsTotalCount:       totalOverlapAnalyses,
+		TemplateCustomMetadata:   s.metadata.TemplateCustomMetadata,
+		TotalProvidersCount:      len(s.metadata.ProvidersMap),
+		ShouldRenderAlphaVantage: err == nil,
+		LatestData:               latestData,
+		LatestDate:               latestDate,
+		Top10Percentage:          s.top10HoldingsPercentage(10, etfHoldings),
+		LinearDailyData:          linear10DaysData,
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }

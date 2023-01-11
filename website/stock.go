@@ -1,6 +1,7 @@
 package website
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -25,45 +26,54 @@ func (s *server) renderStock(c *gin.Context) {
 		mappedHoldings[leverage] = letfHoldings
 	}
 
-	latestDate, latestData := s.fetchStockTradingData(stock)
+	latestDate, latestData, linear5DaysData, err := s.fetchStockTradingData(stock, 5) // TODO: Hardcoded 10 days split data
 
 	data := struct {
-		Ticker                 string
-		Description            string
-		MappedHoldings         map[string][]models.LETFHolding
-		Combinations           []models.StockCombination
-		TemplateCustomMetadata TemplateCustomMetadata
-		TotalETFsCount         int
-		TotalProvidersCount    int
-		LatestData             alphavantage.DailyData
-		LatestDate             string
+		Ticker                   string
+		Description              string
+		MappedHoldings           map[string][]models.LETFHolding
+		Combinations             []models.StockCombination
+		TemplateCustomMetadata   TemplateCustomMetadata
+		TotalETFsCount           int
+		TotalProvidersCount      int
+		ShouldRenderAlphaVantage bool
+		LatestData               alphavantage.DailyData
+		LatestDate               string
+		LinearDailyData          []alphavantage.LinearTimeSeriesDaily
 	}{
-		Ticker:                 stock,
-		Description:            stockWrapper.Holdings[0].StockDescription, //TODO: Hardcoded stock description
-		MappedHoldings:         mappedHoldings,
-		TemplateCustomMetadata: s.metadata.TemplateCustomMetadata,
-		Combinations:           stockWrapper.Combinations,
-		TotalETFsCount:         len(stockWrapper.Holdings),
-		TotalProvidersCount:    len(s.metadata.ProvidersMap),
-		LatestData:             latestData,
-		LatestDate:             latestDate,
+		Ticker:                   stock,
+		Description:              stockWrapper.Holdings[0].StockDescription, //TODO: Hardcoded stock description
+		MappedHoldings:           mappedHoldings,
+		TemplateCustomMetadata:   s.metadata.TemplateCustomMetadata,
+		Combinations:             stockWrapper.Combinations,
+		TotalETFsCount:           len(stockWrapper.Holdings),
+		TotalProvidersCount:      len(s.metadata.ProvidersMap),
+		ShouldRenderAlphaVantage: err == nil,
+		LatestData:               latestData,
+		LatestDate:               latestDate,
+		LinearDailyData:          linear5DaysData,
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }
 
-func (s *server) fetchStockTradingData(ticker string) (string, alphavantage.DailyData) {
+func (s *server) fetchStockTradingData(ticker string, X int) (
+	string,
+	alphavantage.DailyData,
+	[]alphavantage.LinearTimeSeriesDaily,
+	error,
+) {
 	// See if we can fetch data from alpha vantage about the stock
 	tradingData, err := s.dependencies.AlphaVantage.FetchStockTradingData(ticker)
 	if err != nil {
 		fmt.Printf("Error when fetching trading data for %s, error is: %s\n", ticker, err)
-	} else {
-		latestDate := tradingData.LatestDate()
-		if k, ok := tradingData.TimeSeriesDaily[latestDate]; ok {
-			return latestDate, k
-		}
-		fmt.Printf("Hmm, did not find lastData for %s when combing through %+v\n", latestDate, tradingData)
+		return "", alphavantage.DailyData{}, nil, err
 	}
-	return "", alphavantage.DailyData{}
+
+	latestDate := tradingData.LatestDate()
+	if k, ok := tradingData.TimeSeriesDaily[latestDate]; ok {
+		return latestDate, k, tradingData.SplitByXDates(X), nil
+	}
+	return "", alphavantage.DailyData{}, nil, errors.New(fmt.Sprintf("Hmm, did not find lastData for %s when combing through %+v\n", latestDate, tradingData))
 }
 
 func (s *server) mappedHoldings(holdings []models.LETFHolding) map[string][]models.LETFHolding {
