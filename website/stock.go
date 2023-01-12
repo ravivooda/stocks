@@ -39,7 +39,7 @@ func (s *server) renderStock(c *gin.Context) {
 		ShouldRenderAlphaVantage bool
 		LatestData               alphavantage.DailyData
 		LatestDate               string
-		LinearDailyData          []alphavantage.LinearTimeSeriesDaily
+		ChartData                ChartData
 	}{
 		Ticker:                   stock,
 		Description:              stockWrapper.Holdings[0].StockDescription, //TODO: Hardcoded stock description
@@ -51,7 +51,10 @@ func (s *server) renderStock(c *gin.Context) {
 		ShouldRenderAlphaVantage: err == nil,
 		LatestData:               latestData,
 		LatestDate:               latestDate,
-		LinearDailyData:          linear5DaysData,
+		ChartData: ChartData{
+			Ticker:          stock,
+			LinearDailyData: linear5DaysData,
+		},
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)
 }

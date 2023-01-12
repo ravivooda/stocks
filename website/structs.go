@@ -1,6 +1,9 @@
 package website
 
-import "stocks/models"
+import (
+	"stocks/external/stocks/alphavantage"
+	"stocks/models"
+)
 
 type TemplateCustomMetadata struct {
 	SideBarMetadata SideBarMetadata
@@ -19,6 +22,11 @@ type SideBarMetadata struct {
 	TopETFs               []models.LETFAccountTicker
 	TopStocks             []models.StockTicker
 	SocialNetworkMetadata SocialNetworkMetadata
+}
+
+type ChartData struct {
+	Ticker          string
+	LinearDailyData []alphavantage.LinearTimeSeriesDaily
 }
 
 type HeaderMetadata struct {
