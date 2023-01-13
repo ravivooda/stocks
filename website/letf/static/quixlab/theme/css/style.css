@@ -11639,6 +11639,18 @@ table.dataTable thead .sorting::after {
 .timeline-badge.info {
   background-color: #4d7cff !important; }
 
+.gradient-price-text {
+  color: rgba(59, 182, 16, 0.8);
+}
+
+.gradient-profit-text {
+  color: rgba(32, 121, 0, 0.8);
+}
+
+.gradient-loss-text {
+  color: rgb(203, 30, 30);
+}
+
 .stat-widget-one {
   padding: 2rem;
   text-align: center; }

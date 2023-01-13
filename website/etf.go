@@ -26,7 +26,7 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		totalOverlapAnalyses += len(analyses)
 	}
 
-	latestDate, latestData, linear10DaysData, err := s.fetchStockTradingData(etf, 10) // TODO: Hardcoded 10 days split data
+	latestDate, latestData, linear5DaysData, err := s.fetchStockTradingData(etf, 5) // TODO: Hardcoded 5 days split data
 
 	data := struct {
 		AccountTicker            models.LETFAccountTicker
@@ -40,7 +40,7 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		LatestData               alphavantage.DailyData
 		LatestDate               string
 		Top10Percentage          float64
-		LinearDailyData          []alphavantage.LinearTimeSeriesDaily
+		ChartData                ChartData
 	}{
 		AccountTicker:            models.LETFAccountTicker(etf),
 		Holdings:                 etfHoldings,
@@ -53,7 +53,11 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		LatestData:               latestData,
 		LatestDate:               latestDate,
 		Top10Percentage:          s.top10HoldingsPercentage(10, etfHoldings),
-		LinearDailyData:          linear10DaysData,
+		ChartData: ChartData{
+			Ticker:                 etf,
+			LinearDailyData:        linear5DaysData,
+			TaxLossCalculationData: s.generateTaxLossCalculationData(linear5DaysData),
+		},
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)
 }

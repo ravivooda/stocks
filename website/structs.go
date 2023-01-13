@@ -24,9 +24,18 @@ type SideBarMetadata struct {
 	SocialNetworkMetadata SocialNetworkMetadata
 }
 
+type TaxLossCalculationData struct {
+	Begin          alphavantage.LinearTimeSeriesDaily
+	Today          alphavantage.LinearTimeSeriesDaily
+	IsHarvesteable bool
+	ChangePrice    string
+	Swappable      string
+}
+
 type ChartData struct {
-	Ticker          string
-	LinearDailyData []alphavantage.LinearTimeSeriesDaily
+	Ticker                 string
+	LinearDailyData        []alphavantage.LinearTimeSeriesDaily
+	TaxLossCalculationData TaxLossCalculationData
 }
 
 type HeaderMetadata struct {
