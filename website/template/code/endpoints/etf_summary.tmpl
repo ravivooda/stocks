@@ -192,8 +192,11 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <h3 class="card-title">Leverage: <b>{{ $leverage }}</b></h3>
-                                                <p class="card-subtitle text-muted"> As
-                                                    of {{ renderDate $.LatestDate }} </p>
+                                                <p class="card-subtitle text-muted" id="sub_{{$leverage}}">
+                                                    <script type="application/javascript">
+                                                        renderTextForKey("leverage_{{$leverage}}_description", "sub_{{$leverage}}");
+                                                    </script>
+                                                </p>
                                                 <div class="table-responsive">
                                                     <table id="row-select-leverage-{{ $leverage }}"
                                                            class="table table-striped table-bordered similar-etfs-ordering"
