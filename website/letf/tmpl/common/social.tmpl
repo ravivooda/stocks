@@ -1,0 +1,43 @@
+{{ define "social" }}
+    <script src="/static/js/upsell.js"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        Follow us to get unique insights for optimizing taxes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    You don't need to download an app to use us! Follow us to get insights to optimize your portfolio.
+                    No spam! We share about twice a day on the most popular stocks.
+                </div>
+                <div class="modal-footer">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col">
+                            <a class="btn btn-social-icon btn-twitter"
+                               href="{{.SideBarMetadata.SocialNetworkMetadata.TwitterURL}}"
+                               target="_blank">
+                                <span class="fa fa-twitter"></span> Follow @optimizetaxes
+                            </a>
+                            <a class="btn btn-facebook btn-social-icon"
+                               href="{{.SideBarMetadata.SocialNetworkMetadata.FacebookURL}}"
+                               target="_blank">
+                                <span class="fa fa-facebook-f"></span>
+                            </a>
+                            <a class="btn btn-linkedin btn-social-icon"
+                               href="{{.SideBarMetadata.SocialNetworkMetadata.LinkedInURL}}"
+                               target="_blank">
+                                <span class="fa fa-linkedin"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
