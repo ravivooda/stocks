@@ -1,51 +1,56 @@
 {{ define "linear_security_chart" }}
     <!-- Line Chart -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Portfolio Performance</h4>
-                <canvas id="lineChart"></canvas>
-            </div>
-            <div class="card-footer">
-                <div class="card-group">
-                    <div class="card bg-info-lighten-2">
-                        <div class="stat-widget-one">
-                            <div class="stat-content">
-                                <div class="stat-text">If you've invested</div>
-                                <div class="stat-digit">
-                                    <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.Begin.DailyPrice}}
-                                </div>
-                                <div class="stat-text">on {{renderDate .TaxLossCalculationData.Begin.Date}}</div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Portfolio Performance</h4>
+            <canvas id="lineChart"></canvas>
+        </div>
+        <div class="card-footer">
+            <div class="card-group">
+                <div class="card bg-info-lighten-2">
+                    <div class="stat-widget-one">
+                        <div class="stat-content">
+                            <div class="stat-text">If you've invested</div>
+                            <div class="stat-digit">
+                                <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.Begin.DailyPrice}}
                             </div>
+                            <div class="stat-text">on {{renderDate .TaxLossCalculationData.Begin.Date}}</div>
                         </div>
                     </div>
-                    <div class="card {{if .TaxLossCalculationData.IsHarvesteable}} bg-warning-lighten-2 {{ else}} bg-success-rgba1 {{ end}}">
-                        <div class="stat-widget-one">
-                            <div class="stat-content">
-                                <div class="stat-text">It would be</div>
-                                <div class="stat-digit {{if .TaxLossCalculationData.IsHarvesteable}} gradient-loss-text {{ else}} gradient-profit-text {{ end}}">
-                                    <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.Today.DailyPrice}}
-                                </div>
-                                <div class="stat-text">today</div>
+                </div>
+                <div class="card {{if .TaxLossCalculationData.IsHarvestable}} bg-warning-lighten-2 {{ else}} bg-success-rgba1 {{ end}}">
+                    <div class="stat-widget-one">
+                        <div class="stat-content">
+                            <div class="stat-text">It would be</div>
+                            <div class="stat-digit {{if .TaxLossCalculationData.IsHarvestable}} gradient-loss-text {{ else}} gradient-profit-text {{ end}}">
+                                <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.Today.DailyPrice}}
                             </div>
+                            <div class="stat-text">today</div>
                         </div>
                     </div>
-                    <div class="card bg-success-lighten-2">
-                        <div class="stat-widget-one">
-                            <div class="stat-content">
-                                {{if .TaxLossCalculationData.IsHarvesteable}}
-                                    <div class="stat-text">You could harvest</div>
-                                {{ else}}
-                                    <div class="stat-text">Your gains are</div>
-                                {{ end}}
+                </div>
+                <div class="card bg-success-lighten-2">
+                    <div class="stat-widget-one">
+                        <div class="stat-content">
+                            {{if .TaxLossCalculationData.IsHarvestable}}
+                                <div class="stat-text">You could harvest</div>
+                            {{ else}}
+                                <div class="stat-text">Your gains are</div>
+                            {{ end}}
 
-                                <div class="stat-digit gradient-price-text">
-                                    <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.ChangePrice}}
-                                </div>
-                                {{if .TaxLossCalculationData.IsHarvesteable}}
-                                <div class="stat-text">by swapping with {{template "etf" .TaxLossCalculationData.Swappable}}</div>
-                                {{end }}
+                            <div class="stat-digit gradient-price-text">
+                                <i class="fa fa-usd"></i>{{ .TaxLossCalculationData.ChangePrice}}
                             </div>
+                            {{if .TaxLossCalculationData.IsHarvestable}}
+                                <div class="stat-text">
+                                    by swapping with
+                                    {{ range .TaxLossCalculationData.Swappables }}
+                                        {{ template "etf" . }}
+                                    {{ end }}
+                                </div>
+                                    {{else}}
+                                <div class="stat-text">Congratulations!</div>
+                            {{end }}
                         </div>
                     </div>
                 </div>
@@ -56,6 +61,16 @@
     <script type="application/javascript">
         //line chart
         let ctx = document.getElementById("lineChart");
+        (function (){
+            let ctx = document.getElementById("lineChart");
+            if (screen.width < 1000) {
+                ctx.height = 300;
+            } else if (screen.width < 2000) {
+                ctx.height = 200;
+            } else {
+                ctx.height = 100;
+            }
+        })();
         let myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -74,6 +89,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
                 tooltips: {
                     mode: 'index',
                     intersect: false,
@@ -86,8 +102,24 @@
                             maxRotation: 90,
                             minRotation: 90
                         }
-                    }]
+                    }],
                 }
+            },
+            onResize: function(myChart, size) {
+                let showTicks = (size.height >= 1000);
+
+                myChart.options = {
+                    scales: {
+                        x: {
+                            display: false,
+                        },
+                        xAxes: [{
+                            ticks: {
+                                display: showTicks
+                            }
+                        }]
+                    }
+                };
             }
         });
     </script>

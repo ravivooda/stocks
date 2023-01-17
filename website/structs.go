@@ -25,11 +25,11 @@ type SideBarMetadata struct {
 }
 
 type TaxLossCalculationData struct {
-	Begin          alphavantage.LinearTimeSeriesDaily
-	Today          alphavantage.LinearTimeSeriesDaily
-	IsHarvesteable bool
-	ChangePrice    string
-	Swappable      string
+	Begin         alphavantage.LinearTimeSeriesDaily
+	Today         alphavantage.LinearTimeSeriesDaily
+	IsHarvestable bool
+	ChangePrice   string
+	Swappables    []models.LETFAccountTicker
 }
 
 type ChartData struct {

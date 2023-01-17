@@ -163,9 +163,10 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
+                                {{ template "linear_security_chart" .ChartData}}
                                 <div class="card">
-                                    <div class="card-body">
-                                        <h3>Holdings for <b>{{ .AccountTicker }}</b></h3>
+                                    <div class="mobile-card-body">
+                                        <h3 class="mobile-title">Holdings for <b>{{ .AccountTicker }}</b></h3>
                                         <div class="table-responsive">
                                             <table id="row-select-holdings"
                                                    class="table table-striped table-bordered holdings-ordering"
@@ -186,9 +187,11 @@
                                                                 <span class="rounded_border">{{ .StockDescription }}</span>
                                                             </td>
                                                             <td>
-                                                                <button type="button"
-                                                                        class="btn mb-1 btn-outline-success btn-sm"
-                                                                        onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html'">{{ .StockTicker }}</button>
+                                                                {{ if ne .StockTicker "" }}
+                                                                    <button type="button"
+                                                                            class="btn mb-1 btn-outline-success btn-sm"
+                                                                            onclick="location.href='{{ $.TemplateCustomMetadata.WebsitePaths.StockSummary }}/{{ .StockTicker }}.html'">{{ .StockTicker }}</button>
+                                                                {{ end}}
                                                             </td>
                                                             <td>{{ renderPercentage .PercentContained }}</td>
                                                         </tr>

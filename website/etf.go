@@ -56,7 +56,7 @@ func (s *server) _renderETF(c *gin.Context, etf string, etfHoldings []models.LET
 		ChartData: ChartData{
 			Ticker:                 etf,
 			LinearDailyData:        linear5DaysData,
-			TaxLossCalculationData: s.generateTaxLossCalculationData(linear5DaysData),
+			TaxLossCalculationData: s.generateTaxLossCalculationData(etf, linear5DaysData, overlaps),
 		},
 	}
 	c.HTML(http.StatusOK, ETFSummaryTemplate, data)

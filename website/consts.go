@@ -73,5 +73,5 @@ func renderStockTickersCount(input []models.StockTicker) string {
 
 func renderDate(input string) string {
 	date, _ := time.Parse("2006-01-02", input) // TODO: Silently ignoring error when parsing date
-	return date.Format("Mon January 2, 2006")
+	return date.Format("January 2, 2006")
 }

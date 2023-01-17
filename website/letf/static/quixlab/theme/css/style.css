@@ -11328,6 +11328,21 @@ table.dataTable thead .sorting::after {
       border-radius: 0; }
   .card .card-body {
     padding: 1.88rem 1.81rem; }
+  @media screen and (max-width: 767px) {
+    .mobile-card-body {
+      padding: 1.88rem 0.1rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .mobile-title {
+      padding: 0rem 1.81rem;
+    }
+  }
+  @media screen and (min-width: 767px) {
+    .mobile-card-body {
+      padding: 1.88rem 1.81rem;
+    }
+  }
   .card-action a {
     display: inline-block;
     color: #fff;
