@@ -2,23 +2,15 @@
 <html lang="en">
 <head>
     <title>{{ .Ticker }} Summary, Exposure to ETFs</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    {{ template "includes" }}
     <script type="application/javascript">
         $(document).ready(function () {
-            {{ with .MappedHoldings }}
-            {{ range $leverage, $overlaps := . }}
-            $('#test-row-{{ $leverage }}').css('cursor', 'pointer');
-            $('#test-row-{{ $leverage }}').click(function () {
-                $('html, body').animate({
-                    scrollTop: $("#leverage-{{ $leverage }}").offset().top
-                }, 1000);
-                return false;
-            });
+            {{ range $leverage, $overlaps := .MappedHoldings }}
+            setupCardScrollForLeverage('{{$leverage}}')
             {{ end }}
-            {{ end }}
+            setupMobileConfig();
         });
     </script>
-    {{ template "includes" }}
     <meta name="description"
           content="Detailed summary of stock {{ .Ticker }}. Lists all the ETFs containing the {{ .Ticker }} under different leverages">
 </head>
@@ -164,7 +156,7 @@
                                             <div class="card-body">
                                                 <h3>Leverage: {{ $leverage }}</h3>
                                                 <div class="table-responsive">
-                                                    <table id="row-select-holdings"
+                                                    <table id="row-select-leverage-{{ $leverage }}"
                                                            class="table table-striped table-bordered stocks-exposure-ordering"
                                                            role="grid"
                                                            aria-describedby="row-select_info">

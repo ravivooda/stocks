@@ -2,32 +2,12 @@
 <html lang="en">
 <head>
     <title>{{ .AccountTicker }} Holdings, Overlaps</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script type="application/javascript">
         $(document).ready(function () {
-            {{ with .Overlaps }}
-            {{ range $leverage, $overlaps := . }}
-            $('#test-row-{{ $leverage }}').css('cursor', 'pointer');
-            $('#test-row-{{ $leverage }}').click(function () {
-                $('html, body').animate({
-                    scrollTop: $("#leverage-{{ $leverage }}").offset().top
-                }, 1000);
-                return false;
-            });
-            waitForElm('#row-select-leverage-{{ $leverage}}_length').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
-            waitForElm('#row-select-leverage-{{ $leverage}}_filter').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
-            waitForElm('#row-select-leverage-{{ $leverage}}_info').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
+            {{ range $leverage, $overlaps := .Overlaps }}
+            setupCardScrollForLeverage('{{$leverage}}')
             {{ end }}
-            {{ end }}
+            setupMobileConfig();
             waitForElm('#row-select-holdings_length').then((elm) => {
                 elm.classList.add("d-none")
                 elm.classList.add("d-lg-block")
