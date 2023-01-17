@@ -23,16 +23,15 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 
 	s.setupRobotsAndSiteMap(router)
 
-	dirname := "./website/letf/static/quixlab/theme"
-	infos, err := ioutil.ReadDir(dirname)
+	infos, err := ioutil.ReadDir(themePath)
 	utils.PanicErr(err)
 
 	for _, info := range infos {
 		if info.IsDir() {
-			router.Static(fmt.Sprintf("/%s", info.Name()), fmt.Sprintf("%s/%s", dirname, info.Name()))
+			router.Static(fmt.Sprintf("/%s", info.Name()), fmt.Sprintf("%s/%s", themePath, info.Name()))
 		}
 	}
-	router.Static("/static", "./website/letf/static")
+	router.Static("/static", staticPath)
 	router.SetFuncMap(template.FuncMap{
 		"renderETFsArray":         renderETFsArray,
 		"renderPercentage":        renderPercentage,
@@ -116,8 +115,8 @@ func (s *server) route(paths []string, router *gin.Engine, handler func(c *gin.C
 	}
 }
 func (s *server) setupRobotsAndSiteMap(r *gin.Engine) {
-	r.StaticFile("robots.txt", "./website/letf/generated/robots.txt")
-	r.StaticFile("sitemap.xml", "./website/letf/generated/sitemap.xml")
+	r.StaticFile("robots.txt", fmt.Sprintf("%s/robots.txt", generatedPath))
+	r.StaticFile("sitemap.xml", fmt.Sprintf("%s/sitemap.xml", generatedPath))
 }
 
 const addr = ":8080"

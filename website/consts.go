@@ -20,24 +20,19 @@ var DefaultWebsitePaths = Paths{
 }
 
 var (
-	ETFSummaryTemplate         = "etf_summary.tmpl"
-	TemplatesDir               = "website/letf/tmpl"
-	ETFSummaryTemplateLoc      = fmt.Sprintf("%s/%s", TemplatesDir, ETFSummaryTemplate)
+	ETFSummaryTemplate = "etf_summary.tmpl"
+	TemplatesDir       = "website/letf/tmpl"
+
 	etfSummariesPathFromRoot   = "/etf-summary"
 	stockSummariesPathFromRoot = "/stock-summary"
 	overlapsPathFromRoot       = fmt.Sprintf("%s/overlap", etfSummariesPathFromRoot)
 
-	StockSummaryTemplate    = "stock_summary.tmpl"
-	stockSummaryTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, StockSummaryTemplate)
+	StockSummaryTemplate = "stock_summary.tmpl"
 
-	OverlapTemplate    = "etf_overlap.tmpl"
-	overlapTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, OverlapTemplate)
+	OverlapTemplate = "etf_overlap.tmpl"
 
 	listAllETFsTemplate   = "list_all_etfs.tmpl"
 	listAllStocksTemplate = "list_all_stocks.tmpl"
-
-	welcomeTemplate    = "index.tmpl"
-	welcomeTemplateLoc = fmt.Sprintf("%s/%s", TemplatesDir, welcomeTemplate)
 
 	useCasesTemplate          = "use_cases.tmpl"
 	disclaimerTemplate        = "disclaimer.tmpl"
@@ -45,7 +40,10 @@ var (
 	faqsTemplate              = "faq.tmpl"
 	contactTemplate           = "contact.tmpl"
 
-	error404tmpl = "page-error-404.tmpl"
+	error404tmpl  = "page-error-404.tmpl"
+	themePath     = "./website/letf/static/quixlab/theme"
+	staticPath    = "./website/letf/static"
+	generatedPath = "./website/letf/generated"
 )
 
 func renderETFsArray(input []models.LETFAccountTicker) string {
