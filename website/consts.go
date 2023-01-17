@@ -21,7 +21,7 @@ var DefaultWebsitePaths = Paths{
 
 var (
 	ETFSummaryTemplate = "etf_summary.tmpl"
-	TemplatesDir       = "website/letf/tmpl"
+	TemplatesDir       = "website/template/code"
 
 	etfSummariesPathFromRoot   = "/etf-summary"
 	stockSummariesPathFromRoot = "/stock-summary"
@@ -41,9 +41,9 @@ var (
 	contactTemplate           = "contact.tmpl"
 
 	error404tmpl  = "page-error-404.tmpl"
-	themePath     = "./website/letf/static/quixlab/theme"
-	staticPath    = "./website/letf/static"
-	generatedPath = "./website/letf/generated"
+	themePath     = "./website/template/static/quixlab/theme"
+	staticPath    = "./website/template/static"
+	generatedPath = "./website/template/generated"
 )
 
 func renderETFsArray(input []models.LETFAccountTicker) string {
