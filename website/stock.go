@@ -52,8 +52,9 @@ func (s *server) renderStock(c *gin.Context) {
 		LatestData:               latestData,
 		LatestDate:               latestDate,
 		ChartData: ChartData{
-			Ticker:          stock,
-			LinearDailyData: linear5DaysData,
+			Ticker:                 stock,
+			LinearDailyData:        linear5DaysData,
+			TaxLossCalculationData: s.generateTaxLossCalculationData(linear5DaysData, []models.LETFAccountTicker{mappedHoldings["1x"][0].LETFAccountTicker}), //TODO: Hardcoded 1x for generating tax data
 		},
 	}
 	c.HTML(http.StatusOK, StockSummaryTemplate, data)

@@ -149,7 +149,9 @@
                             </div>
                         </div>
                         {{ if .ShouldRenderAlphaVantage }}
+                        <div class="col-lg-6">
                             {{ template "linear_security_chart" .ChartData}}
+                        </div>
                         {{ end }}
                     </div>
                     <h4 class="section-heading">ETFs with exposure to <b>{{ .Ticker }}</b></h4>

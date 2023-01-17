@@ -8,9 +8,8 @@ import (
 )
 
 func (s *server) generateTaxLossCalculationData(
-	etf string,
 	data []alphavantage.LinearTimeSeriesDaily,
-	overlaps map[string][]models.LETFOverlapAnalysis,
+	swappables []models.LETFAccountTicker,
 ) TaxLossCalculationData {
 	start, end := data[0], data[len(data)-1]
 	startPrice, endPrice := utils.ParseFloat(start.DailyPrice), utils.ParseFloat(end.DailyPrice)
@@ -27,6 +26,6 @@ func (s *server) generateTaxLossCalculationData(
 		},
 		IsHarvestable: startPrice >= endPrice,
 		ChangePrice:   renderLargeNumbers(int(math.Abs(beginPortfolioValue - endPortfolioValue))),
-		Swappables:    overlaps[s.metadata.AccountMap[utils.FetchAccountTicker(etf)].Leveraged][0].LETFHoldees,
+		Swappables:    swappables,
 	}
 }
