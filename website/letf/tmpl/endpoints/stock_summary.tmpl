@@ -7,8 +7,8 @@
         $(document).ready(function () {
             {{ range $leverage, $overlaps := .MappedHoldings }}
             setupCardScrollForLeverage('{{$leverage}}')
+            leverageConfigForMobile('#row-select-leverage-{{$leverage}}');
             {{ end }}
-            setupMobileConfig();
         });
     </script>
     <meta name="description"

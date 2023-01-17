@@ -2,27 +2,16 @@
 <html lang="en">
 <head>
     <title>{{ .AccountTicker }} Holdings, Overlaps</title>
+    {{ template "includes" }}
     <script type="application/javascript">
         $(document).ready(function () {
             {{ range $leverage, $overlaps := .Overlaps }}
             setupCardScrollForLeverage('{{$leverage}}')
+            leverageConfigForMobile('#row-select-leverage-{{$leverage}}');
             {{ end }}
-            setupMobileConfig();
-            waitForElm('#row-select-holdings_length').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
-            waitForElm('#row-select-holdings_filter').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
-            waitForElm('#row-select-holdings_info').then((elm) => {
-                elm.classList.add("d-none")
-                elm.classList.add("d-lg-block")
-            })
+            leverageConfigForMobile('#row-select-holdings');
         });
     </script>
-    {{ template "includes" }}
     <meta name="description" content="Detailed summary of holdings, overlaps, leverage for ETFs {{ .AccountTicker }}">
 </head>
 <body>
