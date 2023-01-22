@@ -14,7 +14,7 @@ on:
 jobs:
   todo:
     concurrency:
-      group: ${{ github.ref }}-${{ github.job }}
+      group: ${{ github.ref }}-${{ github.job }}-${{ github.workflow }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:

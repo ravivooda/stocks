@@ -10,7 +10,7 @@ on:
 jobs:
   deploy_to_do:
     concurrency:
-      group: ${{ github.ref }}-${{ github.job }}
+      group: ${{ github.ref }}-${{ github.job }}-${{ github.workflow }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
