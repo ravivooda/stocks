@@ -1,7 +1,6 @@
 package website
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"stocks/models"
@@ -9,7 +8,7 @@ import (
 	"strings"
 )
 
-const sep = "_"
+const sep = ","
 
 func (s *server) renderOverlap(c *gin.Context) {
 	holder, holdees := s.fetchOverlapParam(c)
@@ -32,12 +31,8 @@ func (s *server) renderOverlap(c *gin.Context) {
 }
 
 func (s *server) fetchOverlapParam(c *gin.Context) (string, []string) {
-	param := c.Param(overlapParam)
-	param = strings.ReplaceAll(param, ".html", "")
-	holds := strings.SplitN(param, sep, 2)
-	// TODO: Forcefully assuming only holds 2
-	if len(holds) != 2 {
-		panic(fmt.Sprintf("expected splittable by _ to 2 segments but did not find anyin %s", param))
-	}
-	return holds[0], []string{holds[1]}
+	// TODO: Handle error gracefully for query lookup in overlaps
+	lhs, _ := c.GetQuery(overlapKeyLHS)
+	rhs, _ := c.GetQuery(overlapKeyRHS)
+	return lhs, strings.Split(rhs, sep)
 }

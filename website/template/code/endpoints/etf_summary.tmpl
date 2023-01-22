@@ -234,7 +234,7 @@
                                                                         {{ end }}
                                                                     </td>
                                                                     <td>
-                                                                        <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}/{{ $.AccountTicker }}_{{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}}_{{end}}{{$element}}{{end}}.html">
+                                                                        <a href="{{ $.TemplateCustomMetadata.WebsitePaths.Overlaps }}?lhs={{ $.AccountTicker }}&rhs={{$equipment := .LETFHoldees}}{{ range $index, $element := .LETFHoldees}}{{if $index}},{{end}}{{$element}}{{end}}">
                                                                             {{ renderPercentage .OverlapPercentage }}%
                                                                             <span>&#8594;</span>
                                                                             <div class="progress mb-3"

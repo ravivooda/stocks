@@ -85,15 +85,12 @@ func (l *logger) FetchOverlapDetails(lhs string, rhs []string) (models.LETFOverl
 	lhsETFHoldings, _, err := l.FetchHoldings(lhs)
 	utils.PanicErr(err)
 
-	// TODO: Forcefully assuming that only one element exists in rhs
-	//var rhsETFHoldings [][]models.LETFHolding
-	//for _, rh := range rhs {
-	//	rhETFHoldings, rhsleverage, err := l.FetchHoldings(rh)
-	//	utils.PanicErr(err)
-	//	rhsETFHoldings = append(rhsETFHoldings)
-	//}
-	rhsETFHoldings, _, err := l.FetchHoldings(rhs[0])
-	utils.PanicErr(err)
+	var rhsETFHoldings []models.LETFHolding
+	for _, rh := range rhs {
+		h, _, err := l.FetchHoldings(rh)
+		utils.PanicErr(err)
+		rhsETFHoldings = append(rhsETFHoldings, h...)
+	}
 
 	totalOverlapPercentage, details := l.g.Compare(
 		utils.MapLETFHoldingsWithStockTicker(lhsETFHoldings),

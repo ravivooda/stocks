@@ -47,7 +47,7 @@ func (s *server) StartServing(ctx context.Context, kill time.Duration) error {
 		s.renderFindOverlapsInputHTML(c)
 	})
 
-	router.GET(fmt.Sprintf("/etf-summary/overlap/:%s", overlapParam), func(c *gin.Context) {
+	router.GET("/etf-summary/overlap", func(c *gin.Context) {
 		s.renderOverlap(c)
 	})
 

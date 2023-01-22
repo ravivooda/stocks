@@ -10,7 +10,10 @@ import (
 )
 
 const stockParamKey = "stock"
-const overlapParam = "overlap"
+const (
+	overlapKeyLHS = "lhs"
+	overlapKeyRHS = "rhs"
+)
 
 var DefaultWebsitePaths = Paths{
 	LETFSummary:      etfSummariesPathFromRoot,
