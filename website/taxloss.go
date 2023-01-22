@@ -11,6 +11,10 @@ func (s *server) generateTaxLossCalculationData(
 	data []alphavantage.LinearTimeSeriesDaily,
 	swappables []models.LETFAccountTicker,
 ) TaxLossCalculationData {
+	if len(data) == 0 {
+		//TODO: Handle empty data in a different way
+		return TaxLossCalculationData{}
+	}
 	start, end := data[0], data[len(data)-1]
 	startPrice, endPrice := utils.ParseFloat(start.DailyPrice), utils.ParseFloat(end.DailyPrice)
 	beginPortfolioValue := 10000.00
