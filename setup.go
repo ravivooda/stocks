@@ -72,7 +72,9 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 			InsightGenerators: request.generators,
 			InsightsLogger:    request.logger,
 			EtfsMaps:          etfsMap,
-		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap)
+		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap, func(ticker models.LETFAccountTicker) bool {
+			return TopHardcodedETFsMap[ticker]
+		})
 	}
 
 	metadata, autoCompleteMetadata := createMetadata(holdingsWithStockTickerMap, holdingsWithAccountTickerMap, etfsMap, 10, 10, generatedInsights)
@@ -100,18 +102,7 @@ func createMetadata(
 
 	// TODO: Bring back hardcoded top ETFS; Today it's hardcoded as top etfs by volume trading from: https://etfdb.com/compare/volume/
 	//topETFs := filterTopETFs(accountMap, topETFsCount)
-	topETFs := []models.LETFAccountTicker{
-		"TQQQ",
-		"XLU",
-		"SOXL",
-		"SPY",
-		"LABU",
-		"VXUS",
-		"EEM",
-		"XLF",
-		"FXI",
-		"UPRO",
-	}
+	topETFs := TopHardcodedETFs
 
 	metadata := website.Metadata{
 		AccountMap:   accountMap,
