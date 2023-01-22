@@ -112,31 +112,8 @@ func Orchestrate(ctx context.Context, request Request, holdingsWithStockTickerMa
 	return generateInsights(ctx, request, holdingsWithAccountTickerMap)
 }
 
-func logHoldings(
-	ctx context.Context,
-	logger insights.Logger,
-	holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding,
-	etfsMap map[models.LETFAccountTicker]models.ETF,
-) {
-	for ticker, holdings := range holdingsWithAccountTickerMap {
-		fileName, err := logger.LogHoldings(ctx, ticker, holdings, etfsMap[ticker].Leveraged)
-		utils.PanicErr(err)
-		fmt.Printf("wrote the holdings to %s\n", fileName)
-	}
-}
-
 func generateInsights(_ context.Context, request Request, holdingsWithAccountTickerMap map[models.LETFAccountTicker][]models.LETFHolding) int {
 	var totalGatheredInsights = 0
-
-	//
-	//fmt.Println("Generating welcome pages")
-	//for _, generator := range request.websiteGenerators {
-	//	_, err := generator.Generate(ctx, letf.Request{
-	//		Letfs:     holdingsWithAccountTickerMap,
-	//		StocksMap: holdingsWithStockTickerMap,
-	//	})
-	//	utils.PanicErr(err)
-	//}
 
 	fmt.Println("Generating ETF Pages")
 	for _, iGenerator := range request.InsightGenerators {
@@ -152,6 +129,19 @@ func generateInsights(_ context.Context, request Request, holdingsWithAccountTic
 						etfArray = []models.LETFOverlapAnalysis{}
 					}
 					mappedOverlapAnalysis[holdee.Leveraged] = append(etfArray, analysis)
+				}
+
+				for leverage, analyses := range mappedOverlapAnalysis {
+					//fmt.Printf("Fetching merge insights for ticker %s, with leverage %s, len = %d\n", ticker, leverage, len(analyses))
+					if leverage == "" {
+						for _, analysis := range analyses {
+							panic(fmt.Sprintf("found empty leverage for %s\n", analysis.LETFHoldees))
+						}
+					}
+					mergedInsights := iGenerator.MergeInsights(map[models.LETFAccountTicker][]models.LETFOverlapAnalysis{ticker: analyses}, holdingsWithAccountTickerMap)
+					//fmt.Printf("Found %d merged insights\n", len(mergedInsights[ticker]))
+					analyses = append(analyses, mergedInsights[ticker]...)
+					mappedOverlapAnalysis[leverage] = analyses
 				}
 
 				var wrappedOverlaps []insights.OverlapWrapper
