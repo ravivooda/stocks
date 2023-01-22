@@ -6,6 +6,7 @@ fetch all the stocks from different providers. Currently, supports:
 - MicroSector ([limited](external/securities/microsector/holdings))
 - [ProShares](external/securities/proshares/README.md)
 - [Master Data Reports](external/securities/masterdatareports/README.md)
+- [Invesco](external/securities/invesco/README.md)
 
 If you are interested in all the tickers, please see [seeds.yaml](database/seeds.yaml)
 
