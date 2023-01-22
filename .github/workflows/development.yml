@@ -2,13 +2,14 @@ name: Push CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
-jobs:
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
 
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
