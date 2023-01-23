@@ -87,9 +87,15 @@
                                                        class="table table-striped table-bordered overlap-ordering"
                                                        role="grid"
                                                        aria-describedby="row-select_info">
+                                                    <colgroup>
+                                                        <col span="2">
+                                                        <col style="background-color:rgba(207,53,21,0.2)">
+                                                        <col span="{{len .Analysis.LETFHoldees}}" style="background-color:rgba(227,98,4,0.2)">
+                                                        <col style="background-color: rgba(12,72,203,0.2)">
+                                                    </colgroup>
                                                     <thead>
                                                     <tr>
-                                                        <th>Holding Stock Name</th>
+                                                        <th class="d-none d-lg-table-cell">Holding Stock Name</th>
                                                         <th>Ticker</th>
                                                         <th>Percentage Exposure in {{ .Analysis.LETFHolder }}</th>
                                                         {{ range .Analysis.LETFHoldees }}
