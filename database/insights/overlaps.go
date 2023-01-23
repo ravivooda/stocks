@@ -54,7 +54,10 @@ func (l *logger) FetchOverlapsWithoutDetailedOverlaps(etfName string) (map[strin
 	_, allOverlapsPercentageFilePath := l.allOverlapsPercentageFilePath(string(utils.FetchAccountTicker(etfName)))
 
 	file, err := ioutil.ReadFile(allOverlapsPercentageFilePath)
-	utils.PanicErr(err)
+	if err != nil {
+		utils.LogErr(err)
+		return map[string][]models.LETFOverlapAnalysis{}, nil
+	}
 
 	data := allOverlapsWrapper{}
 	utils.PanicErr(json.Unmarshal(file, &data))
