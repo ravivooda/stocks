@@ -73,7 +73,7 @@ func setup(context context.Context, shouldOrchestrate bool, request setupRequest
 			InsightsLogger:    request.logger,
 			EtfsMaps:          etfsMap,
 		}, holdingsWithStockTickerMap, holdingsWithAccountTickerMap, func(ticker models.LETFAccountTicker) bool {
-			return TopHardcodedETFsMap[ticker]
+			return false
 		})
 	}
 
