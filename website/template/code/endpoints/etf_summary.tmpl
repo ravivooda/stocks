@@ -48,6 +48,7 @@
                                             </div>
                                             <div class="card-footer border-0 bg-transparent">
                                                 <div class="row">
+                                                    {{ if .ShouldRenderAlphaVantage }}
                                                     <div class="col-xl-6">
                                                         <div class="card gradient-2-shadow">
                                                             <div class="stat-widget-one">
@@ -60,6 +61,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    {{ end }}
                                                     <div class="col-xl-6">
                                                         <div class="card gradient-2-shadow">
                                                             <div class="stat-widget-one">
@@ -132,7 +134,9 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                {{ template "linear_security_chart" .ChartData}}
+                                {{if .ShouldRenderAlphaVantage }}
+                                    {{ template "linear_security_chart" .ChartData}}
+                                {{ end }}
                                 <div class="card">
                                     <div class="mobile-card-body">
                                         <h3 class="mobile-title">Holdings for <b>{{ .AccountTicker }}</b></h3>
