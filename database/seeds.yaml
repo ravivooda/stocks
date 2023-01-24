@@ -5,6 +5,7 @@ seeds:
       skipped:
         - TENG
         - COM
+        - SPUU
         - RUSL # Negative Tickers from here on
         - CLDS
         - LABD
@@ -67,7 +68,6 @@ seeds:
         - MNM
         - ONG
         - UBOT
-        - SPUU
         - EVEN
         - GUSH
         - FNGG
