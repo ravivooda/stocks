@@ -28,8 +28,8 @@ securities:
     url: "https://www.invesco.com/us/financial-products/etfs/holdings/main/holdings/0?audienceType=Investor&action=download&ticker=%s"
 outputs:
   insights:
-    min_threshold_percentage: 0
-    min_merged_threshold_percentage: 70
+    min_threshold_percentage: 10
+    min_merged_threshold_percentage: 30
     min_merged_improvement_threshold_percentage: 3
   websites:
     min_threshold_percentage: 10
