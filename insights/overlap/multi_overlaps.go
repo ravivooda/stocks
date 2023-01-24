@@ -52,7 +52,7 @@ func (g *generator) MergeInsights(
 					LETFHolder:        ticker,
 					LETFHoldees:       holdees,
 					OverlapPercentage: totalOverlapPercentage,
-					DetailedOverlap:   &computedOverlaps,
+					DetailedOverlap:   nil,
 				})
 			}
 		}
